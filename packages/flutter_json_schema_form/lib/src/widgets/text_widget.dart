@@ -28,6 +28,10 @@ class _TextWidgetState extends State<TextWidget> {
     ),
   );
 
+  void onChange(BuildContext context, value) {
+    context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(widget.model.id!, value));
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget field;
@@ -43,7 +47,6 @@ class _TextWidgetState extends State<TextWidget> {
     } else if (widget.model.widgetType == WidgetType.textarea) {
       field = TextFormField(
         decoration: decoration,
-        // expands: true,
         minLines: 4,
         maxLines: 10,
       );
@@ -54,6 +57,9 @@ class _TextWidgetState extends State<TextWidget> {
           return TextFormField(
             initialValue: value ?? '',
             decoration: decoration,
+            onChanged: (value) {
+              onChange(context, value);
+            },
           );
         },
       );

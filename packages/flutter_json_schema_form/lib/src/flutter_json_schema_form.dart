@@ -5,16 +5,20 @@ import 'bloc/form_bloc.dart';
 import 'models/models.dart';
 import 'widgets/widgets.dart';
 
+typedef ChangeFormCallback = Function(Map<String, dynamic> formData);
+
 class FlutterJsonSchemaForm extends StatefulWidget {
   final Map<String, dynamic> schema;
   final Map<String, dynamic>? uiSchema;
   final Map<String, dynamic>? formData;
+  final ChangeFormCallback? onChange;
 
   const FlutterJsonSchemaForm({
     Key? key,
     required this.schema,
     this.uiSchema,
     this.formData,
+    this.onChange,
   }) : super(key: key);
 
   @override
@@ -33,7 +37,7 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => FormBloc(widget.formData),
+      create: (context) => FormBloc(formData: widget.formData, onChangeCallback: widget.onChange),
       child: SingleChildScrollView(
         child: SectionWidget(model: model),
       ),
