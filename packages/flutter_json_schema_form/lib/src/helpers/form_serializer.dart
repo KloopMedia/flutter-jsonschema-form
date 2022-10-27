@@ -43,7 +43,12 @@ class FormSerializer {
   static List<Field> _createFixedArrayFields(List items, List itemsUi) {
     final fields = items.mapWithIndex((e, index) {
       final field = e as Map<String, dynamic>;
-      final ui = itemsUi[index];
+      Map<String, dynamic> ui;
+      try {
+        ui = itemsUi[index];
+      } catch (e) {
+        ui = {};
+      }
       return createModelFromSchema(index.toString(), field, ui) as TextFieldModel;
     }).toList();
     return fields;
