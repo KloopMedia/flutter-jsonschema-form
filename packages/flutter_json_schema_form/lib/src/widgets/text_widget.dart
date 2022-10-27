@@ -16,8 +16,6 @@ class TextWidget extends StatefulWidget {
 }
 
 class _TextWidgetState extends State<TextWidget> {
-  String selectedValue = "";
-
   final decoration = const InputDecoration(
     isDense: true,
     focusedBorder: OutlineInputBorder(
@@ -32,43 +30,46 @@ class _TextWidgetState extends State<TextWidget> {
     context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(widget.model.id!, value));
   }
 
-  @override
-  Widget build(BuildContext context) {
-    Widget field;
+  Widget buildTextWidget(value) {
     if (widget.model.widgetType == WidgetType.select) {
-      field = DropdownButtonFormField(
+      return DropdownButtonFormField<String>(
+          value: value,
           decoration: decoration,
           onChanged: (String? newValue) {
-            setState(() {
-              selectedValue = newValue!;
-            });
+            onChange(context, newValue);
           },
           items: widget.model.dropdownItems);
     } else if (widget.model.widgetType == WidgetType.textarea) {
-      field = TextFormField(
+      return TextFormField(
         decoration: decoration,
         minLines: 4,
         maxLines: 10,
+        onChanged: (newValue) {
+          onChange(context, newValue);
+        },
       );
     } else {
-      field = BlocBuilder<bloc.FormBloc, bloc.FormState>(
-        builder: (context, state) {
-          final value = state.formData[widget.model.id];
-          return TextFormField(
-            initialValue: value ?? '',
-            decoration: decoration,
-            onChanged: (value) {
-              onChange(context, value);
-            },
-          );
+      return TextFormField(
+        initialValue: value ?? '',
+        decoration: decoration,
+        onChanged: (newValue) {
+          onChange(context, newValue);
         },
       );
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return FieldWrapper(
       title: widget.model.fieldTitle,
       description: widget.model.description,
-      child: field,
+      child: BlocBuilder<bloc.FormBloc, bloc.FormState>(
+        builder: (context, state) {
+          final value = state.formData[widget.model.id];
+          return buildTextWidget(value);
+        },
+      ),
     );
   }
 }
