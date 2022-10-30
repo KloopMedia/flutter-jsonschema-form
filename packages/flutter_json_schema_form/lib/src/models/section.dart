@@ -7,24 +7,30 @@ class Section extends Field {
   final List<Field> fields;
 
   Section({
-    String? id,
+    required String id,
     String? title,
     String? description,
     FieldType? type,
+    required Path path,
     required this.fields,
   }) : super(
           id: id,
           title: title,
           description: description,
           fieldType: type,
+          path: path,
         );
 
-  factory Section.fromJson(Map<String, dynamic> json, Map<String, dynamic> ui) {
+  factory Section.fromJson(Map<String, dynamic> schema, Map<String, dynamic> uiSchema) {
+    final type = $enumDecodeNullable(typeEnumMap, schema['type']);
+    final path = Path([PathItem("\$root", type)]);
     return Section(
-      title: json['title'],
-      description: json['description'],
-      type: $enumDecodeNullable(typeEnumMap, json['type']),
-      fields: FormSerializer.mapJsonToFields(json['properties'], ui),
+      id: "\$root",
+      title: schema['title'],
+      description: schema['description'],
+      type: type,
+      fields: FormSerializer.mapJsonToFields(schema['properties'], uiSchema, path),
+      path: path,
     );
   }
 }

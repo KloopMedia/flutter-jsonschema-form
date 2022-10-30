@@ -15,12 +15,14 @@ class TextFieldModel extends Field {
     WidgetType? widgetType,
     this.enumOptions,
     this.enumNames,
+    required Path path,
   }) : super(
           id: id,
           title: title,
           description: description,
           fieldType: fieldType,
           widgetType: widgetType,
+          path: path,
         );
 
   List<DropdownMenuItem<String>> get dropdownItems {

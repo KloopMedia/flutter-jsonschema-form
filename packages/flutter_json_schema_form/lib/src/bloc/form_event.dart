@@ -7,8 +7,9 @@ abstract class FormEvent extends Equatable {
 class ChangeFormEvent extends FormEvent {
   final String id;
   final dynamic value;
+  final Path path;
 
-  const ChangeFormEvent(this.id, this.value);
+  const ChangeFormEvent(this.id, this.value, this.path);
 
   @override
   List<Object?> get props => [id, value];

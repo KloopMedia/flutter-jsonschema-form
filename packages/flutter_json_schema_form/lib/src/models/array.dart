@@ -13,6 +13,7 @@ class Array extends Field {
     FieldType? fieldType,
     WidgetType? widgetType,
     this.itemType,
+    required Path path,
   })  : isFixed = false,
         items = null,
         super(
@@ -21,6 +22,7 @@ class Array extends Field {
           description: description,
           fieldType: fieldType,
           widgetType: widgetType,
+          path: path,
         );
 
   Array.fixed({
@@ -30,6 +32,7 @@ class Array extends Field {
     FieldType? fieldType,
     WidgetType? widgetType,
     required this.items,
+    required Path path,
   })  : itemType = null,
         isFixed = true,
         super(
@@ -38,5 +41,6 @@ class Array extends Field {
           description: description,
           fieldType: fieldType,
           widgetType: widgetType,
+          path: path,
         );
 }

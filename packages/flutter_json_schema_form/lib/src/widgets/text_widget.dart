@@ -27,7 +27,11 @@ class _TextWidgetState extends State<TextWidget> {
   );
 
   void onChange(BuildContext context, value) {
-    context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(widget.model.id!, value));
+    context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(
+          widget.model.id,
+          value,
+          widget.model.path,
+        ));
   }
 
   Widget buildTextWidget(value) {
@@ -41,6 +45,7 @@ class _TextWidgetState extends State<TextWidget> {
           items: widget.model.dropdownItems);
     } else if (widget.model.widgetType == WidgetType.textarea) {
       return TextFormField(
+        initialValue: value,
         decoration: decoration,
         minLines: 4,
         maxLines: 10,
@@ -50,7 +55,7 @@ class _TextWidgetState extends State<TextWidget> {
       );
     } else {
       return TextFormField(
-        initialValue: value ?? '',
+        initialValue: value,
         decoration: decoration,
         onChanged: (newValue) {
           onChange(context, newValue);
