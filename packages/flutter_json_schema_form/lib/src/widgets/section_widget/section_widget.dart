@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../helpers/helpers.dart';
-import '../models/models.dart';
-import 'widgets.dart';
+import '../../helpers/helpers.dart';
+import '../../models/models.dart';
+import '../widgets.dart';
 
 class SectionWidget extends StatefulWidget {
   final Section model;
@@ -16,7 +16,6 @@ class SectionWidget extends StatefulWidget {
 class _SectionWidgetState extends State<SectionWidget> {
   @override
   Widget build(BuildContext context) {
-    // print(widget.model.path.stringPath);
     return FieldWrapper.section(
       title: widget.model.fieldTitle,
       description: widget.model.description,
