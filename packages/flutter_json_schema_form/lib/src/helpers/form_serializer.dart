@@ -34,9 +34,17 @@ class FormSerializer {
     switch (type) {
       case FieldType.object:
         return Section(
-            id: id, fields: mapJsonToFields(schema['properties'], uiSchema, path), path: path);
+          id: id,
+          fields: mapJsonToFields(schema['properties'], uiSchema, newPath),
+          path: newPath,
+        );
       case FieldType.array:
-        return _createArrayModel(id: id, schema: schema, uiSchema: uiSchema, path: newPath);
+        return _createArrayModel(
+          id: id,
+          schema: schema,
+          uiSchema: uiSchema,
+          path: newPath,
+        );
       case FieldType.string:
         return TextFieldModel(
           id: id,
