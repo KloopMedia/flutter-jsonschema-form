@@ -1,5 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
-
 import '../models/models.dart';
 import 'helpers.dart';
 
@@ -29,7 +27,7 @@ class FormSerializer {
     required Map<String, dynamic> uiSchema,
     required PathModel path,
   }) {
-    final type = $enumDecodeNullable(typeEnumMap, schema['type']);
+    final type = decodeFieldType(schema['type']);
     final newPath = PathModel([...path.path, PathItem(id, type)]);
     switch (type) {
       case FieldType.object:
@@ -51,7 +49,7 @@ class FormSerializer {
           title: schema['title'],
           description: schema['description'],
           fieldType: type,
-          widgetType: $enumDecodeNullable(widgetEnumMap, uiSchema['ui:widget']),
+          widgetType: decodeWidgetType(uiSchema['ui:widget']),
           enumOptions: schema['enum'],
           enumNames: schema['enumNames'],
           path: newPath,

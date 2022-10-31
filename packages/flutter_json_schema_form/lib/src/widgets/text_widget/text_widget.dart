@@ -37,7 +37,7 @@ class _TextWidgetState extends State<TextWidget> {
         //   return previousState.formData[id] != currentState.formData[id];
         // },
         builder: (context, state) {
-          final value = state.formData[id];
+          final value = getFormDataByPath(state.formData, path);
           if (widgetType == WidgetType.select) {
             return DropdownButtonFormField<String>(
                 value: value,

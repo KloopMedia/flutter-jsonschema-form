@@ -1,5 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
-
 import '../helpers/helpers.dart';
 import 'models.dart';
 
@@ -22,7 +20,7 @@ class Section extends Field {
         );
 
   factory Section.fromJson(Map<String, dynamic> schema, Map<String, dynamic> uiSchema) {
-    final type = $enumDecodeNullable(typeEnumMap, schema['type']);
+    final type = decodeFieldType(schema['type']);
     final path = PathModel([]);
     return Section(
       id: "\$root",

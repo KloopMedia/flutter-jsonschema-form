@@ -1,4 +1,5 @@
 import '../helpers/helpers.dart';
+import 'models.dart';
 
 abstract class Field {
   String id;
@@ -20,24 +21,4 @@ abstract class Field {
   String? get fieldTitle => title ?? id;
 
   set setId(String id) => this.id = id;
-}
-
-class PathModel {
-  final List<PathItem> path;
-
-  PathModel(this.path);
-
-  void add(String id, FieldType? fieldType) => path.add(PathItem(id, fieldType));
-
-  List<String> get stringPath => path.map((e) => e.toString()).toList();
-}
-
-class PathItem {
-  String id;
-  FieldType? fieldType;
-
-  PathItem(this.id, this.fieldType);
-
-  @override
-  String toString() => '{id: $id, type: $fieldType}';
 }

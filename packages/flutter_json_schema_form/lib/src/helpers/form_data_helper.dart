@@ -1,5 +1,4 @@
-import 'package:flutter_json_schema_form/src/models/field.dart';
-
+import '../models/models.dart';
 import 'helpers.dart';
 
 Map<String, dynamic> updateFormDataByPath(
@@ -40,4 +39,30 @@ Map<String, dynamic> updateFormDataByPath(
     }
   }
   return data;
+}
+
+dynamic getFormDataByPath(
+  Map<String, dynamic> formData,
+  PathModel path,
+) {
+  Map<String, dynamic> data = {...formData};
+  final pathItems = path.path;
+  dynamic dataPointer = data;
+  for (final field in pathItems) {
+    if (dataPointer is Map) {
+      if (dataPointer.containsKey(field.id)) {
+        dataPointer = dataPointer[field.id];
+      } else {
+        return null;
+      }
+    } else if (dataPointer is List) {
+      try {
+        final index = int.parse(field.id);
+        dataPointer = dataPointer[index];
+      } on RangeError {
+        dataPointer = null;
+      }
+    }
+  }
+  return dataPointer;
 }

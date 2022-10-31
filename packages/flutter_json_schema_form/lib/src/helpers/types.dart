@@ -1,3 +1,5 @@
+import 'package:json_annotation/json_annotation.dart';
+
 enum FieldType { object, array, string, number, integer, boolean }
 
 enum WidgetType { radio, select, textarea }
@@ -16,3 +18,7 @@ const widgetEnumMap = {
   WidgetType.textarea: 'textarea',
   WidgetType.radio: 'radio',
 };
+
+FieldType? decodeFieldType(String? type) => $enumDecodeNullable(typeEnumMap, type);
+
+WidgetType? decodeWidgetType(String? type) => $enumDecodeNullable(widgetEnumMap, type);
