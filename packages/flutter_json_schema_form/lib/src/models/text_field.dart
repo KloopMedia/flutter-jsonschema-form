@@ -15,7 +15,7 @@ class TextFieldModel extends Field {
     WidgetType? widgetType,
     this.enumOptions,
     this.enumNames,
-    required Path path,
+    required PathModel path,
   }) : super(
           id: id,
           title: title,
@@ -25,7 +25,7 @@ class TextFieldModel extends Field {
           path: path,
         );
 
-  TextFieldModel copyWith({String? id, Path? path}) {
+  TextFieldModel copyWith({String? id, PathModel? path}) {
     return TextFieldModel(
       id: id ?? this.id,
       title: title,

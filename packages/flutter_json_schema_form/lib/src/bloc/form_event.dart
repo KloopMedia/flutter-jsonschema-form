@@ -7,7 +7,7 @@ abstract class FormEvent extends Equatable {
 class ChangeFormEvent extends FormEvent {
   final String id;
   final dynamic value;
-  final Path path;
+  final PathModel path;
 
   const ChangeFormEvent(this.id, this.value, this.path);
 

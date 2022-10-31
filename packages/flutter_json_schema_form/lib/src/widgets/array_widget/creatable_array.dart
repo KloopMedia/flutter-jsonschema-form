@@ -30,7 +30,7 @@ class _CreatableArrayState extends State<CreatableArray> {
     if (model is TextFieldModel) {
       final List<PathItem> pathList = List.from(model.path.path);
       pathList[pathList.length - 1] = PathItem(id, model.fieldType);
-      return model.copyWith(id: id, path: Path(pathList));
+      return model.copyWith(id: id, path: PathModel(pathList));
     }
     return model;
   }

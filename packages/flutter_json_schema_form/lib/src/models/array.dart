@@ -13,7 +13,7 @@ class Array extends Field {
     FieldType? fieldType,
     WidgetType? widgetType,
     this.itemType,
-    required Path path,
+    required PathModel path,
   })  : isFixed = false,
         items = null,
         super(
@@ -32,7 +32,7 @@ class Array extends Field {
     FieldType? fieldType,
     WidgetType? widgetType,
     required this.items,
-    required Path path,
+    required PathModel path,
   })  : itemType = null,
         isFixed = true,
         super(

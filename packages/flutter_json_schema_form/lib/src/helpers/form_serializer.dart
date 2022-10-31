@@ -7,7 +7,7 @@ class FormSerializer {
   static List<Field> mapJsonToFields(
     Map<String, dynamic> schema,
     Map<String, dynamic>? uiSchema,
-    Path path,
+    PathModel path,
   ) {
     Map<String, dynamic> fieldMap = schema;
     List<Field> fields = [];
@@ -27,10 +27,10 @@ class FormSerializer {
     required String id,
     required Map<String, dynamic> schema,
     required Map<String, dynamic> uiSchema,
-    required Path path,
+    required PathModel path,
   }) {
     final type = $enumDecodeNullable(typeEnumMap, schema['type']);
-    final newPath = Path([...path.path, PathItem(id, type)]);
+    final newPath = PathModel([...path.path, PathItem(id, type)]);
     switch (type) {
       case FieldType.object:
         return Section(
@@ -71,7 +71,7 @@ class FormSerializer {
     required String id,
     required Map<String, dynamic> schema,
     required Map<String, dynamic> uiSchema,
-    required Path path,
+    required PathModel path,
   }) {
     final items = schema['items'];
     final itemsUi = uiSchema['items'];
@@ -87,7 +87,7 @@ class FormSerializer {
     }
   }
 
-  static List<Field> _createFixedArrayFields(List items, List itemsUi, Path path) {
+  static List<Field> _createFixedArrayFields(List items, List itemsUi, PathModel path) {
     final fields = items.mapWithIndex((e, index) {
       final field = e as Map<String, dynamic>;
       Map<String, dynamic> ui;

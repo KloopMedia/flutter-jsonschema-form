@@ -11,7 +11,7 @@ class Section extends Field {
     String? title,
     String? description,
     FieldType? type,
-    required Path path,
+    required PathModel path,
     required this.fields,
   }) : super(
           id: id,
@@ -23,7 +23,7 @@ class Section extends Field {
 
   factory Section.fromJson(Map<String, dynamic> schema, Map<String, dynamic> uiSchema) {
     final type = $enumDecodeNullable(typeEnumMap, schema['type']);
-    final path = Path([]);
+    final path = PathModel([]);
     return Section(
       id: "\$root",
       title: schema['title'],

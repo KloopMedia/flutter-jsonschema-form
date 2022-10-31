@@ -6,7 +6,7 @@ abstract class Field {
   String? description;
   FieldType? fieldType;
   WidgetType? widgetType;
-  Path path;
+  PathModel path;
 
   Field({
     required this.id,
@@ -22,10 +22,10 @@ abstract class Field {
   set setId(String id) => this.id = id;
 }
 
-class Path {
+class PathModel {
   final List<PathItem> path;
 
-  Path(this.path);
+  PathModel(this.path);
 
   void add(String id, FieldType? fieldType) => path.add(PathItem(id, fieldType));
 
