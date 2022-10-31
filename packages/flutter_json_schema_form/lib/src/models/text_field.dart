@@ -25,6 +25,19 @@ class TextFieldModel extends Field {
           path: path,
         );
 
+  TextFieldModel copyWith({String? id, Path? path}) {
+    return TextFieldModel(
+      id: id ?? this.id,
+      title: title,
+      description: description,
+      fieldType: fieldType,
+      widgetType: widgetType,
+      path: path ?? this.path,
+      enumOptions: enumOptions,
+      enumNames: enumNames,
+    );
+  }
+
   List<DropdownMenuItem<String>> get dropdownItems {
     final options = enumOptions ?? [];
     final names = enumNames ?? [];
