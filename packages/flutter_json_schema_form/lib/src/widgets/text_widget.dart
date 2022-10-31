@@ -16,10 +16,19 @@ class TextWidget extends StatefulWidget {
 }
 
 class _TextWidgetState extends State<TextWidget> {
+  late final id = widget.model.id;
+  late final path = widget.model.path;
+  late final title = widget.model.fieldTitle;
+  late final description = widget.model.description;
+  late final type = widget.model.fieldType;
+
   final decoration = const InputDecoration(
     isDense: true,
     focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.blueAccent, width: 1.0),
+      borderSide: BorderSide(
+        color: Colors.blueAccent,
+        width: 1.0,
+      ),
     ),
     enabledBorder: OutlineInputBorder(
       borderSide: BorderSide(width: 1.0),
@@ -27,15 +36,11 @@ class _TextWidgetState extends State<TextWidget> {
   );
 
   void onChange(BuildContext context, value) {
-    context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(
-          widget.model.id,
-          value,
-          widget.model.path,
-        ));
+    context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(id, value, path));
   }
 
   Widget buildTextWidget(value) {
-    if (widget.model.widgetType == WidgetType.select) {
+    if (type == WidgetType.select) {
       return DropdownButtonFormField<String>(
           value: value,
           decoration: decoration,
@@ -43,7 +48,7 @@ class _TextWidgetState extends State<TextWidget> {
             onChange(context, newValue);
           },
           items: widget.model.dropdownItems);
-    } else if (widget.model.widgetType == WidgetType.textarea) {
+    } else if (type == WidgetType.textarea) {
       return TextFormField(
         initialValue: value,
         decoration: decoration,
@@ -67,11 +72,14 @@ class _TextWidgetState extends State<TextWidget> {
   @override
   Widget build(BuildContext context) {
     return FieldWrapper(
-      title: widget.model.fieldTitle,
-      description: widget.model.description,
+      title: title,
+      description: description,
       child: BlocBuilder<bloc.FormBloc, bloc.FormState>(
+        buildWhen: (previousState, currentState) {
+          return previousState.formData[id] != currentState.formData[id];
+        },
         builder: (context, state) {
-          final value = state.formData[widget.model.id];
+          final value = state.formData[id];
           return buildTextWidget(value);
         },
       ),
