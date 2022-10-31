@@ -23,7 +23,7 @@ class Section extends Field {
 
   factory Section.fromJson(Map<String, dynamic> schema, Map<String, dynamic> uiSchema) {
     final type = $enumDecodeNullable(typeEnumMap, schema['type']);
-    final path = Path([PathItem("\$root", type)]);
+    final path = Path([]);
     return Section(
       id: "\$root",
       title: schema['title'],
