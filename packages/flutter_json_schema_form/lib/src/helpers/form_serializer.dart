@@ -1,3 +1,6 @@
+import 'package:flutter_json_schema_form/src/models/boolean_field_model.dart';
+import 'package:flutter_json_schema_form/src/models/number_field_model.dart';
+
 import '../models/models.dart';
 import 'helpers.dart';
 
@@ -50,18 +53,33 @@ class FormSerializer {
           id: id,
           title: schema['title'],
           description: schema['description'],
-          fieldType: type,
           widgetType: decodeWidgetType(uiSchema['ui:widget']),
           enumItems: schema['enum'],
           enumNames: schema['enumNames'],
           path: newPath,
         );
       case FieldType.number:
-
       case FieldType.integer:
-
+        return NumberFieldModel(
+          id: id,
+          title: schema['title'],
+          description: schema['description'],
+          fieldType: type,
+          widgetType: decodeWidgetType(uiSchema['ui:widget']),
+          enumItems: schema['enum'],
+          enumNames: schema['enumNames'],
+          path: newPath,
+        );
       case FieldType.boolean:
-
+        return BooleanFieldModel(
+          id: id,
+          title: schema['title'],
+          description: schema['description'],
+          widgetType: decodeWidgetType(uiSchema['ui:widget']),
+          enumItems: schema['enum'],
+          enumNames: schema['enumNames'],
+          path: newPath,
+        );
       default:
         throw Exception("Model not implemented for type $type");
     }

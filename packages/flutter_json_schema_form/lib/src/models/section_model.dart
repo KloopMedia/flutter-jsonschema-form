@@ -23,7 +23,7 @@ class Section extends BaseField {
 
   factory Section.fromJson(Map<String, dynamic> schema, Map<String, dynamic> uiSchema) {
     final type = decodeFieldType(schema['type']);
-    final path = PathModel([]);
+    const path = PathModel([]);
     final dependencies = FormSerializer.parseSchemaDependencies(schema['dependencies'], uiSchema, path);
     return Section(
       id: "#",

@@ -3,31 +3,33 @@ import 'package:flutter/material.dart';
 import '../helpers/helpers.dart';
 import 'models.dart';
 
-class TextFieldModel extends BaseField {
-  const TextFieldModel({
+class NumberFieldModel extends BaseField {
+  const NumberFieldModel({
     required String id,
     String? title,
     String? description,
+    FieldType? fieldType,
     WidgetType? widgetType,
     List? enumItems,
     List? enumNames,
     required PathModel path,
   }) : super(
-          id: id,
-          title: title,
-          description: description,
-          fieldType: FieldType.string,
-          widgetType: widgetType,
-          path: path,
-          enumItems: enumItems,
-          enumNames: enumNames,
-        );
+    id: id,
+    title: title,
+    description: description,
+    fieldType: fieldType,
+    widgetType: widgetType,
+    path: path,
+    enumItems: enumItems,
+    enumNames: enumNames,
+  );
 
-  TextFieldModel copyWith({String? id, PathModel? path}) {
-    return TextFieldModel(
+  NumberFieldModel copyWith({String? id, PathModel? path}) {
+    return NumberFieldModel(
       id: id ?? this.id,
       title: title,
       description: description,
+      fieldType: fieldType,
       widgetType: widgetType,
       path: path ?? this.path,
       enumItems: enumItems,
@@ -35,5 +37,5 @@ class TextFieldModel extends BaseField {
     );
   }
 
-  List<DropdownMenuItem<String>> get dropdownItems => getDropdownItems<String>();
+  List<DropdownMenuItem<double>> get dropdownItems => getDropdownItems<double>();
 }
