@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 import '../helpers/helpers.dart';
 import 'models.dart';
 
@@ -37,5 +35,6 @@ class NumberFieldModel extends FieldModel {
     );
   }
 
-  List<DropdownMenuItem<double>> get dropdownItems => getDropdownItems<double>();
+  get dropdownItems => getDropdownItems<double>();
+  get radioItems => getRadioItems<double>();
 }

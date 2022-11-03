@@ -100,7 +100,8 @@ abstract class FieldModel {
     }
 
     List<DropdownMenuItem<T>> items = List.generate(options.length, (index) {
-      final T value = options[index];
+      final T value = _parseValue<T>(options[index]);
+
       String name;
       try {
         name = names[index].toString();
@@ -121,7 +122,8 @@ abstract class FieldModel {
     }
 
     List<Map<String, dynamic>> items = List.generate(options.length, (index) {
-      final T value = options[index];
+      final T value = _parseValue<T>(options[index]);
+      print(value.runtimeType);
       String name;
       try {
         name = names[index].toString();
@@ -131,5 +133,19 @@ abstract class FieldModel {
       return {'value': value, 'name': name};
     });
     return items;
+  }
+}
+
+T _parseValue<T>(dynamic value) {
+  try {
+    if (T == int) {
+      return int.parse(value) as T;
+    } else if (T == double) {
+      return double.parse(value) as T;
+    } else {
+      return value;
+    }
+  } catch (e) {
+    return null as T;
   }
 }

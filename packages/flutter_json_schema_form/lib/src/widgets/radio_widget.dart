@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../helpers/helpers.dart';
 
-class RadioWidget<T> extends StatelessWidget {
+class RadioWidget<T> extends StatefulWidget {
   final T? value;
   final List<Map<String, dynamic>> items;
   final WidgetOnChangeCallback<T> onChange;
@@ -15,16 +15,28 @@ class RadioWidget<T> extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<RadioWidget<T>> createState() => _RadioWidgetState<T>();
+}
+
+class _RadioWidgetState<T> extends State<RadioWidget<T>> {
+  late var currentValue = widget.value;
+
+  @override
   Widget build(BuildContext context) {
     return Column(
-      children: List.generate(items.length, (index) {
-        final item = items[index];
+      children: List.generate(widget.items.length, (index) {
+        final item = widget.items[index];
         return RadioListTile<T>(
           title: Text(item['name']),
           value: item['value'],
-          groupValue: value,
+          groupValue: currentValue,
           contentPadding: EdgeInsets.zero,
-          onChanged: onChange,
+          onChanged: (newValue) {
+            setState(() {
+              currentValue = newValue;
+            });
+            widget.onChange(newValue);
+          },
         );
       }),
     );

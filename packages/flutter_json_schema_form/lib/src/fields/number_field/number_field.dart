@@ -50,7 +50,7 @@ class _NumberFieldState extends State<NumberField> {
           } else if (widgetType == WidgetType.radio) {
             return RadioWidget<double>(
               value: value,
-              items: widget.model.getRadioItems(),
+              items: widget.model.radioItems,
               onChange: (newValue) {
                 onChange(context, newValue);
               },

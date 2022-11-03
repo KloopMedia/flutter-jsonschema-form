@@ -50,7 +50,7 @@ class _TextFieldState extends State<TextField> {
           } else if (widgetType == WidgetType.radio) {
             return RadioWidget<String>(
               value: value,
-              items: widget.model.getRadioItems(),
+              items: widget.model.radioItems,
               onChange: (newValue) {
                 onChange(context, newValue);
               },

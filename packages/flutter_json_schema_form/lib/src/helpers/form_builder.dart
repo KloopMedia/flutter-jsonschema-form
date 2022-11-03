@@ -78,6 +78,8 @@ Widget _mapModelToWidget(FieldModel model) {
     return fields.ArrayWidget(model: model);
   } else if (model is NumberFieldModel) {
     return fields.NumberField(model: model);
+  } else if (model is BooleanFieldModel) {
+    return fields.BooleanField(model: model);
   }
   return const Text('Error: widget not found');
 }
