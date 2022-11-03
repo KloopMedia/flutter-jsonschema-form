@@ -1,17 +1,14 @@
-import 'package:flutter_json_schema_form/src/models/boolean_field_model.dart';
-import 'package:flutter_json_schema_form/src/models/number_field_model.dart';
-
 import '../models/models.dart';
 import 'helpers.dart';
 
 class FormSerializer {
-  static List<BaseField> mapJsonToFields(
+  static List<FieldModel> mapJsonToFields(
     Map<String, dynamic> schema,
     Map<String, dynamic>? uiSchema,
     PathModel path,
   ) {
     Map<String, dynamic> fieldMap = schema;
-    List<BaseField> fields = [];
+    List<FieldModel> fields = [];
     for (var field in fieldMap.entries) {
       Map<String, dynamic> ui = uiSchema != null ? uiSchema[field.key] ?? {} : {};
       fields.add(_createModelFromSchema(
@@ -24,7 +21,7 @@ class FormSerializer {
     return fields;
   }
 
-  static BaseField _createModelFromSchema({
+  static FieldModel _createModelFromSchema({
     required String id,
     required Map<String, dynamic> schema,
     required Map<String, dynamic> uiSchema,
@@ -49,32 +46,14 @@ class FormSerializer {
           path: newPath,
         );
       case FieldType.string:
-        return TextFieldModel(
-          id: id,
-          title: schema['title'],
-          description: schema['description'],
-          widgetType: decodeWidgetType(uiSchema['ui:widget']),
-          enumItems: schema['enum'],
-          enumNames: schema['enumNames'],
-          path: newPath,
-        );
       case FieldType.number:
       case FieldType.integer:
-        return NumberFieldModel(
+      case FieldType.boolean:
+        return FieldModel(
           id: id,
           title: schema['title'],
           description: schema['description'],
           fieldType: type,
-          widgetType: decodeWidgetType(uiSchema['ui:widget']),
-          enumItems: schema['enum'],
-          enumNames: schema['enumNames'],
-          path: newPath,
-        );
-      case FieldType.boolean:
-        return BooleanFieldModel(
-          id: id,
-          title: schema['title'],
-          description: schema['description'],
           widgetType: decodeWidgetType(uiSchema['ui:widget']),
           enumItems: schema['enum'],
           enumNames: schema['enumNames'],
@@ -105,7 +84,7 @@ class FormSerializer {
     }
   }
 
-  static List<BaseField> _createFixedArrayFields(List items, List itemsUi, PathModel path) {
+  static List<FieldModel> _createFixedArrayFields(List items, List itemsUi, PathModel path) {
     final fields = items.mapWithIndex((item, index) {
       final field = item as Map<String, dynamic>;
       Map<String, dynamic> ui;

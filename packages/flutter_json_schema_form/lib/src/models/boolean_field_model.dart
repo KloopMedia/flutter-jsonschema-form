@@ -3,16 +3,15 @@ import 'package:flutter/material.dart';
 import '../helpers/helpers.dart';
 import 'models.dart';
 
-class BooleanFieldModel extends BaseField {
+class BooleanFieldModel extends FieldModel {
   const BooleanFieldModel({
     required String id,
     String? title,
     String? description,
     WidgetType? widgetType,
-    List? enumItems,
     List? enumNames,
     required PathModel path,
-  }) : super(
+  }) : super.init(
           id: id,
           title: title,
           description: description,
@@ -34,7 +33,6 @@ class BooleanFieldModel extends BaseField {
       description: description,
       widgetType: widgetType,
       path: path ?? this.path,
-      enumItems: enumItems,
       enumNames: enumNames,
     );
   }

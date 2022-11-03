@@ -1,10 +1,10 @@
 import '../helpers/helpers.dart';
 import 'models.dart';
 
-class Array extends BaseField {
+class Array extends FieldModel {
   final bool isFixed;
-  final List<BaseField>? items;
-  final BaseField? itemType;
+  final List<FieldModel>? items;
+  final FieldModel? itemType;
 
   Array.dynamic({
     required String id,
@@ -16,7 +16,7 @@ class Array extends BaseField {
     required PathModel path,
   })  : isFixed = false,
         items = null,
-        super(
+        super.init(
           id: id,
           title: title,
           description: description,
@@ -35,7 +35,7 @@ class Array extends BaseField {
     required PathModel path,
   })  : itemType = null,
         isFixed = true,
-        super(
+        super.init(
           id: id,
           title: title,
           description: description,

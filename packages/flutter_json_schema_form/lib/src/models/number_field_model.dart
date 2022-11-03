@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../helpers/helpers.dart';
 import 'models.dart';
 
-class NumberFieldModel extends BaseField {
+class NumberFieldModel extends FieldModel {
   const NumberFieldModel({
     required String id,
     String? title,
@@ -13,7 +13,7 @@ class NumberFieldModel extends BaseField {
     List? enumItems,
     List? enumNames,
     required PathModel path,
-  }) : super(
+  }) : super.init(
     id: id,
     title: title,
     description: description,

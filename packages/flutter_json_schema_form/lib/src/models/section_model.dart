@@ -1,8 +1,8 @@
 import '../helpers/helpers.dart';
 import 'models.dart';
 
-class Section extends BaseField {
-  final List<BaseField> fields;
+class Section extends FieldModel {
+  final List<FieldModel> fields;
   final List<Dependency> dependencies;
 
   const Section({
@@ -13,7 +13,7 @@ class Section extends BaseField {
     required PathModel path,
     required this.fields,
     required this.dependencies,
-  }) : super(
+  }) : super.init(
           id: id,
           title: title,
           description: description,

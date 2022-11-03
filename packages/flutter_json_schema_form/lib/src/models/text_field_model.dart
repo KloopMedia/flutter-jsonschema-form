@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../helpers/helpers.dart';
 import 'models.dart';
 
-class TextFieldModel extends BaseField {
+class TextFieldModel extends FieldModel {
   const TextFieldModel({
     required String id,
     String? title,
@@ -12,7 +12,7 @@ class TextFieldModel extends BaseField {
     List? enumItems,
     List? enumNames,
     required PathModel path,
-  }) : super(
+  }) : super.init(
           id: id,
           title: title,
           description: description,
