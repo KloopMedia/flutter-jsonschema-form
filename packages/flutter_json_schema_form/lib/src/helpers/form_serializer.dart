@@ -31,10 +31,12 @@ class FormSerializer {
     final newPath = PathModel([...path.path, PathItem(id, type)]);
     switch (type) {
       case FieldType.object:
+        final dependencies = parseSchemaDependencies(schema['dependencies'], uiSchema, newPath);
         return Section(
           id: id,
           fields: mapJsonToFields(schema['properties'], uiSchema, newPath),
           path: newPath,
+          dependencies: dependencies,
         );
       case FieldType.array:
         return _createArrayModel(
@@ -86,17 +88,52 @@ class FormSerializer {
   }
 
   static List<Field> _createFixedArrayFields(List items, List itemsUi, PathModel path) {
-    final fields = items.mapWithIndex((e, index) {
-      final field = e as Map<String, dynamic>;
+    final fields = items.mapWithIndex((item, index) {
+      final field = item as Map<String, dynamic>;
       Map<String, dynamic> ui;
       try {
         ui = itemsUi[index];
-      } catch (e) {
+      } on RangeError {
         ui = {};
       }
       return _createModelFromSchema(id: index.toString(), schema: field, uiSchema: ui, path: path);
     }).toList();
     return fields;
+  }
+
+  static List<Dependency> parseSchemaDependencies(
+      Map<String, dynamic>? schema, Map<String, dynamic>? uiSchema, PathModel path) {
+    if (schema == null) {
+      return [];
+    }
+    List<Dependency> deps = [];
+    for (final field in schema.entries) {
+      final id = field.key;
+      final value = field.value;
+      if (value.containsKey('oneOf')) {
+        List<Map<String, dynamic>> dependencies = value['oneOf'];
+        for (final dependency in dependencies) {
+          Map<String, dynamic> fields = dependency['properties'];
+          final Map<String, dynamic> condition = fields.remove(id);
+          final List<dynamic> conditionValues = condition['enum'];
+          for (final item in fields.entries) {
+            deps.add(
+              Dependency(
+                parentId: id,
+                values: conditionValues,
+                field: _createModelFromSchema(
+                  id: item.key,
+                  schema: item.value,
+                  uiSchema: uiSchema?[item.key] ?? {},
+                  path: path,
+                ),
+              ),
+            );
+          }
+        }
+      }
+    }
+    return deps;
   }
 }
 

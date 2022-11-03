@@ -19,7 +19,10 @@ class _SectionWidgetState extends State<SectionWidget> {
     return FieldWrapper.section(
       title: widget.model.fieldTitle,
       description: widget.model.description,
-      child: FormBuilder(fields: widget.model.fields),
+      child: FormBuilder(
+        fields: widget.model.fields,
+        dependencies: widget.model.dependencies,
+      ),
     );
   }
 }

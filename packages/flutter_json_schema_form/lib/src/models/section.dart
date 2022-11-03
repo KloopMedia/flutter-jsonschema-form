@@ -3,6 +3,7 @@ import 'models.dart';
 
 class Section extends Field {
   final List<Field> fields;
+  final List<Dependency> dependencies;
 
   Section({
     required String id,
@@ -11,6 +12,7 @@ class Section extends Field {
     FieldType? type,
     required PathModel path,
     required this.fields,
+    required this.dependencies,
   }) : super(
           id: id,
           title: title,
@@ -22,13 +24,15 @@ class Section extends Field {
   factory Section.fromJson(Map<String, dynamic> schema, Map<String, dynamic> uiSchema) {
     final type = decodeFieldType(schema['type']);
     final path = PathModel([]);
+    final dependencies = FormSerializer.parseSchemaDependencies(schema['dependencies'], uiSchema, path);
     return Section(
-      id: "\$root",
+      id: "#",
       title: schema['title'],
       description: schema['description'],
       type: type,
       fields: FormSerializer.mapJsonToFields(schema['properties'], uiSchema, path),
       path: path,
+      dependencies: dependencies,
     );
   }
 }

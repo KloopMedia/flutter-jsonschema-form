@@ -45,7 +45,7 @@ class _CreatableArrayState extends State<CreatableArray> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        FormBuilder(fields: fields),
+        FormBuilder(fields: fields, dependencies: const []),
         Row(
           children: [
             ElevatedButton(

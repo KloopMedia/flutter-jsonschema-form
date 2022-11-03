@@ -20,7 +20,8 @@ Map<String, dynamic> updateFormDataByPath(
       }
     } else {
       if (dataPointer is Map) {
-        dataPointer.update(field.id, (prevValue) => value, ifAbsent: () => value);
+        // TODO: Potential bug of value type. Verify later
+        dataPointer.update(field.id, (prevValue) => value.toString(), ifAbsent: () => value.toString());
       }
       if (dataPointer is List) {
         final index = int.parse(field.id);
@@ -62,6 +63,8 @@ dynamic getFormDataByPath(
       } on RangeError {
         dataPointer = null;
       }
+    } else {
+      return dataPointer;
     }
   }
   return dataPointer;

@@ -22,3 +22,11 @@ abstract class Field {
 
   set setId(String id) => this.id = id;
 }
+
+class Dependency {
+  final String parentId;
+  final List<dynamic> values;
+  final Field? field;
+
+  const Dependency({required this.parentId, required this.values, this.field});
+}

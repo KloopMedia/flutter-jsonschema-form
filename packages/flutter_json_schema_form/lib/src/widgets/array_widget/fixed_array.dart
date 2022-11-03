@@ -9,6 +9,6 @@ class FixedArray extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FormBuilder(fields: items);
+    return FormBuilder(fields: items, dependencies: const []);
   }
 }
