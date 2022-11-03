@@ -18,11 +18,11 @@ abstract class FieldModel {
     this.title,
     this.description,
     this.fieldType,
-    this.widgetType,
+    WidgetType? widgetType,
     required this.path,
     this.enumItems,
     this.enumNames,
-  });
+  }) : widgetType = widgetType == null && enumItems != null ? WidgetType.select : widgetType;
 
   factory FieldModel({
     required String id,
@@ -108,6 +108,27 @@ abstract class FieldModel {
         name = value.toString();
       }
       return DropdownMenuItem(value: value, child: Text(name));
+    });
+    return items;
+  }
+
+  List<Map<String, dynamic>> getRadioItems<T>() {
+    final options = enumItems ?? [];
+    final names = enumNames ?? [];
+
+    if (options.isEmpty) {
+      return [];
+    }
+
+    List<Map<String, dynamic>> items = List.generate(options.length, (index) {
+      final T value = options[index];
+      String name;
+      try {
+        name = names[index].toString();
+      } catch (_) {
+        name = value.toString();
+      }
+      return {'value': value, 'name': name};
     });
     return items;
   }

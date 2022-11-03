@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../models/models.dart';
-import '../widgets.dart';
+import '../../fields/fields.dart';
 import 'creatable_array.dart';
 import 'fixed_array.dart';
 
 class ArrayWidget extends StatefulWidget {
-  final Array model;
+  final ArrayModel model;
 
   const ArrayWidget({Key? key, required this.model}) : super(key: key);
 

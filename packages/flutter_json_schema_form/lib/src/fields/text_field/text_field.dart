@@ -4,18 +4,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../helpers/helpers.dart';
 import '../../models/models.dart';
 import '../../bloc/bloc.dart' as bloc;
-import '../widgets.dart';
+import '../../widgets/widgets.dart';
+import '../fields.dart';
 
-class TextWidget extends StatefulWidget {
+class TextField extends StatefulWidget {
   final TextFieldModel model;
 
-  const TextWidget({Key? key, required this.model}) : super(key: key);
+  const TextField({Key? key, required this.model}) : super(key: key);
 
   @override
-  State<TextWidget> createState() => _TextWidgetState();
+  State<TextField> createState() => _TextFieldState();
 }
 
-class _TextWidgetState extends State<TextWidget> {
+class _TextFieldState extends State<TextField> {
   late final id = widget.model.id;
   late final path = widget.model.path;
   late final title = widget.model.fieldTitle;
@@ -39,28 +40,33 @@ class _TextWidgetState extends State<TextWidget> {
         builder: (context, state) {
           final value = getFormDataByPath(state.formData, path);
           if (widgetType == WidgetType.select) {
-            return DropdownButtonFormField<dynamic>(
-                value: value,
-                decoration: decoration,
-                onChanged: (dynamic newValue) {
-                  onChange(context, newValue);
-                },
-                items: widget.model.dropdownItems);
+            return SelectWidget<String>(
+              value: value,
+              items: widget.model.dropdownItems,
+              onChange: (newValue) {
+                onChange(context, newValue);
+              },
+            );
+          } else if (widgetType == WidgetType.radio) {
+            return RadioWidget<String>(
+              value: value,
+              items: widget.model.getRadioItems(),
+              onChange: (newValue) {
+                onChange(context, newValue);
+              },
+            );
           } else if (widgetType == WidgetType.textarea) {
-            return TextFormField(
-              initialValue: value,
-              decoration: decoration,
-              minLines: 4,
-              maxLines: 10,
-              onChanged: (newValue) {
+            return TextWidget(
+              value: value,
+              textArea: true,
+              onChange: (newValue) {
                 onChange(context, newValue);
               },
             );
           } else {
-            return TextFormField(
-              initialValue: value,
-              decoration: decoration,
-              onChanged: (newValue) {
+            return TextWidget(
+              value: value,
+              onChange: (newValue) {
                 onChange(context, newValue);
               },
             );

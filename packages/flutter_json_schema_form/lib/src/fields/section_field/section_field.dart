@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 
 import '../../helpers/helpers.dart';
 import '../../models/models.dart';
-import '../widgets.dart';
+import '../../fields/fields.dart';
 
-class SectionWidget extends StatefulWidget {
-  final Section model;
+class SectionField extends StatefulWidget {
+  final SectionModel model;
 
-  const SectionWidget({Key? key, required this.model}) : super(key: key);
+  const SectionField({Key? key, required this.model}) : super(key: key);
 
   @override
-  State<SectionWidget> createState() => _SectionWidgetState();
+  State<SectionField> createState() => _SectionFieldState();
 }
 
-class _SectionWidgetState extends State<SectionWidget> {
+class _SectionFieldState extends State<SectionField> {
   @override
   Widget build(BuildContext context) {
     return FieldWrapper.section(

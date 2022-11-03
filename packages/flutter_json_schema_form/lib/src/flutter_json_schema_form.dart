@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/form_bloc.dart';
 import 'models/models.dart';
-import 'widgets/widgets.dart';
+import 'fields/fields.dart';
 
 typedef ChangeFormCallback = Function(Map<String, dynamic> formData);
 
@@ -26,11 +26,11 @@ class FlutterJsonSchemaForm extends StatefulWidget {
 }
 
 class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
-  late Section model;
+  late SectionModel model;
 
   @override
   void initState() {
-    model = Section.fromJson(widget.schema, widget.uiSchema ?? {});
+    model = SectionModel.fromJson(widget.schema, widget.uiSchema ?? {});
     super.initState();
   }
 
@@ -39,7 +39,7 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
     return BlocProvider(
       create: (context) => FormBloc(formData: widget.formData, onChangeCallback: widget.onChange),
       child: SingleChildScrollView(
-        child: SectionWidget(model: model),
+        child: SectionField(model: model),
       ),
     );
   }

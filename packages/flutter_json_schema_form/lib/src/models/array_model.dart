@@ -1,12 +1,12 @@
 import '../helpers/helpers.dart';
 import 'models.dart';
 
-class Array extends FieldModel {
+class ArrayModel extends FieldModel {
   final bool isFixed;
   final List<FieldModel>? items;
   final FieldModel? itemType;
 
-  Array.dynamic({
+  ArrayModel.dynamic({
     required String id,
     String? title,
     String? description,
@@ -25,7 +25,7 @@ class Array extends FieldModel {
           path: path,
         );
 
-  Array.fixed({
+  ArrayModel.fixed({
     required String id,
     String? title,
     String? description,

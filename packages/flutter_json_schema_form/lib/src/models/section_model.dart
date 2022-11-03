@@ -1,11 +1,11 @@
 import '../helpers/helpers.dart';
 import 'models.dart';
 
-class Section extends FieldModel {
+class SectionModel extends FieldModel {
   final List<FieldModel> fields;
-  final List<Dependency> dependencies;
+  final List<DependencyModel> dependencies;
 
-  const Section({
+  const SectionModel({
     required String id,
     String? title,
     String? description,
@@ -21,11 +21,11 @@ class Section extends FieldModel {
           path: path,
         );
 
-  factory Section.fromJson(Map<String, dynamic> schema, Map<String, dynamic> uiSchema) {
+  factory SectionModel.fromJson(Map<String, dynamic> schema, Map<String, dynamic> uiSchema) {
     final type = decodeFieldType(schema['type']);
     const path = PathModel([]);
     final dependencies = FormSerializer.parseSchemaDependencies(schema['dependencies'], uiSchema, path);
-    return Section(
+    return SectionModel(
       id: "#",
       title: schema['title'],
       description: schema['description'],

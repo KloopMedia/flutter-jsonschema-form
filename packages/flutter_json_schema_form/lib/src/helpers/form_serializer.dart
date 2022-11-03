@@ -32,7 +32,7 @@ class FormSerializer {
     switch (type) {
       case FieldType.object:
         final dependencies = parseSchemaDependencies(schema['dependencies'], uiSchema, newPath);
-        return Section(
+        return SectionModel(
           id: id,
           fields: mapJsonToFields(schema['properties'], uiSchema, newPath),
           path: newPath,
@@ -64,7 +64,7 @@ class FormSerializer {
     }
   }
 
-  static Array _createArrayModel({
+  static ArrayModel _createArrayModel({
     required String id,
     required Map<String, dynamic> schema,
     required Map<String, dynamic> uiSchema,
@@ -74,11 +74,11 @@ class FormSerializer {
     final itemsUi = uiSchema['items'];
     if (items is List) {
       final fields = _createFixedArrayFields(items, itemsUi, path);
-      return Array.fixed(id: id, items: fields, path: path);
+      return ArrayModel.fixed(id: id, items: fields, path: path);
     } else if (items is Map<String, dynamic>) {
       final itemType = _createModelFromSchema(id: '', schema: items, uiSchema: uiSchema, path: path)
           as TextFieldModel;
-      return Array.dynamic(id: id, itemType: itemType, path: path);
+      return ArrayModel.dynamic(id: id, itemType: itemType, path: path);
     } else {
       throw Exception('Incorrect type of items in $id');
     }
@@ -98,12 +98,12 @@ class FormSerializer {
     return fields;
   }
 
-  static List<Dependency> parseSchemaDependencies(
+  static List<DependencyModel> parseSchemaDependencies(
       Map<String, dynamic>? schema, Map<String, dynamic>? uiSchema, PathModel path) {
     if (schema == null) {
       return [];
     }
-    List<Dependency> deps = [];
+    List<DependencyModel> deps = [];
     for (final field in schema.entries) {
       final id = field.key;
       final value = field.value;
@@ -115,7 +115,7 @@ class FormSerializer {
           final List<dynamic> conditionValues = condition['enum'];
           for (final item in fields.entries) {
             deps.add(
-              Dependency(
+              DependencyModel(
                 parentId: id,
                 values: conditionValues,
                 field: _createModelFromSchema(

@@ -36,4 +36,5 @@ class TextFieldModel extends FieldModel {
   }
 
   List<DropdownMenuItem<String>> get dropdownItems => getDropdownItems<String>();
+  List<Map<String, dynamic>> get radioItems => getRadioItems<String>();
 }

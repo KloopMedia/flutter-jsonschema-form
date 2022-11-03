@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
+typedef WidgetOnChangeCallback<T> = void Function(T? value);
+
 enum FieldType { object, array, string, number, integer, boolean }
 
 enum WidgetType { radio, select, textarea }
