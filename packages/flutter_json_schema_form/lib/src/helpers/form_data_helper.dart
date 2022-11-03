@@ -6,7 +6,7 @@ Map<String, dynamic> updateFormDataByPath(
   dynamic value,
   PathModel path,
 ) {
-  Map<String, dynamic> data = {...formData};
+  dynamic data = {...formData};
   final pathItems = path.path;
   dynamic dataPointer = data;
   for (final field in pathItems) {
@@ -20,8 +20,7 @@ Map<String, dynamic> updateFormDataByPath(
       }
     } else {
       if (dataPointer is Map) {
-        // TODO: Potential bug of value type. Verify later
-        dataPointer.update(field.id, (prevValue) => value.toString(), ifAbsent: () => value.toString());
+        dataPointer.update(field.id, (prevValue) => value, ifAbsent: () => value);
       }
       if (dataPointer is List) {
         final index = int.parse(field.id);
@@ -34,9 +33,6 @@ Map<String, dynamic> updateFormDataByPath(
           dataPointer.add(value);
         }
       }
-    }
-    if (dataPointer is Map) {
-      dataPointer = dataPointer[field.id];
     }
   }
   return data;
