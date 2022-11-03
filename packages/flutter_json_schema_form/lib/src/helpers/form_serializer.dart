@@ -2,13 +2,13 @@ import '../models/models.dart';
 import 'helpers.dart';
 
 class FormSerializer {
-  static List<Field> mapJsonToFields(
+  static List<BaseField> mapJsonToFields(
     Map<String, dynamic> schema,
     Map<String, dynamic>? uiSchema,
     PathModel path,
   ) {
     Map<String, dynamic> fieldMap = schema;
-    List<Field> fields = [];
+    List<BaseField> fields = [];
     for (var field in fieldMap.entries) {
       Map<String, dynamic> ui = uiSchema != null ? uiSchema[field.key] ?? {} : {};
       fields.add(_createModelFromSchema(
@@ -21,7 +21,7 @@ class FormSerializer {
     return fields;
   }
 
-  static Field _createModelFromSchema({
+  static BaseField _createModelFromSchema({
     required String id,
     required Map<String, dynamic> schema,
     required Map<String, dynamic> uiSchema,
@@ -52,7 +52,7 @@ class FormSerializer {
           description: schema['description'],
           fieldType: type,
           widgetType: decodeWidgetType(uiSchema['ui:widget']),
-          enumOptions: schema['enum'],
+          enumItems: schema['enum'],
           enumNames: schema['enumNames'],
           path: newPath,
         );
@@ -87,7 +87,7 @@ class FormSerializer {
     }
   }
 
-  static List<Field> _createFixedArrayFields(List items, List itemsUi, PathModel path) {
+  static List<BaseField> _createFixedArrayFields(List items, List itemsUi, PathModel path) {
     final fields = items.mapWithIndex((item, index) {
       final field = item as Map<String, dynamic>;
       Map<String, dynamic> ui;

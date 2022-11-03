@@ -7,7 +7,7 @@ import '../widgets/widgets.dart';
 import 'helpers.dart';
 
 class FormBuilder extends StatelessWidget {
-  final List<Field> fields;
+  final List<BaseField> fields;
   final List<Dependency> dependencies;
 
   const FormBuilder({Key? key, required this.fields, required this.dependencies}) : super(key: key);
@@ -73,7 +73,7 @@ class DependencyWidget extends StatelessWidget {
   }
 }
 
-Widget _mapModelToWidget(Field model) {
+Widget _mapModelToWidget(BaseField model) {
   if (model is TextFieldModel) {
     return TextWidget(model: model);
   } else if (model is Section) {

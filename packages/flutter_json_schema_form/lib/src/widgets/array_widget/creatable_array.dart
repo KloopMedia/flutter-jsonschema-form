@@ -4,7 +4,7 @@ import '../../helpers/helpers.dart';
 import '../../models/models.dart';
 
 class CreatableArray extends StatefulWidget {
-  final Field model;
+  final BaseField model;
 
   const CreatableArray({
     Key? key,
@@ -16,7 +16,7 @@ class CreatableArray extends StatefulWidget {
 }
 
 class _CreatableArrayState extends State<CreatableArray> {
-  List<Field> fields = [];
+  List<BaseField> fields = [];
 
   void addItemToArray() {
     final id = fields.length.toString();
@@ -26,7 +26,7 @@ class _CreatableArrayState extends State<CreatableArray> {
     });
   }
 
-  Field createArrayItemFromModel(Field model, String id) {
+  BaseField createArrayItemFromModel(BaseField model, String id) {
     if (model is TextFieldModel) {
       final List<PathItem> pathList = List.from(model.path.path);
       pathList[pathList.length - 1] = PathItem(id, model.fieldType);

@@ -1,11 +1,11 @@
 import '../helpers/helpers.dart';
 import 'models.dart';
 
-class Section extends Field {
-  final List<Field> fields;
+class Section extends BaseField {
+  final List<BaseField> fields;
   final List<Dependency> dependencies;
 
-  Section({
+  const Section({
     required String id,
     String? title,
     String? description,

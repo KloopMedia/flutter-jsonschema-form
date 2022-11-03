@@ -4,7 +4,7 @@ import '../../helpers/helpers.dart';
 import '../../models/models.dart';
 
 class FixedArray extends StatelessWidget {
-  final List<Field> items;
+  final List<BaseField> items;
   const FixedArray({Key? key, required this.items}) : super(key: key);
 
   @override

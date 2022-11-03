@@ -5,7 +5,7 @@ import '../helpers/helpers.dart';
 class PathModel {
   final List<PathItem> path;
 
-  PathModel(this.path);
+  const PathModel(this.path);
 
   void add(String id, FieldType? fieldType) => path.add(PathItem(id, fieldType));
 

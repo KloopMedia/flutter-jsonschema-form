@@ -1,10 +1,10 @@
 import '../helpers/helpers.dart';
 import 'models.dart';
 
-class Array extends Field {
+class Array extends BaseField {
   final bool isFixed;
-  final List<Field>? items;
-  final Field? itemType;
+  final List<BaseField>? items;
+  final BaseField? itemType;
 
   Array.dynamic({
     required String id,

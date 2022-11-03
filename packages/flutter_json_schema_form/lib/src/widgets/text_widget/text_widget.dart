@@ -39,10 +39,10 @@ class _TextWidgetState extends State<TextWidget> {
         builder: (context, state) {
           final value = getFormDataByPath(state.formData, path);
           if (widgetType == WidgetType.select) {
-            return DropdownButtonFormField<String>(
+            return DropdownButtonFormField<dynamic>(
                 value: value,
                 decoration: decoration,
-                onChanged: (String? newValue) {
+                onChanged: (dynamic newValue) {
                   onChange(context, newValue);
                 },
                 items: widget.model.dropdownItems);
