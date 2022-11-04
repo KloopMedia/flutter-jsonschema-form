@@ -6,7 +6,7 @@ Map<String, dynamic> updateFormDataByPath(
   dynamic value,
   PathModel path,
 ) {
-  dynamic data = {...formData};
+  final data = Map.of(formData);
   final pathItems = path.path;
   dynamic dataPointer = data;
   for (final field in pathItems) {
@@ -34,6 +34,54 @@ Map<String, dynamic> updateFormDataByPath(
         }
       }
     }
+    if (dataPointer is Map) {
+      dataPointer = dataPointer[field.id];
+    }
+  }
+  return data;
+}
+
+// Original creator: marioreggiori (2022) Deeply (Version 1.2.0) [https://github.com/marioreggiori/deeply.dart].
+dynamic updateDeeply(
+  List<PathItem> keyPath,
+  dynamic data,
+  Function updater, [
+  dynamic notSetValue,
+  int i = 0,
+  FieldType? parentType,
+]) {
+  if (i == keyPath.length) {
+    return updater(data ?? notSetValue);
+  }
+
+  final field = keyPath[i];
+
+  if (data == null) {
+    if (parentType == FieldType.object) {
+      data = {};
+    }
+    if (parentType == FieldType.array) {
+      data = [];
+    }
+  }
+
+  if (data is List) {
+    try {
+      var index = int.parse(field.id);
+      data[index] = (updater(data));
+    } on RangeError {
+      data.add(updater(data));
+    }
+  } else {
+    data = Map<dynamic, dynamic>.from(data);
+    data[field.id] = updateDeeply(
+      keyPath,
+      data[field.id],
+      updater,
+      notSetValue,
+      ++i,
+      field.fieldType,
+    );
   }
   return data;
 }
