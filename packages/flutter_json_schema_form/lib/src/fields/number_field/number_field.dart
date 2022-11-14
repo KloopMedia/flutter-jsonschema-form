@@ -61,7 +61,6 @@ class _NumberFieldState extends State<NumberField> {
             return NumberWidget<double>(
               value: value,
               onChange: (newValue) {
-                print(newValue);
                 onChange(context, newValue);
               },
             );
