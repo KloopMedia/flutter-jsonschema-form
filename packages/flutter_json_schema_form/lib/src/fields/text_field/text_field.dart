@@ -23,6 +23,7 @@ class _TextFieldState extends State<TextField> {
   late final description = widget.model.description;
   late final type = widget.model.fieldType;
   late final widgetType = widget.model.widgetType;
+  late final isRequired = widget.model.isRequired;
 
   void onChange(BuildContext context, value) {
     context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(id, value, path));
@@ -33,6 +34,7 @@ class _TextFieldState extends State<TextField> {
     return FieldWrapper(
       title: title,
       description: description,
+      isRequired: isRequired,
       child: BlocBuilder<bloc.FormBloc, bloc.FormState>(
         // buildWhen: (previousState, currentState) {
         //   return previousState.formData[id] != currentState.formData[id];

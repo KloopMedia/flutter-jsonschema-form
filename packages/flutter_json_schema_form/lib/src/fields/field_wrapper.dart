@@ -8,6 +8,7 @@ enum WrapperType {
 class FieldWrapper extends StatelessWidget {
   final String? title;
   final String? description;
+  final bool isRequired;
   final Widget child;
   final WrapperType _type;
 
@@ -15,6 +16,7 @@ class FieldWrapper extends StatelessWidget {
     Key? key,
     this.title,
     this.description,
+    required this.isRequired,
     required this.child,
   })  : _type = WrapperType.field,
         super(key: key);
@@ -23,15 +25,21 @@ class FieldWrapper extends StatelessWidget {
     super.key,
     this.title,
     this.description,
+    this.isRequired = false,
     required this.child,
   }) : _type = WrapperType.section;
 
   @override
   Widget build(BuildContext context) {
     Widget? titleWidget = title != null
-        ? Text(
-            title!,
-            style: _type == WrapperType.section ? Theme.of(context).textTheme.headline6 : null,
+        ? Text.rich(
+            TextSpan(
+              text: title,
+              style: _type == WrapperType.section ? Theme.of(context).textTheme.headline6 : null,
+              children: <TextSpan>[
+                if (isRequired) const TextSpan(text: '*', style: TextStyle(color: Colors.red)),
+              ],
+            ),
           )
         : null;
     Widget? descriptionWidget = description != null ? Text(description!) : null;

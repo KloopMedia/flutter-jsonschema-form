@@ -24,6 +24,7 @@ class _BooleanFieldState extends State<BooleanField> {
   late final description = widget.model.description;
   late final type = widget.model.fieldType;
   late final widgetType = widget.model.widgetType;
+  late final isRequired = widget.model.isRequired;
 
   void onChange(BuildContext context, value) {
     context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(id, value, path));
@@ -41,6 +42,7 @@ class _BooleanFieldState extends State<BooleanField> {
           return FieldWrapper(
             title: title,
             description: description,
+            isRequired: isRequired,
             child: SelectWidget<bool>(
               value: value,
               items: widget.model.dropdownItems,
@@ -53,6 +55,7 @@ class _BooleanFieldState extends State<BooleanField> {
           return FieldWrapper(
             title: title,
             description: description,
+            isRequired: isRequired,
             child: RadioWidget<bool>(
               value: value,
               items: widget.model.getRadioItems(),

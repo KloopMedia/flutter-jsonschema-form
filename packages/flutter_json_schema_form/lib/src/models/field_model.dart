@@ -12,6 +12,7 @@ abstract class FieldModel {
   final PathModel path;
   final List? enumItems;
   final List? enumNames;
+  final bool isRequired;
 
   const FieldModel.init({
     required this.id,
@@ -22,6 +23,7 @@ abstract class FieldModel {
     required this.path,
     this.enumItems,
     this.enumNames,
+    required this.isRequired,
   }) : widgetType = widgetType == null && enumItems != null ? WidgetType.select : widgetType;
 
   factory FieldModel({
@@ -33,6 +35,7 @@ abstract class FieldModel {
     WidgetType? widgetType,
     List? enumItems,
     List? enumNames,
+    bool isRequired = false,
   }) {
     switch (fieldType) {
       case FieldType.string:
@@ -44,6 +47,7 @@ abstract class FieldModel {
           enumItems: enumItems,
           enumNames: enumNames,
           path: path,
+          isRequired: isRequired,
         );
       case FieldType.number:
         return NumberFieldModel(
@@ -55,6 +59,7 @@ abstract class FieldModel {
           enumItems: enumItems,
           enumNames: enumNames,
           path: path,
+          isRequired: isRequired,
         );
       case FieldType.integer:
         return NumberFieldModel(
@@ -66,6 +71,7 @@ abstract class FieldModel {
           enumItems: enumItems,
           enumNames: enumNames,
           path: path,
+          isRequired: isRequired,
         );
       case FieldType.boolean:
         return BooleanFieldModel(
@@ -75,6 +81,7 @@ abstract class FieldModel {
           widgetType: widgetType,
           enumNames: enumNames,
           path: path,
+          isRequired: isRequired,
         );
       default:
         return TextFieldModel(
@@ -85,6 +92,7 @@ abstract class FieldModel {
           enumItems: enumItems,
           enumNames: enumNames,
           path: path,
+          isRequired: isRequired,
         );
     }
   }
@@ -123,7 +131,6 @@ abstract class FieldModel {
 
     List<Map<String, dynamic>> items = List.generate(options.length, (index) {
       final T value = _parseValue<T>(options[index]);
-      print(value.runtimeType);
       String name;
       try {
         name = names[index].toString();

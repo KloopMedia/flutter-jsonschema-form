@@ -7,15 +7,21 @@ class FormSerializer {
     Map<String, dynamic>? uiSchema,
     PathModel path,
   ) {
-    Map<String, dynamic> fieldMap = schema;
+    if (!schema.containsKey('properties')) {
+      return [];
+    }
+    Map<String, dynamic> fieldMap = schema['properties'];
+    final required = getRequiredFields(schema);
     List<FieldModel> fields = [];
     for (var field in fieldMap.entries) {
       Map<String, dynamic> ui = uiSchema != null ? uiSchema[field.key] ?? {} : {};
+      final isRequired = required.contains(field.key);
       fields.add(_createModelFromSchema(
         id: field.key,
         schema: field.value,
         uiSchema: ui,
         path: path,
+        isRequired: isRequired,
       ));
     }
     return fields;
@@ -26,17 +32,20 @@ class FormSerializer {
     required Map<String, dynamic> schema,
     required Map<String, dynamic> uiSchema,
     required PathModel path,
+    required bool isRequired,
   }) {
-    final type = decodeFieldType(schema['type']);
+    final type = getFieldType(schema);
     final newPath = PathModel([...path.path, PathItem(id, type)]);
     switch (type) {
       case FieldType.object:
         final dependencies = parseSchemaDependencies(schema['dependencies'], uiSchema, newPath);
+        final requiredFields = getRequiredFields(schema);
         return SectionModel(
           id: id,
           fields: mapJsonToFields(schema['properties'], uiSchema, newPath),
           path: newPath,
           dependencies: dependencies,
+          required: requiredFields,
         );
       case FieldType.array:
         return _createArrayModel(
@@ -58,9 +67,10 @@ class FormSerializer {
           enumItems: schema['enum'],
           enumNames: schema['enumNames'],
           path: newPath,
+          isRequired: isRequired,
         );
       default:
-        throw Exception("Model not implemented for type $type");
+        throw Exception("Model doesn't exist for type $type");
     }
   }
 
@@ -76,8 +86,12 @@ class FormSerializer {
       final fields = _createFixedArrayFields(items, itemsUi, path);
       return ArrayModel.fixed(id: id, items: fields, path: path);
     } else if (items is Map<String, dynamic>) {
-      final itemType = _createModelFromSchema(id: '', schema: items, uiSchema: uiSchema, path: path)
-          as TextFieldModel;
+      final itemType = _createModelFromSchema(
+          id: '',
+          schema: items,
+          uiSchema: uiSchema,
+          path: path,
+          isRequired: true) as TextFieldModel;
       return ArrayModel.dynamic(id: id, itemType: itemType, path: path);
     } else {
       throw Exception('Incorrect type of items in $id');
@@ -93,9 +107,26 @@ class FormSerializer {
       } on RangeError {
         ui = {};
       }
-      return _createModelFromSchema(id: index.toString(), schema: field, uiSchema: ui, path: path);
+      return _createModelFromSchema(
+          id: index.toString(), schema: field, uiSchema: ui, path: path, isRequired: true);
     }).toList();
     return fields;
+  }
+
+  static List<String> getRequiredFields(Map<String, dynamic> schema) {
+    if (schema.containsKey('required')) {
+      return schema['required'];
+    } else {
+      return [];
+    }
+  }
+
+  static FieldType? getFieldType(Map<String, dynamic> schema) {
+    if (schema.containsKey('type')) {
+      return decodeFieldType(schema['type']);
+    } else {
+      return FieldType.string;
+    }
   }
 
   static List<DependencyModel> parseSchemaDependencies(
@@ -113,6 +144,7 @@ class FormSerializer {
           Map<String, dynamic> fields = dependency['properties'];
           final Map<String, dynamic> condition = fields.remove(id);
           final List<dynamic> conditionValues = condition['enum'];
+          final required = getRequiredFields(dependency);
           for (final item in fields.entries) {
             deps.add(
               DependencyModel(
@@ -123,6 +155,7 @@ class FormSerializer {
                   schema: item.value,
                   uiSchema: uiSchema?[item.key] ?? {},
                   path: path,
+                  isRequired: required.contains(id),
                 ),
               ),
             );

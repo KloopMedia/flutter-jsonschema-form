@@ -9,8 +9,14 @@ import 'helpers.dart';
 class FormBuilder extends StatelessWidget {
   final List<FieldModel> fields;
   final List<DependencyModel> dependencies;
+  // final List<String> required;
 
-  const FormBuilder({Key? key, required this.fields, required this.dependencies}) : super(key: key);
+  const FormBuilder({
+    Key? key,
+    required this.fields,
+    required this.dependencies,
+    // required this.required,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

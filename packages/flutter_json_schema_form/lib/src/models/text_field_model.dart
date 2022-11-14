@@ -11,6 +11,7 @@ class TextFieldModel extends FieldModel {
     WidgetType? widgetType,
     List? enumItems,
     List? enumNames,
+    required bool isRequired,
     required PathModel path,
   }) : super.init(
           id: id,
@@ -21,6 +22,7 @@ class TextFieldModel extends FieldModel {
           path: path,
           enumItems: enumItems,
           enumNames: enumNames,
+          isRequired: isRequired,
         );
 
   TextFieldModel copyWith({String? id, PathModel? path}) {
@@ -32,9 +34,11 @@ class TextFieldModel extends FieldModel {
       path: path ?? this.path,
       enumItems: enumItems,
       enumNames: enumNames,
+      isRequired: isRequired,
     );
   }
 
   List<DropdownMenuItem<String>> get dropdownItems => getDropdownItems<String>();
+
   List<Map<String, dynamic>> get radioItems => getRadioItems<String>();
 }

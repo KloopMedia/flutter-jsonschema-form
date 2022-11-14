@@ -11,6 +11,7 @@ class BooleanFieldModel extends FieldModel {
     WidgetType? widgetType,
     List? enumNames,
     required PathModel path,
+    required bool isRequired,
   }) : super.init(
           id: id,
           title: title,
@@ -18,6 +19,7 @@ class BooleanFieldModel extends FieldModel {
           fieldType: FieldType.boolean,
           widgetType: widgetType,
           path: path,
+          isRequired: isRequired,
           enumItems: widgetType == WidgetType.select || widgetType == WidgetType.radio
               ? const [true, false]
               : null,
@@ -34,6 +36,7 @@ class BooleanFieldModel extends FieldModel {
       widgetType: widgetType,
       path: path ?? this.path,
       enumNames: enumNames,
+      isRequired: isRequired,
     );
   }
 

@@ -11,16 +11,18 @@ class NumberFieldModel extends FieldModel {
     List? enumItems,
     List? enumNames,
     required PathModel path,
+    required bool isRequired,
   }) : super.init(
-    id: id,
-    title: title,
-    description: description,
-    fieldType: fieldType,
-    widgetType: widgetType,
-    path: path,
-    enumItems: enumItems,
-    enumNames: enumNames,
-  );
+          id: id,
+          title: title,
+          description: description,
+          fieldType: fieldType,
+          widgetType: widgetType,
+          path: path,
+          enumItems: enumItems,
+          enumNames: enumNames,
+          isRequired: isRequired,
+        );
 
   NumberFieldModel copyWith({String? id, PathModel? path}) {
     return NumberFieldModel(
@@ -32,9 +34,11 @@ class NumberFieldModel extends FieldModel {
       path: path ?? this.path,
       enumItems: enumItems,
       enumNames: enumNames,
+      isRequired: isRequired,
     );
   }
 
   get dropdownItems => getDropdownItems<double>();
+
   get radioItems => getRadioItems<double>();
 }

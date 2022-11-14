@@ -17,13 +17,13 @@ class ArrayModel extends FieldModel {
   })  : isFixed = false,
         items = null,
         super.init(
-          id: id,
-          title: title,
-          description: description,
-          fieldType: fieldType,
-          widgetType: widgetType,
-          path: path,
-        );
+            id: id,
+            title: title,
+            description: description,
+            fieldType: fieldType,
+            widgetType: widgetType,
+            path: path,
+            isRequired: false);
 
   ArrayModel.fixed({
     required String id,
@@ -42,5 +42,6 @@ class ArrayModel extends FieldModel {
           fieldType: fieldType,
           widgetType: widgetType,
           path: path,
+          isRequired: false,
         );
 }
