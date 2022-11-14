@@ -4,6 +4,7 @@ import '../helpers/helpers.dart';
 import 'models.dart';
 
 class BooleanFieldModel extends FieldModel {
+  final bool? defaultValue;
   const BooleanFieldModel({
     required String id,
     String? title,
@@ -12,6 +13,7 @@ class BooleanFieldModel extends FieldModel {
     List? enumNames,
     required PathModel path,
     required bool isRequired,
+    this.defaultValue,
   }) : super.init(
           id: id,
           title: title,
@@ -37,6 +39,7 @@ class BooleanFieldModel extends FieldModel {
       path: path ?? this.path,
       enumNames: enumNames,
       isRequired: isRequired,
+      defaultValue: defaultValue,
     );
   }
 

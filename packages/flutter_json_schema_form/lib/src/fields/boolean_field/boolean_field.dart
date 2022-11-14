@@ -25,19 +25,36 @@ class _BooleanFieldState extends State<BooleanField> {
   late final type = widget.model.fieldType;
   late final widgetType = widget.model.widgetType;
   late final isRequired = widget.model.isRequired;
+  late final defaultValue = widget.model.defaultValue;
 
   void onChange(BuildContext context, value) {
     context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(id, value, path));
   }
 
   @override
+  void initState() {
+    if (defaultValue != null) {
+      final formData = context.read<bloc.FormBloc>().state.formData;
+      final value = getFormDataByPath(formData, path);
+      if (value == null) {
+        onChange(context, defaultValue);
+      }
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<bloc.FormBloc, bloc.FormState>(
-      // buildWhen: (previousState, currentState) {
-      //   return previousState.formData[id] != currentState.formData[id];
-      // },
+      buildWhen: (previous, current) {
+        final previousValue = getFormDataByPath(previous.formData, path);
+        final currentValue = getFormDataByPath(current.formData, path);
+        return previousValue != currentValue;
+      },
       builder: (context, state) {
-        final value = getFormDataByPath(state.formData, path);
+        final data = getFormDataByPath(state.formData, path);
+        final value = data ?? defaultValue;
+
         if (widgetType == WidgetType.select) {
           return FieldWrapper(
             title: title,

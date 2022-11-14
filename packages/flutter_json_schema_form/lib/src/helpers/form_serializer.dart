@@ -68,6 +68,7 @@ class FormSerializer {
           enumNames: schema['enumNames'],
           path: newPath,
           isRequired: isRequired,
+          defaultValue: schema['default'],
         );
       default:
         throw Exception("Model doesn't exist for type $type");
@@ -87,11 +88,12 @@ class FormSerializer {
       return ArrayModel.fixed(id: id, items: fields, path: path);
     } else if (items is Map<String, dynamic>) {
       final itemType = _createModelFromSchema(
-          id: '',
-          schema: items,
-          uiSchema: uiSchema,
-          path: path,
-          isRequired: true) as TextFieldModel;
+        id: '',
+        schema: items,
+        uiSchema: uiSchema,
+        path: path,
+        isRequired: true,
+      );
       return ArrayModel.dynamic(id: id, itemType: itemType, path: path);
     } else {
       throw Exception('Incorrect type of items in $id');

@@ -4,6 +4,7 @@ import '../helpers/helpers.dart';
 import 'models.dart';
 
 class TextFieldModel extends FieldModel {
+  final String? defaultValue;
   const TextFieldModel({
     required String id,
     String? title,
@@ -13,6 +14,7 @@ class TextFieldModel extends FieldModel {
     List? enumNames,
     required bool isRequired,
     required PathModel path,
+    this.defaultValue
   }) : super.init(
           id: id,
           title: title,
@@ -35,6 +37,7 @@ class TextFieldModel extends FieldModel {
       enumItems: enumItems,
       enumNames: enumNames,
       isRequired: isRequired,
+      defaultValue: defaultValue,
     );
   }
 

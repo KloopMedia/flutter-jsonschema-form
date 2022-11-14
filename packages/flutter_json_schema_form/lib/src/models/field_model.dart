@@ -36,6 +36,7 @@ abstract class FieldModel {
     List? enumItems,
     List? enumNames,
     bool isRequired = false,
+    dynamic defaultValue,
   }) {
     switch (fieldType) {
       case FieldType.string:
@@ -48,19 +49,9 @@ abstract class FieldModel {
           enumNames: enumNames,
           path: path,
           isRequired: isRequired,
+          defaultValue: defaultValue,
         );
       case FieldType.number:
-        return NumberFieldModel(
-          id: id,
-          title: title,
-          description: description,
-          fieldType: fieldType,
-          widgetType: widgetType,
-          enumItems: enumItems,
-          enumNames: enumNames,
-          path: path,
-          isRequired: isRequired,
-        );
       case FieldType.integer:
         return NumberFieldModel(
           id: id,
@@ -72,6 +63,7 @@ abstract class FieldModel {
           enumNames: enumNames,
           path: path,
           isRequired: isRequired,
+          defaultValue: defaultValue,
         );
       case FieldType.boolean:
         return BooleanFieldModel(
@@ -82,6 +74,7 @@ abstract class FieldModel {
           enumNames: enumNames,
           path: path,
           isRequired: isRequired,
+          defaultValue: defaultValue,
         );
       default:
         return TextFieldModel(
@@ -93,6 +86,7 @@ abstract class FieldModel {
           enumNames: enumNames,
           path: path,
           isRequired: isRequired,
+          defaultValue: defaultValue,
         );
     }
   }

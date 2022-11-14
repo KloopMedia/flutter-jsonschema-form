@@ -2,6 +2,7 @@ import '../helpers/helpers.dart';
 import 'models.dart';
 
 class NumberFieldModel extends FieldModel {
+  final double? defaultValue;
   const NumberFieldModel({
     required String id,
     String? title,
@@ -12,6 +13,7 @@ class NumberFieldModel extends FieldModel {
     List? enumNames,
     required PathModel path,
     required bool isRequired,
+    this.defaultValue,
   }) : super.init(
           id: id,
           title: title,
@@ -35,6 +37,7 @@ class NumberFieldModel extends FieldModel {
       enumItems: enumItems,
       enumNames: enumNames,
       isRequired: isRequired,
+      defaultValue: defaultValue,
     );
   }
 
