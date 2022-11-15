@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import '../helpers/helpers.dart';
 
 class NumberWidget<T> extends StatelessWidget {
-  final int? value;
+  final T? value;
   final WidgetOnChangeCallback<T> onChange;
   final WidgetValidator<String>? validator;
 
@@ -18,7 +18,7 @@ class NumberWidget<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      initialValue: value != null ? value.toString() : '',
+      initialValue: value?.toString(),
       validator: validator,
       decoration: decoration,
       keyboardType: TextInputType.number,

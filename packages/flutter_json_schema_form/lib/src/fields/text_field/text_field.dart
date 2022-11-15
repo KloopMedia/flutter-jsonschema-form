@@ -9,8 +9,11 @@ import '../fields.dart';
 
 class TextField extends StatefulWidget {
   final TextFieldModel model;
+  final DependencyModel? dependency;
+  final String? value;
 
-  const TextField({Key? key, required this.model}) : super(key: key);
+  const TextField({Key? key, required this.model, required this.value, this.dependency})
+      : super(key: key);
 
   @override
   State<TextField> createState() => _TextFieldState();
@@ -25,6 +28,7 @@ class _TextFieldState extends State<TextField> {
   late final widgetType = widget.model.widgetType;
   late final isRequired = widget.model.isRequired;
   late final defaultValue = widget.model.defaultValue;
+  late final bloc.FormBloc _bloc;
 
   void onChange(BuildContext context, value) {
     context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(id, value, path));
@@ -39,14 +43,30 @@ class _TextFieldState extends State<TextField> {
 
   @override
   void initState() {
-    if (defaultValue != null) {
-      final formData = context.read<bloc.FormBloc>().state.formData;
-      final value = getFormDataByPath(formData, path);
-      if (value == null) {
-        onChange(context, defaultValue);
-      }
+    if (defaultValue != null && widget.value == null) {
+      onChange(context, defaultValue);
     }
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    _bloc = context.read<bloc.FormBloc>();
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    final dependency = widget.dependency;
+    if (dependency != null) {
+      final formData = _bloc.state.formData;
+      final parentValue = getFormDataByPath(formData, dependency.parentPath);
+
+      if (!dependency.values.contains(parentValue)) {
+        _bloc.add(bloc.ChangeFormEvent(id, widget.value, path, true));
+      }
+    }
+    super.dispose();
   }
 
   @override
@@ -55,51 +75,43 @@ class _TextFieldState extends State<TextField> {
       title: title,
       description: description,
       isRequired: isRequired,
-      child: BlocBuilder<bloc.FormBloc, bloc.FormState>(
-        buildWhen: (previous, current) {
-          final previousValue = getFormDataByPath(previous.formData, path);
-          final currentValue = getFormDataByPath(current.formData, path);
-          return previousValue != currentValue;
-        },
-        builder: (context, state) {
-          final data = getFormDataByPath(state.formData, path);
-          final value = data ?? defaultValue;
-          if (widgetType == WidgetType.select) {
-            return SelectWidget<String>(
-              value: value,
-              items: widget.model.dropdownItems,
-              onChange: (newValue) {
-                onChange(context, newValue);
-              },
-            );
-          } else if (widgetType == WidgetType.radio) {
-            return RadioWidget<String>(
-              value: value,
-              items: widget.model.radioItems,
-              onChange: (newValue) {
-                onChange(context, newValue);
-              },
-            );
-          } else if (widgetType == WidgetType.textarea) {
-            return TextWidget(
-              value: value,
-              validator: validator,
-              textArea: true,
-              onChange: (newValue) {
-                onChange(context, newValue);
-              },
-            );
-          } else {
-            return TextWidget(
-              value: value,
-              validator: validator,
-              onChange: (newValue) {
-                onChange(context, newValue);
-              },
-            );
-          }
-        },
-      ),
+      child: Builder(builder: (context) {
+        final value = widget.value ?? defaultValue;
+        if (widgetType == WidgetType.select) {
+          return SelectWidget<String>(
+            value: value,
+            items: widget.model.dropdownItems,
+            onChange: (newValue) {
+              onChange(context, newValue);
+            },
+          );
+        } else if (widgetType == WidgetType.radio) {
+          return RadioWidget<String>(
+            value: value,
+            items: widget.model.radioItems,
+            onChange: (newValue) {
+              onChange(context, newValue);
+            },
+          );
+        } else if (widgetType == WidgetType.textarea) {
+          return TextWidget(
+            value: value,
+            validator: validator,
+            textArea: true,
+            onChange: (newValue) {
+              onChange(context, newValue);
+            },
+          );
+        } else {
+          return TextWidget(
+            value: value,
+            validator: validator,
+            onChange: (newValue) {
+              onChange(context, newValue);
+            },
+          );
+        }
+      }),
     );
   }
 }

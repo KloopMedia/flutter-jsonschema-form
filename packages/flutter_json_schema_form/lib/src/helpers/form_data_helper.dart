@@ -46,6 +46,7 @@ dynamic updateDeeply(
   List<PathItem> keyPath,
   dynamic data,
   Function updater, [
+  bool delete = false,
   dynamic notSetValue,
   int i = 0,
   FieldType? parentType,
@@ -55,6 +56,17 @@ dynamic updateDeeply(
   }
 
   final field = keyPath[i];
+
+  if (delete && keyPath.length == i + 1) {
+    if (data is Map) {
+      data.remove(field.id);
+    }
+    if (data is List) {
+      var index = int.parse(field.id);
+      data.removeAt(index);
+    }
+    return data;
+  }
 
   if (data == null) {
     if (parentType == FieldType.object) {
@@ -78,6 +90,7 @@ dynamic updateDeeply(
       keyPath,
       data[field.id],
       updater,
+      delete,
       notSetValue,
       ++i,
       field.fieldType,

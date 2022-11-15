@@ -6,6 +6,7 @@ import '../../flutter_json_schema_form.dart';
 import '../models/models.dart';
 
 part 'form_event.dart';
+
 part 'form_state.dart';
 
 class FormBloc extends Bloc<FormEvent, FormState> {
@@ -22,9 +23,10 @@ class FormBloc extends Bloc<FormEvent, FormState> {
   void _onChangeFormEvent(ChangeFormEvent event, Emitter<FormState> emit) {
     final value = event.value;
     final path = event.path;
+    final delete = event.delete;
     print(path.stringPath);
     final formData = Map<String, dynamic>.from(
-      updateDeeply(path.path, state.formData, (prevValue) => value),
+      updateDeeply(path.path, state.formData, (prevValue) => value, delete),
     );
     emit(FormModified(formData));
     if (onChangeCallback != null) {

@@ -9,8 +9,11 @@ import '../fields.dart';
 
 class NumberField extends StatefulWidget {
   final NumberFieldModel model;
+  final DependencyModel? dependency;
+  final double? value;
 
-  const NumberField({Key? key, required this.model}) : super(key: key);
+  const NumberField({Key? key, required this.model, required this.value, this.dependency})
+      : super(key: key);
 
   @override
   State<NumberField> createState() => _NumberFieldState();
@@ -25,13 +28,14 @@ class _NumberFieldState extends State<NumberField> {
   late final widgetType = widget.model.widgetType;
   late final isRequired = widget.model.isRequired;
   late final defaultValue = widget.model.defaultValue;
+  late final bloc.FormBloc _bloc;
 
   void onChange(BuildContext context, value) {
     context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(id, value, path));
   }
 
   String? validator(String? value) {
-    if (isRequired && (value == null || value.isEmpty) ) {
+    if (isRequired && (value == null || value.isEmpty)) {
       return 'Required';
     }
     return null;
@@ -50,20 +54,34 @@ class _NumberFieldState extends State<NumberField> {
   }
 
   @override
+  void didChangeDependencies() {
+    _bloc = context.read<bloc.FormBloc>();
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    final dependency = widget.dependency;
+    if (dependency != null) {
+      final formData = _bloc.state.formData;
+      final parentValue = getFormDataByPath(formData, dependency.parentPath);
+
+      if (!dependency.values.contains(parentValue)) {
+        _bloc.add(bloc.ChangeFormEvent(id, widget.value, path, true));
+      }
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FieldWrapper(
       title: title,
       description: description,
       isRequired: isRequired,
-      child: BlocBuilder<bloc.FormBloc, bloc.FormState>(
-        buildWhen: (previous, current) {
-          final previousValue = getFormDataByPath(previous.formData, path);
-          final currentValue = getFormDataByPath(current.formData, path);
-          return previousValue != currentValue;
-        },
-        builder: (context, state) {
-          final data = getFormDataByPath(state.formData, path);
-          final value = data ?? defaultValue;
+      child: Builder(
+        builder: (context) {
+          final value = widget.value ?? defaultValue;
 
           if (widgetType == WidgetType.select) {
             return SelectWidget<double>(
@@ -91,7 +109,7 @@ class _NumberFieldState extends State<NumberField> {
             );
           } else {
             return NumberWidget<int>(
-              value: value,
+              value: value?.toInt(),
               validator: validator,
               onChange: (newValue) {
                 onChange(context, newValue);

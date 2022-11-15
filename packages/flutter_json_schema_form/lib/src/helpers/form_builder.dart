@@ -9,13 +9,11 @@ import 'helpers.dart';
 class FormBuilder extends StatelessWidget {
   final List<FieldModel> fields;
   final List<DependencyModel> dependencies;
-  // final List<String> required;
 
   const FormBuilder({
     Key? key,
     required this.fields,
     required this.dependencies,
-    // required this.required,
   }) : super(key: key);
 
   @override
@@ -28,7 +26,7 @@ class FormBuilder extends StatelessWidget {
           itemCount: fields.length,
           itemBuilder: (context, index) {
             final model = fields[index];
-            return _mapModelToWidget(model);
+            return FieldBuilder(model: model);
           },
         ),
         ListView.builder(
@@ -41,6 +39,22 @@ class FormBuilder extends StatelessWidget {
           },
         ),
       ],
+    );
+  }
+}
+
+class FieldBuilder extends StatelessWidget {
+  final FieldModel model;
+
+  const FieldBuilder({Key? key, required this.model}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<bloc.FormBloc, bloc.FormState>(
+      builder: (context, state) {
+        final value = getFormDataByPath(state.formData, model.path);
+        return _mapModelToField(model, value);
+      },
     );
   }
 }
@@ -58,15 +72,12 @@ class DependencyBuilder extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final parentPath = [...field.path.path];
-    parentPath.removeLast();
-    parentPath.add(PathItem(model.parentId, FieldType.string));
-
     return BlocBuilder<bloc.FormBloc, bloc.FormState>(
       builder: (context, state) {
-        final value = getFormDataByPath(state.formData, PathModel(parentPath));
-        if (model.values.contains(value)) {
-          return _mapModelToWidget(field);
+        final parentValue = getFormDataByPath(state.formData, model.parentPath);
+        if (model.values.contains(parentValue)) {
+          final value = getFormDataByPath(state.formData, field.path);
+          return _mapModelToField(field, value, model);
         } else {
           return const SizedBox.shrink();
         }
@@ -75,17 +86,17 @@ class DependencyBuilder extends StatelessWidget {
   }
 }
 
-Widget _mapModelToWidget(FieldModel model) {
+Widget _mapModelToField(FieldModel model, dynamic value, [DependencyModel? dependency]) {
   if (model is TextFieldModel) {
-    return fields.TextField(model: model);
+    return fields.TextField(model: model, value: value, dependency: dependency);
   } else if (model is SectionModel) {
     return fields.SectionField(model: model);
   } else if (model is ArrayModel) {
     return fields.ArrayWidget(model: model);
   } else if (model is NumberFieldModel) {
-    return fields.NumberField(model: model);
+    return fields.NumberField(model: model, value: value, dependency: dependency);
   } else if (model is BooleanFieldModel) {
-    return fields.BooleanField(model: model);
+    return fields.BooleanField(model: model, value: value, dependency: dependency);
   }
-  return const Text('Error: widget not found');
+  return const Text('Error: Field not found');
 }

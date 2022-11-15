@@ -151,6 +151,7 @@ class FormSerializer {
             deps.add(
               DependencyModel(
                 parentId: id,
+                parentPath: PathModel([...path.path, PathItem(id, null)]),
                 values: conditionValues,
                 field: _createModelFromSchema(
                   id: item.key,

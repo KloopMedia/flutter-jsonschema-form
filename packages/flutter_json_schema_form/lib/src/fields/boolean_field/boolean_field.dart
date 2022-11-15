@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_json_schema_form/src/widgets/checkbox_widget.dart';
 
 import '../../helpers/helpers.dart';
 import '../../models/models.dart';
@@ -10,8 +9,11 @@ import '../fields.dart';
 
 class BooleanField extends StatefulWidget {
   final BooleanFieldModel model;
+  final DependencyModel? dependency;
+  final bool? value;
 
-  const BooleanField({Key? key, required this.model}) : super(key: key);
+  const BooleanField({Key? key, required this.model, this.value, this.dependency})
+      : super(key: key);
 
   @override
   State<BooleanField> createState() => _BooleanFieldState();
@@ -26,6 +28,7 @@ class _BooleanFieldState extends State<BooleanField> {
   late final widgetType = widget.model.widgetType;
   late final isRequired = widget.model.isRequired;
   late final defaultValue = widget.model.defaultValue;
+  late final bloc.FormBloc _bloc;
 
   void onChange(BuildContext context, value) {
     context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(id, value, path));
@@ -44,54 +47,66 @@ class _BooleanFieldState extends State<BooleanField> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<bloc.FormBloc, bloc.FormState>(
-      buildWhen: (previous, current) {
-        final previousValue = getFormDataByPath(previous.formData, path);
-        final currentValue = getFormDataByPath(current.formData, path);
-        return previousValue != currentValue;
-      },
-      builder: (context, state) {
-        final data = getFormDataByPath(state.formData, path);
-        final value = data ?? defaultValue;
+  void didChangeDependencies() {
+    _bloc = context.read<bloc.FormBloc>();
+    super.didChangeDependencies();
+  }
 
-        if (widgetType == WidgetType.select) {
-          return FieldWrapper(
-            title: title,
-            description: description,
-            isRequired: isRequired,
-            child: SelectWidget<bool>(
-              value: value,
-              items: widget.model.dropdownItems,
-              onChange: (newValue) {
-                onChange(context, newValue);
-              },
-            ),
-          );
-        } else if (widgetType == WidgetType.radio) {
-          return FieldWrapper(
-            title: title,
-            description: description,
-            isRequired: isRequired,
-            child: RadioWidget<bool>(
-              value: value,
-              items: widget.model.getRadioItems(),
-              onChange: (newValue) {
-                onChange(context, newValue);
-              },
-            ),
-          );
-        } else {
-          return CheckboxWidget(
-            title: title,
-            description: description,
+  @override
+  void dispose() {
+    final dependency = widget.dependency;
+    if (dependency != null) {
+      final formData = _bloc.state.formData;
+      final parentValue = getFormDataByPath(formData, dependency.parentPath);
+
+      if (!dependency.values.contains(parentValue)) {
+        _bloc.add(bloc.ChangeFormEvent(id, widget.value, path, true));
+      }
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Builder(builder: (context) {
+      final value = widget.value ?? defaultValue;
+
+      if (widgetType == WidgetType.select) {
+        return FieldWrapper(
+          title: title,
+          description: description,
+          isRequired: isRequired,
+          child: SelectWidget<bool>(
             value: value,
+            items: widget.model.dropdownItems,
             onChange: (newValue) {
               onChange(context, newValue);
             },
-          );
-        }
-      },
-    );
+          ),
+        );
+      } else if (widgetType == WidgetType.radio) {
+        return FieldWrapper(
+          title: title,
+          description: description,
+          isRequired: isRequired,
+          child: RadioWidget<bool>(
+            value: value,
+            items: widget.model.getRadioItems(),
+            onChange: (newValue) {
+              onChange(context, newValue);
+            },
+          ),
+        );
+      } else {
+        return CheckboxWidget(
+          title: title,
+          description: description,
+          value: value,
+          onChange: (newValue) {
+            onChange(context, newValue);
+          },
+        );
+      }
+    });
   }
 }
