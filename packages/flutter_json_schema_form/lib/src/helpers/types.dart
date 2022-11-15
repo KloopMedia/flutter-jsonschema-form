@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 typedef WidgetOnChangeCallback<T> = void Function(T? value);
+typedef WidgetValidator<T> = String? Function(T? value);
 
 enum FieldType { object, array, string, number, integer, boolean }
 

@@ -6,17 +6,20 @@ import '../helpers/helpers.dart';
 class NumberWidget<T> extends StatelessWidget {
   final int? value;
   final WidgetOnChangeCallback<T> onChange;
+  final WidgetValidator<String>? validator;
 
   const NumberWidget({
     Key? key,
     required this.value,
     required this.onChange,
+    this.validator,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       initialValue: value != null ? value.toString() : '',
+      validator: validator,
       decoration: decoration,
       keyboardType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],

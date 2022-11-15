@@ -6,12 +6,14 @@ class RadioWidget<T> extends StatefulWidget {
   final T? value;
   final List<Map<String, dynamic>> items;
   final WidgetOnChangeCallback<T> onChange;
+  final WidgetValidator<T>? validator;
 
   const RadioWidget({
     Key? key,
     required this.value,
     required this.items,
     required this.onChange,
+    this.validator,
   }) : super(key: key);
 
   @override

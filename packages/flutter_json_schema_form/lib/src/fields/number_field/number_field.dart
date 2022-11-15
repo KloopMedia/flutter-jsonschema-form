@@ -30,6 +30,13 @@ class _NumberFieldState extends State<NumberField> {
     context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(id, value, path));
   }
 
+  String? validator(String? value) {
+    if (isRequired && (value == null || value.isEmpty) ) {
+      return 'Required';
+    }
+    return null;
+  }
+
   @override
   void initState() {
     if (defaultValue != null) {
@@ -77,6 +84,7 @@ class _NumberFieldState extends State<NumberField> {
           } else if (type == FieldType.number) {
             return NumberWidget<double>(
               value: value,
+              validator: validator,
               onChange: (newValue) {
                 onChange(context, newValue);
               },
@@ -84,6 +92,7 @@ class _NumberFieldState extends State<NumberField> {
           } else {
             return NumberWidget<int>(
               value: value,
+              validator: validator,
               onChange: (newValue) {
                 onChange(context, newValue);
               },

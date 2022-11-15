@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'bloc/form_bloc.dart';
+import 'bloc/form_bloc.dart' as bloc;
 import 'models/models.dart';
 import 'fields/fields.dart';
 
@@ -27,6 +27,15 @@ class FlutterJsonSchemaForm extends StatefulWidget {
 
 class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
   late SectionModel model;
+  final _formKey = GlobalKey<FormState>();
+
+  void submit() {
+    if (_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Processing Data')),
+      );
+    }
+  }
 
   @override
   void initState() {
@@ -37,9 +46,20 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => FormBloc(formData: widget.formData, onChangeCallback: widget.onChange),
-      child: SingleChildScrollView(
-        child: SectionField(model: model),
+      create: (context) => bloc.FormBloc(
+        formData: widget.formData,
+        onChangeCallback: widget.onChange,
+      ),
+      child: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SectionField(model: model),
+              ElevatedButton(onPressed: submit, child: const Text('Submit')),
+            ],
+          ),
+        ),
       ),
     );
   }

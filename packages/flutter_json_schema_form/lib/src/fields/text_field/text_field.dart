@@ -30,6 +30,13 @@ class _TextFieldState extends State<TextField> {
     context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(id, value, path));
   }
 
+  String? validator(value) {
+    if (isRequired && (value == null || value.isEmpty)) {
+      return 'Required';
+    }
+    return null;
+  }
+
   @override
   void initState() {
     if (defaultValue != null) {
@@ -76,6 +83,7 @@ class _TextFieldState extends State<TextField> {
           } else if (widgetType == WidgetType.textarea) {
             return TextWidget(
               value: value,
+              validator: validator,
               textArea: true,
               onChange: (newValue) {
                 onChange(context, newValue);
@@ -84,6 +92,7 @@ class _TextFieldState extends State<TextField> {
           } else {
             return TextWidget(
               value: value,
+              validator: validator,
               onChange: (newValue) {
                 onChange(context, newValue);
               },
