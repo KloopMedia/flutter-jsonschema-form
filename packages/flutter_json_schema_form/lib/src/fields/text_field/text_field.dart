@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 
+import '../../bloc/bloc.dart' as bloc;
 import '../../helpers/helpers.dart';
 import '../../models/models.dart';
-import '../../bloc/bloc.dart' as bloc;
-import '../../widgets/widgets.dart';
 import '../fields.dart';
 
 class TextField extends StatefulWidget {
@@ -28,6 +28,7 @@ class _TextFieldState extends State<TextField> {
   late final widgetType = widget.model.widgetType;
   late final isRequired = widget.model.isRequired;
   late final defaultValue = widget.model.defaultValue;
+  late final value = widget.value ?? defaultValue;
   late bloc.FormBloc _bloc;
 
   void onChange(value) {
@@ -85,31 +86,41 @@ class _TextFieldState extends State<TextField> {
       description: description,
       isRequired: isRequired,
       child: Builder(builder: (context) {
-        final value = widget.value ?? defaultValue;
         if (widgetType == WidgetType.select) {
-          return SelectWidget<String>(
-            value: value,
+          return FormBuilderDropdown(
+            name: id,
+            initialValue: value,
+            decoration: decoration,
+            validator: validator,
             items: widget.model.dropdownItems,
-            onChange: onChange,
+            onChanged: onChange,
           );
         } else if (widgetType == WidgetType.radio) {
-          return RadioWidget<String>(
-            value: value,
-            items: widget.model.radioItems,
-            onChange: onChange,
+          return FormBuilderRadioGroup(
+            name: id,
+            initialValue: value,
+            decoration: decoration,
+            orientation: OptionsOrientation.vertical,
+            validator: validator,
+            options: widget.model.getRadio(),
+            onChanged: onChange,
           );
         } else if (widgetType == WidgetType.textarea) {
-          return TextWidget(
-            value: value,
+          return FormBuilderTextField(
+            name: id,
+            initialValue: value,
+            decoration: decoration,
+            minLines: 4,
             validator: validator,
-            textArea: true,
-            onChange: onChange,
+            onChanged: onChange,
           );
         } else {
-          return TextWidget(
-            value: value,
+          return FormBuilderTextField(
+            name: id,
+            initialValue: value,
+            decoration: decoration,
             validator: validator,
-            onChange: onChange,
+            onChanged: onChange,
           );
         }
       }),

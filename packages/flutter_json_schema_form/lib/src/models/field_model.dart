@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 import '../helpers/helpers.dart';
 import 'models.dart';
@@ -91,7 +92,7 @@ abstract class FieldModel {
     }
   }
 
-  String? get fieldTitle => title ?? id;
+  String get fieldTitle => title ?? id;
 
   List<DropdownMenuItem<T>> getDropdownItems<T>() {
     final options = enumItems ?? [];
@@ -135,14 +136,33 @@ abstract class FieldModel {
     });
     return items;
   }
+
+  List<FormBuilderFieldOption<T>> getRadio<T>() {
+    final options = enumItems ?? [];
+    final names = enumNames ?? [];
+
+    if (options.isEmpty) {
+      return [];
+    }
+
+    List<FormBuilderFieldOption<T>> items = List.generate(options.length, (index) {
+      final T value = _parseValue<T>(options[index]);
+      String name;
+      try {
+        name = names[index].toString();
+      } catch (_) {
+        name = value.toString();
+      }
+      return FormBuilderFieldOption(value: value, child: Text(name));
+    });
+    return items;
+  }
 }
 
 T _parseValue<T>(dynamic value) {
   try {
-    if (T == int) {
-      return int.parse(value) as T;
-    } else if (T == double) {
-      return double.parse(value) as T;
+    if (T == num) {
+      return num.parse(value) as T;
     } else {
       return value;
     }

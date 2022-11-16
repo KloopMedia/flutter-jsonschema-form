@@ -2,7 +2,7 @@ import '../helpers/helpers.dart';
 import 'models.dart';
 
 class NumberFieldModel extends FieldModel {
-  final double? defaultValue;
+  final num? defaultValue;
   const NumberFieldModel({
     required String id,
     String? title,
@@ -41,7 +41,7 @@ class NumberFieldModel extends FieldModel {
     );
   }
 
-  get dropdownItems => getDropdownItems<double>();
+  get dropdownItems => getDropdownItems<num>();
 
-  get radioItems => getRadioItems<double>();
+  get radioItems => getRadioItems<num>();
 }

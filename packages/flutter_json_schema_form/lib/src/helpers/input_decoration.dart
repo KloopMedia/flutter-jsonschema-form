@@ -11,4 +11,10 @@ const decoration = InputDecoration(
   enabledBorder: OutlineInputBorder(
     borderSide: BorderSide(width: 1.0),
   ),
+  errorBorder: OutlineInputBorder(
+    borderSide: BorderSide(
+      color: Colors.redAccent,
+      width: 1.0,
+    ),
+  ),
 );

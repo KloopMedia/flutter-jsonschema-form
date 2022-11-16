@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 
+import '../../bloc/bloc.dart' as bloc;
 import '../../helpers/helpers.dart';
 import '../../models/models.dart';
-import '../../bloc/bloc.dart' as bloc;
-import '../../widgets/widgets.dart';
 import '../fields.dart';
 
 class BooleanField extends StatefulWidget {
@@ -28,19 +28,28 @@ class _BooleanFieldState extends State<BooleanField> {
   late final widgetType = widget.model.widgetType;
   late final isRequired = widget.model.isRequired;
   late final defaultValue = widget.model.defaultValue;
-  late final bloc.FormBloc _bloc;
+  late final value = widget.value ?? defaultValue;
+  late bloc.FormBloc _bloc;
 
-  void onChange(BuildContext context, value) {
-    context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(id, value, path));
+  void onChange(value) {
+    _bloc.add(bloc.ChangeFormEvent(id, value, path));
+  }
+
+  String? validator(value) {
+    if (isRequired && value == null) {
+      return 'Required';
+    }
+    return null;
   }
 
   @override
   void initState() {
+    _bloc = context.read<bloc.FormBloc>();
     if (defaultValue != null) {
       final formData = context.read<bloc.FormBloc>().state.formData;
       final value = getFormDataByPath(formData, path);
       if (value == null) {
-        onChange(context, defaultValue);
+        onChange(defaultValue);
       }
     }
     super.initState();
@@ -69,19 +78,18 @@ class _BooleanFieldState extends State<BooleanField> {
   @override
   Widget build(BuildContext context) {
     return Builder(builder: (context) {
-      final value = widget.value ?? defaultValue;
-
       if (widgetType == WidgetType.select) {
         return FieldWrapper(
           title: title,
           description: description,
           isRequired: isRequired,
-          child: SelectWidget<bool>(
-            value: value,
+          child: FormBuilderDropdown(
+            name: id,
+            initialValue: value,
+            decoration: decoration,
+            validator: validator,
             items: widget.model.dropdownItems,
-            onChange: (newValue) {
-              onChange(context, newValue);
-            },
+            onChanged: onChange,
           ),
         );
       } else if (widgetType == WidgetType.radio) {
@@ -89,22 +97,22 @@ class _BooleanFieldState extends State<BooleanField> {
           title: title,
           description: description,
           isRequired: isRequired,
-          child: RadioWidget<bool>(
-            value: value,
-            items: widget.model.getRadioItems(),
-            onChange: (newValue) {
-              onChange(context, newValue);
-            },
+          child: FormBuilderRadioGroup<bool>(
+            name: id,
+            initialValue: value,
+            decoration: decoration,
+            orientation: OptionsOrientation.vertical,
+            validator: validator,
+            options: widget.model.getRadio(),
+            onChanged: onChange,
           ),
         );
       } else {
-        return CheckboxWidget(
-          title: title,
-          description: description,
-          value: value,
-          onChange: (newValue) {
-            onChange(context, newValue);
-          },
+        return FormBuilderCheckbox(
+          name: id,
+          title: Text(title),
+          initialValue: value,
+          onChanged: onChange,
         );
       }
     });

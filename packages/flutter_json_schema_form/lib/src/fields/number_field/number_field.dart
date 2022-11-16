@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 
+import '../../bloc/bloc.dart' as bloc;
 import '../../helpers/helpers.dart';
 import '../../models/models.dart';
-import '../../bloc/bloc.dart' as bloc;
-import '../../widgets/widgets.dart';
 import '../fields.dart';
 
 class NumberField extends StatefulWidget {
   final NumberFieldModel model;
   final DependencyModel? dependency;
-  final double? value;
+  final num? value;
 
   const NumberField({Key? key, required this.model, required this.value, this.dependency})
       : super(key: key);
@@ -28,14 +29,30 @@ class _NumberFieldState extends State<NumberField> {
   late final widgetType = widget.model.widgetType;
   late final isRequired = widget.model.isRequired;
   late final defaultValue = widget.model.defaultValue;
-  late final bloc.FormBloc _bloc;
+  late final value = widget.value ?? defaultValue;
 
-  void onChange(BuildContext context, value) {
-    context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(id, value, path));
+  late bloc.FormBloc _bloc;
+
+  void onChange(value) {
+    num? parsedValue;
+    if (value != null) {
+      try {
+        if (type == FieldType.number) {
+          parsedValue = double.tryParse(value);
+        }
+        if (type == FieldType.integer) {
+          parsedValue = int.tryParse(value);
+        }
+      } on TypeError {
+        parsedValue = value is num ? value : null;
+      }
+    }
+    _bloc.add(bloc.ChangeFormEvent(id, parsedValue, path));
   }
 
-  String? validator(String? value) {
-    if (isRequired && (value == null || value.isEmpty)) {
+  String? validator(value) {
+    print('$id ${value}');
+    if (isRequired && value == null) {
       return 'Required';
     }
     return null;
@@ -43,11 +60,12 @@ class _NumberFieldState extends State<NumberField> {
 
   @override
   void initState() {
+    _bloc = context.read<bloc.FormBloc>();
     if (defaultValue != null) {
       final formData = context.read<bloc.FormBloc>().state.formData;
       final value = getFormDataByPath(formData, path);
       if (value == null) {
-        onChange(context, defaultValue);
+        onChange(defaultValue);
       }
     }
     super.initState();
@@ -81,39 +99,34 @@ class _NumberFieldState extends State<NumberField> {
       isRequired: isRequired,
       child: Builder(
         builder: (context) {
-          final value = widget.value ?? defaultValue;
-
           if (widgetType == WidgetType.select) {
-            return SelectWidget<double>(
-              value: value,
+            return FormBuilderDropdown(
+              name: id,
+              initialValue: value,
+              decoration: decoration,
+              validator: validator,
               items: widget.model.dropdownItems,
-              onChange: (newValue) {
-                onChange(context, newValue);
-              },
+              onChanged: onChange,
             );
           } else if (widgetType == WidgetType.radio) {
-            return RadioWidget<double>(
-              value: value,
-              items: widget.model.radioItems,
-              onChange: (newValue) {
-                onChange(context, newValue);
-              },
-            );
-          } else if (type == FieldType.number) {
-            return NumberWidget<double>(
-              value: value,
+            return FormBuilderRadioGroup<num>(
+              name: id,
+              initialValue: value,
+              decoration: decoration,
+              orientation: OptionsOrientation.vertical,
               validator: validator,
-              onChange: (newValue) {
-                onChange(context, newValue);
-              },
+              options: widget.model.getRadio(),
+              onChanged: onChange,
             );
           } else {
-            return NumberWidget<int>(
-              value: value?.toInt(),
+            return FormBuilderTextField(
+              name: id,
+              initialValue: value?.toString(),
+              decoration: decoration,
               validator: validator,
-              onChange: (newValue) {
-                onChange(context, newValue);
-              },
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              onChanged: onChange,
             );
           }
         },
