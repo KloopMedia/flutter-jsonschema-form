@@ -25,9 +25,16 @@ class FormBloc extends Bloc<FormEvent, FormState> {
     final path = event.path;
     final delete = event.delete;
     print(path.stringPath);
-    final formData = Map<String, dynamic>.from(
-      updateDeeply(path.path, state.formData, (prevValue) => value, delete),
-    );
+    Map<String, dynamic> formData;
+    if (delete || value == null) {
+      formData = Map<String, dynamic>.from(
+        updateDeeply(path.path, state.formData, (prevValue) => value, true),
+      );
+    } else {
+      formData = Map<String, dynamic>.from(
+        updateDeeply(path.path, state.formData, (prevValue) => value, false),
+      );
+    }
     emit(FormModified(formData));
     if (onChangeCallback != null) {
       onChangeCallback!(formData);

@@ -28,10 +28,10 @@ class _TextFieldState extends State<TextField> {
   late final widgetType = widget.model.widgetType;
   late final isRequired = widget.model.isRequired;
   late final defaultValue = widget.model.defaultValue;
-  late final bloc.FormBloc _bloc;
+  late bloc.FormBloc _bloc;
 
-  void onChange(BuildContext context, value) {
-    context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(id, value, path));
+  void onChange(value) {
+    _bloc.add(bloc.ChangeFormEvent(id, value, path));
   }
 
   String? validator(value) {
@@ -43,8 +43,9 @@ class _TextFieldState extends State<TextField> {
 
   @override
   void initState() {
+    _bloc = context.read<bloc.FormBloc>();
     if (defaultValue != null && widget.value == null) {
-      onChange(context, defaultValue);
+      onChange(defaultValue);
     }
     super.initState();
   }
@@ -66,6 +67,14 @@ class _TextFieldState extends State<TextField> {
         _bloc.add(bloc.ChangeFormEvent(id, widget.value, path, true));
       }
     }
+
+    try {
+      bool isArrayItem = path.path[path.path.length - 2].fieldType == FieldType.array;
+      if (isArrayItem) {
+        _bloc.add(bloc.ChangeFormEvent(id, widget.value, path, true));
+      }
+    } catch (_) {}
+
     super.dispose();
   }
 
@@ -81,34 +90,26 @@ class _TextFieldState extends State<TextField> {
           return SelectWidget<String>(
             value: value,
             items: widget.model.dropdownItems,
-            onChange: (newValue) {
-              onChange(context, newValue);
-            },
+            onChange: onChange,
           );
         } else if (widgetType == WidgetType.radio) {
           return RadioWidget<String>(
             value: value,
             items: widget.model.radioItems,
-            onChange: (newValue) {
-              onChange(context, newValue);
-            },
+            onChange: onChange,
           );
         } else if (widgetType == WidgetType.textarea) {
           return TextWidget(
             value: value,
             validator: validator,
             textArea: true,
-            onChange: (newValue) {
-              onChange(context, newValue);
-            },
+            onChange: onChange,
           );
         } else {
           return TextWidget(
             value: value,
             validator: validator,
-            onChange: (newValue) {
-              onChange(context, newValue);
-            },
+            onChange: onChange,
           );
         }
       }),
