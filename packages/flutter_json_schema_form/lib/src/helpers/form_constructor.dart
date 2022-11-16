@@ -6,11 +6,11 @@ import '../fields/fields.dart' as fields;
 import '../bloc/bloc.dart' as bloc;
 import 'helpers.dart';
 
-class FormBuilder extends StatelessWidget {
+class FormConstructor extends StatelessWidget {
   final List<FieldModel> fields;
   final List<DependencyModel> dependencies;
 
-  const FormBuilder({
+  const FormConstructor({
     Key? key,
     required this.fields,
     required this.dependencies,
