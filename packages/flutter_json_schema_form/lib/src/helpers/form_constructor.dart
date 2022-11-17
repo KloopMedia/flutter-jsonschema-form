@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../models/models.dart';
-import '../fields/fields.dart' as fields;
 import '../bloc/bloc.dart' as bloc;
+import '../fields/fields.dart' as form_fields;
+import '../models/models.dart';
 import 'helpers.dart';
 
 class FormConstructor extends StatelessWidget {
@@ -26,7 +26,13 @@ class FormConstructor extends StatelessWidget {
           itemCount: fields.length,
           itemBuilder: (context, index) {
             final model = fields[index];
-            return FieldBuilder(model: model);
+            if (model is SectionModel) {
+              return form_fields.SectionField(model: model);
+            } else if (model is ArrayModel) {
+              return form_fields.ArrayField(model: model);
+            } else {
+              return FieldBuilder(model: model);
+            }
           },
         ),
         ListView.builder(
@@ -35,7 +41,19 @@ class FormConstructor extends StatelessWidget {
           itemCount: dependencies.length,
           itemBuilder: (context, index) {
             final model = dependencies[index];
-            return DependencyBuilder(model: model);
+            final field = model.field;
+
+            if (field == null) {
+              return const SizedBox.shrink();
+            }
+
+            if (field is SectionModel) {
+              return form_fields.SectionField(model: field);
+            } else if (field is ArrayModel) {
+              return form_fields.ArrayField(model: field);
+            } else {
+              return DependencyBuilder(model: model);
+            }
           },
         ),
       ],
@@ -66,12 +84,7 @@ class DependencyBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final field = model.field;
-
-    if (field == null) {
-      return const SizedBox.shrink();
-    }
-
+    final field = model.field!;
     return BlocBuilder<bloc.FormBloc, bloc.FormState>(
       builder: (context, state) {
         final parentValue = getFormDataByPath(state.formData, model.parentPath);
@@ -106,7 +119,13 @@ class ArrayBuilder extends StatelessWidget {
         } on RangeError {
           value = null;
         }
-        return _mapModelToField(model, value);
+        if (model is SectionModel) {
+          return form_fields.SectionField(model: model);
+        } else if (model is ArrayModel) {
+          return form_fields.ArrayField(model: model);
+        } else {
+          return _mapModelToField(model, value);
+        }
       },
     );
   }
@@ -114,15 +133,11 @@ class ArrayBuilder extends StatelessWidget {
 
 Widget _mapModelToField(FieldModel model, dynamic value, [DependencyModel? dependency]) {
   if (model is TextFieldModel) {
-    return fields.TextField(model: model, value: value, dependency: dependency);
-  } else if (model is SectionModel) {
-    return fields.SectionField(model: model);
-  } else if (model is ArrayModel) {
-    return fields.ArrayField(model: model);
+    return form_fields.TextField(model: model, value: value, dependency: dependency);
   } else if (model is NumberFieldModel) {
-    return fields.NumberField(model: model, value: value, dependency: dependency);
+    return form_fields.NumberField(model: model, value: value, dependency: dependency);
   } else if (model is BooleanFieldModel) {
-    return fields.BooleanField(model: model, value: value, dependency: dependency);
+    return form_fields.BooleanField(model: model, value: value, dependency: dependency);
   }
   return const Text('Error: Field not found');
 }
