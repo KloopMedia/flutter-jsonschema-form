@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 import '../../bloc/bloc.dart' as bloc;
 import '../../helpers/helpers.dart';
@@ -86,41 +85,23 @@ class _TextFieldState extends State<TextField> {
       description: description,
       isRequired: isRequired,
       child: Builder(builder: (context) {
-        if (widgetType == WidgetType.select) {
-          return FormBuilderDropdown(
-            name: id,
-            initialValue: value,
-            decoration: decoration,
+        if (widgetType != null) {
+          return FormWidgetBuilder<String>(
+            id: id,
+            widgetType: widgetType!,
+            value: value,
+            onChange: onChange,
             validator: validator,
-            items: widget.model.dropdownItems,
-            onChanged: onChange,
-          );
-        } else if (widgetType == WidgetType.radio) {
-          return FormBuilderRadioGroup(
-            name: id,
-            initialValue: value,
-            decoration: decoration,
-            orientation: OptionsOrientation.vertical,
-            validator: validator,
-            options: widget.model.getRadio(),
-            onChanged: onChange,
-          );
-        } else if (widgetType == WidgetType.textarea) {
-          return FormBuilderTextField(
-            name: id,
-            initialValue: value,
-            decoration: decoration,
-            minLines: 4,
-            validator: validator,
-            onChanged: onChange,
+            dropdownItems: widget.model.getDropdownItems(),
+            radioItems: widget.model.getRadio(),
           );
         } else {
-          return FormBuilderTextField(
-            name: id,
-            initialValue: value,
-            decoration: decoration,
+          return DefaultWidgetBuilder(
+            id: id,
+            fieldType: type!,
+            value: value,
+            onChange: onChange,
             validator: validator,
-            onChanged: onChange,
           );
         }
       }),

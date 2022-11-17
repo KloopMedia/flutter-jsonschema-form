@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 import '../../bloc/bloc.dart' as bloc;
 import '../../helpers/helpers.dart';
@@ -72,49 +71,43 @@ class _BooleanFieldState extends State<BooleanField> {
         _bloc.add(bloc.ChangeFormEvent(id, widget.value, path, true));
       }
     }
+
+    try {
+      bool isArrayItem = path.path[path.path.length - 2].fieldType == FieldType.array;
+      if (isArrayItem) {
+        _bloc.add(bloc.ChangeFormEvent(id, widget.value, path, true));
+      }
+    } catch (_) {}
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Builder(builder: (context) {
-      if (widgetType == WidgetType.select) {
-        return FieldWrapper(
-          title: title,
-          description: description,
-          isRequired: isRequired,
-          child: FormBuilderDropdown(
-            name: id,
-            initialValue: value,
-            decoration: decoration,
-            validator: validator,
-            items: widget.model.dropdownItems,
-            onChanged: onChange,
-          ),
-        );
-      } else if (widgetType == WidgetType.radio) {
-        return FieldWrapper(
-          title: title,
-          description: description,
-          isRequired: isRequired,
-          child: FormBuilderRadioGroup<bool>(
-            name: id,
-            initialValue: value,
-            decoration: decoration,
-            orientation: OptionsOrientation.vertical,
-            validator: validator,
-            options: widget.model.getRadio(),
-            onChanged: onChange,
-          ),
-        );
-      } else {
-        return FormBuilderCheckbox(
-          name: id,
-          title: Text(title),
-          initialValue: value,
-          onChanged: onChange,
-        );
-      }
-    });
+    if (widgetType != null) {
+      return FieldWrapper(
+        title: title,
+        description: description,
+        isRequired: isRequired,
+        child: FormWidgetBuilder<bool>(
+          id: id,
+          widgetType: widgetType!,
+          value: value,
+          onChange: onChange,
+          validator: validator,
+          dropdownItems: widget.model.getDropdownItems(),
+          radioItems: widget.model.getRadio(),
+        ),
+      );
+    } else {
+      return DefaultWidgetBuilder(
+        id: id,
+        fieldType: type!,
+        value: value,
+        onChange: onChange,
+        validator: validator,
+        title: title,
+      );
+    }
   }
 }

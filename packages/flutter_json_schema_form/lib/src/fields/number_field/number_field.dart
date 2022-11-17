@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 import '../../bloc/bloc.dart' as bloc;
 import '../../helpers/helpers.dart';
@@ -93,6 +91,14 @@ class _NumberFieldState extends State<NumberField> {
         _bloc.add(bloc.ChangeFormEvent(id, widget.value, path, true));
       }
     }
+
+    try {
+      bool isArrayItem = path.path[path.path.length - 2].fieldType == FieldType.array;
+      if (isArrayItem) {
+        _bloc.add(bloc.ChangeFormEvent(id, widget.value, path, true));
+      }
+    } catch (_) {}
+
     super.dispose();
   }
 
@@ -104,34 +110,23 @@ class _NumberFieldState extends State<NumberField> {
       isRequired: isRequired,
       child: Builder(
         builder: (context) {
-          if (widgetType == WidgetType.select) {
-            return FormBuilderDropdown(
-              name: id,
-              initialValue: value,
-              decoration: decoration,
+          if (widgetType != null) {
+            return FormWidgetBuilder<num>(
+              id: id,
+              widgetType: widgetType!,
+              value: value,
+              onChange: onChange,
               validator: validator,
-              items: widget.model.dropdownItems,
-              onChanged: onChange,
-            );
-          } else if (widgetType == WidgetType.radio) {
-            return FormBuilderRadioGroup<num>(
-              name: id,
-              initialValue: value,
-              decoration: decoration,
-              orientation: OptionsOrientation.vertical,
-              validator: validator,
-              options: widget.model.getRadio(),
-              onChanged: onChange,
+              dropdownItems: widget.model.getDropdownItems(),
+              radioItems: widget.model.getRadio(),
             );
           } else {
-            return FormBuilderTextField(
-              name: id,
-              initialValue: value?.toString(),
-              decoration: decoration,
+            return DefaultWidgetBuilder(
+              id: id,
+              fieldType: type!,
+              value: value,
+              onChange: onChange,
               validator: validator,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              onChanged: onChange,
             );
           }
         },
