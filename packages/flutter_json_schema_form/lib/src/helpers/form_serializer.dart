@@ -82,7 +82,7 @@ class FormSerializer {
     required PathModel path,
   }) {
     final items = schema['items'];
-    final itemsUi = uiSchema['items'];
+    final itemsUi = uiSchema['items'] ?? [];
     if (items is List) {
       final fields = _createFixedArrayFields(items, itemsUi, path);
       return ArrayModel.fixed(id: id, items: fields, path: path);
