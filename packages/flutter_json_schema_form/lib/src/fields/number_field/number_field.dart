@@ -33,7 +33,7 @@ class _NumberFieldState extends State<NumberField> {
 
   late bloc.FormBloc _bloc;
 
-  void onChange(value) {
+  num? parseValue(value) {
     num? parsedValue;
     if (value != null) {
       try {
@@ -47,12 +47,17 @@ class _NumberFieldState extends State<NumberField> {
         parsedValue = value is num ? value : null;
       }
     }
+    return parsedValue;
+  }
+
+  void onChange(value) {
+    final parsedValue = parseValue(value);
     _bloc.add(bloc.ChangeFormEvent(id, parsedValue, path));
   }
 
   String? validator(value) {
-    print('$id ${value}');
-    if (isRequired && value == null) {
+    final parsedValue = parseValue(value);
+    if (isRequired && parsedValue == null) {
       return 'Required';
     }
     return null;

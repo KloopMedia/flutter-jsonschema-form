@@ -17,4 +17,10 @@ const decoration = InputDecoration(
       width: 1.0,
     ),
   ),
+  focusedErrorBorder: OutlineInputBorder(
+    borderSide: BorderSide(
+      color: Colors.redAccent,
+      width: 1.0,
+    ),
+  ),
 );
