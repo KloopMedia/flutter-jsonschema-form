@@ -38,14 +38,17 @@ class FormSerializer {
     final newPath = PathModel([...path.path, PathItem(id, type)]);
     switch (type) {
       case FieldType.object:
-        final dependencies = parseSchemaDependencies(schema['dependencies'], uiSchema, newPath);
+        final fields = mapJsonToFields(schema, uiSchema, newPath);
+        final dependencies = parseSchemaDependencies(schema, uiSchema, newPath);
         final requiredFields = getRequiredFields(schema);
+        final order = getOrder(uiSchema);
         return SectionModel(
           id: id,
-          fields: mapJsonToFields(schema['properties'], uiSchema, newPath),
+          fields: fields,
           path: newPath,
           dependencies: dependencies,
           required: requiredFields,
+          order: order,
         );
       case FieldType.array:
         return _createArrayModel(
@@ -123,6 +126,14 @@ class FormSerializer {
     }
   }
 
+  static List<String> getOrder(Map<String, dynamic> uiSchema) {
+    if (uiSchema.containsKey('ui:order')) {
+      return uiSchema['ui:order'];
+    } else {
+      return [];
+    }
+  }
+
   static FieldType? getFieldType(Map<String, dynamic> schema) {
     if (schema.containsKey('type')) {
       return decodeFieldType(schema['type']);
@@ -133,11 +144,13 @@ class FormSerializer {
 
   static List<DependencyModel> parseSchemaDependencies(
       Map<String, dynamic>? schema, Map<String, dynamic>? uiSchema, PathModel path) {
-    if (schema == null) {
+    if (schema == null || !schema.containsKey('dependencies')) {
       return [];
     }
+    final Map<String, dynamic> fieldMap = schema['dependencies'];
+
     List<DependencyModel> deps = [];
-    for (final field in schema.entries) {
+    for (final field in fieldMap.entries) {
       final id = field.key;
       final value = field.value;
       if (value.containsKey('oneOf')) {

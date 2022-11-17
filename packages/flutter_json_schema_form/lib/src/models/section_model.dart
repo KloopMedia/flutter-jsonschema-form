@@ -5,6 +5,7 @@ class SectionModel extends FieldModel {
   final List<FieldModel> fields;
   final List<DependencyModel> dependencies;
   final List<String> required;
+  final List<String>? order;
 
   const SectionModel({
     required String id,
@@ -15,6 +16,7 @@ class SectionModel extends FieldModel {
     required this.fields,
     required this.dependencies,
     required this.required,
+    this.order,
   }) : super.init(
           id: id,
           title: title,
@@ -28,7 +30,7 @@ class SectionModel extends FieldModel {
     final type = decodeFieldType(schema['type']);
     const path = PathModel([]);
     final dependencies =
-        FormSerializer.parseSchemaDependencies(schema['dependencies'], uiSchema, path);
+        FormSerializer.parseSchemaDependencies(schema, uiSchema, path);
     final required = FormSerializer.getRequiredFields(schema);
     return SectionModel(
       id: "#",
@@ -39,6 +41,7 @@ class SectionModel extends FieldModel {
       path: path,
       dependencies: dependencies,
       required: required,
+      order: uiSchema['ui:order'],
     );
   }
 }
