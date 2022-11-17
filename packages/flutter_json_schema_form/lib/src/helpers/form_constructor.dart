@@ -86,13 +86,39 @@ class DependencyBuilder extends StatelessWidget {
   }
 }
 
+class ArrayBuilder extends StatelessWidget {
+  final List<FieldModel> fields;
+  final List values;
+
+  const ArrayBuilder({Key? key, required this.fields, required this.values}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: fields.length,
+      itemBuilder: (context, index) {
+        final model = fields[index];
+        dynamic value;
+        try {
+          value = values[index];
+        } on RangeError {
+          value = null;
+        }
+        return _mapModelToField(model, value);
+      },
+    );
+  }
+}
+
 Widget _mapModelToField(FieldModel model, dynamic value, [DependencyModel? dependency]) {
   if (model is TextFieldModel) {
     return fields.TextField(model: model, value: value, dependency: dependency);
   } else if (model is SectionModel) {
     return fields.SectionField(model: model);
   } else if (model is ArrayModel) {
-    return fields.ArrayWidget(model: model);
+    return fields.ArrayField(model: model);
   } else if (model is NumberFieldModel) {
     return fields.NumberField(model: model, value: value, dependency: dependency);
   } else if (model is BooleanFieldModel) {

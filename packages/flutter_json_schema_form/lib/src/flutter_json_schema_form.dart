@@ -56,6 +56,7 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
           children: [
             FormBuilder(
               key: _formKey,
+              clearValueOnUnregister: true,
               child: SectionField(model: model),
             ),
             ElevatedButton(onPressed: submit, child: const Text('Submit')),
