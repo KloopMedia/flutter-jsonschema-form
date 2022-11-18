@@ -7,28 +7,21 @@ import '../models/models.dart';
 import 'helpers.dart';
 
 class FormConstructor extends StatelessWidget {
-  final List<FieldModel> fields;
-  final List<DependencyModel> dependencies;
-  final List<String>? order;
+  final List<dynamic> fields;
 
   const FormConstructor({
     Key? key,
     required this.fields,
-    required this.dependencies,
-    this.order,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final sorted = sortFields(fields, order!);
-    final newList = insertDependencies(sorted, dependencies);
-
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: newList.length,
+      itemCount: fields.length,
       itemBuilder: (context, index) {
-        final model = newList[index];
+        final model = fields[index];
         if (model is SectionModel) {
           return form_fields.SectionField(model: model);
         } else if (model is ArrayModel) {
@@ -134,39 +127,4 @@ Widget _mapModelToField(FieldModel model, dynamic value, [DependencyModel? depen
     return form_fields.BooleanField(model: model, value: value, dependency: dependency);
   }
   return const Text('Error: Field not found');
-}
-
-List<FieldModel> sortFields(List<FieldModel> fields, List<String>? order) {
-  if (order == null) {
-    return fields;
-  }
-  final Map<String, FieldModel> fieldSchema = Map.fromIterable(fields, key: (field) => field.id);
-  final other = fieldSchema.keys.where((element) => !order.contains(element));
-  var orderSchema = List.of(order);
-  if (order.contains('*')) {
-    final wildCardIndex = order.indexOf('*');
-    orderSchema.insertAll(wildCardIndex, other);
-    orderSchema.remove('*');
-  } else {
-    orderSchema.addAll(other);
-  }
-  List<FieldModel> sortedFields = [];
-  for (var element in orderSchema) {
-    final field = fieldSchema[element];
-    if (field != null) {
-      sortedFields.add(field);
-    }
-  }
-  return sortedFields;
-}
-
-List<dynamic> insertDependencies(List<FieldModel> fields, List<DependencyModel> dependencies) {
-  final newFields = List.from(fields);
-  for (var dependency in dependencies) {
-    final index = fields.indexWhere((field) => field.id == dependency.parentId);
-    if (!index.isNegative) {
-      newFields.insert(index + 1, dependency);
-    }
-  }
-  return newFields;
 }

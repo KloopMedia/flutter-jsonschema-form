@@ -6,11 +6,13 @@ class ArrayModel extends FieldModel {
   final List<FieldModel>? items;
   final FieldModel? itemType;
 
+  @override
+  void copyWith({String? id, PathModel? path}) {}
+
   ArrayModel.dynamic({
     required String id,
     String? title,
     String? description,
-    FieldType? fieldType,
     WidgetType? widgetType,
     this.itemType,
     required PathModel path,
@@ -20,7 +22,7 @@ class ArrayModel extends FieldModel {
             id: id,
             title: title,
             description: description,
-            fieldType: fieldType,
+            fieldType: FieldType.array,
             widgetType: widgetType,
             path: path,
             isRequired: false);
@@ -29,7 +31,6 @@ class ArrayModel extends FieldModel {
     required String id,
     String? title,
     String? description,
-    FieldType? fieldType,
     WidgetType? widgetType,
     required this.items,
     required PathModel path,
@@ -39,7 +40,7 @@ class ArrayModel extends FieldModel {
           id: id,
           title: title,
           description: description,
-          fieldType: fieldType,
+          fieldType: FieldType.array,
           widgetType: widgetType,
           path: path,
           isRequired: false,

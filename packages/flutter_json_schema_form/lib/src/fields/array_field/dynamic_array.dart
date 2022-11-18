@@ -30,18 +30,8 @@ class _CreatableArrayState extends State<CreatableArray> {
   }
 
   FieldModel createArrayItemFromModel(FieldModel model, String id) {
-    final List<PathItem> pathList = List.from(model.path.path);
-    pathList[pathList.length - 1] = PathItem(id, model.fieldType);
-    if (model is TextFieldModel) {
-      return model.copyWith(id: id, path: PathModel(pathList));
-    }
-    if (model is NumberFieldModel) {
-      return model.copyWith(id: id, path: PathModel(pathList));
-    }
-    if (model is BooleanFieldModel) {
-      return model.copyWith(id: id, path: PathModel(pathList));
-    }
-    return model;
+    final path = model.path.removeLast().add(id, model.fieldType);
+    return model.copyWith(id: id, path: path);
   }
 
   void removeItemFromArray() {

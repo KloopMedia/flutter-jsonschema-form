@@ -7,7 +7,19 @@ class PathModel {
 
   const PathModel(this.path);
 
-  void add(String id, FieldType? fieldType) => path.add(PathItem(id, fieldType));
+  const PathModel.empty() : path = const [];
+
+  PathModel add(String id, FieldType? fieldType) {
+    final newPath = List.of(path);
+    newPath.add(PathItem(id, fieldType));
+    return PathModel(newPath);
+  }
+
+  PathModel removeLast() {
+    final newPath = List.of(path);
+    newPath.removeLast();
+    return PathModel(newPath);
+  }
 
   List<String> get stringPath => path.map((e) => e.toString()).toList();
 

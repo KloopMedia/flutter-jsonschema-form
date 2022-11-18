@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/models.dart';
 import '../../fields/fields.dart';
-import 'creatable_array.dart';
+import 'dynamic_array.dart';
 import 'fixed_array.dart';
 
 class ArrayField extends StatelessWidget {

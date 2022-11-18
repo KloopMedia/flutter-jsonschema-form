@@ -94,6 +94,8 @@ abstract class FieldModel {
 
   String get fieldTitle => title ?? id;
 
+  dynamic copyWith({String? id, PathModel? path});
+
   List<DropdownMenuItem<T>> getDropdownItems<T>() {
     final options = enumItems ?? [];
     final names = enumNames ?? [];

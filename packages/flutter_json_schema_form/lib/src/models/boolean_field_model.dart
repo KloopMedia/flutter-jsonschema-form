@@ -30,6 +30,7 @@ class BooleanFieldModel extends FieldModel {
               : null,
         );
 
+  @override
   BooleanFieldModel copyWith({String? id, PathModel? path}) {
     return BooleanFieldModel(
       id: id ?? this.id,

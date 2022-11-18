@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 import 'bloc/form_bloc.dart' as bloc;
-import 'models/models.dart';
-import 'fields/fields.dart';
+import 'helpers/helpers.dart';
 
 typedef ChangeFormCallback = Function(Map<String, dynamic> formData);
 
@@ -27,7 +26,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
 }
 
 class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
-  late SectionModel model;
+  late List<dynamic> fields;
   final _formKey = GlobalKey<FormBuilderState>();
 
   void submit() {
@@ -40,7 +39,7 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
 
   @override
   void initState() {
-    model = SectionModel.fromJson(widget.schema, widget.uiSchema ?? {});
+    fields = FormSerializer.serialize(widget.schema, widget.uiSchema);
     super.initState();
   }
 
@@ -57,7 +56,7 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
             FormBuilder(
               key: _formKey,
               clearValueOnUnregister: true,
-              child: SectionField(model: model),
+              child: FormConstructor(fields: fields),
             ),
             ElevatedButton(onPressed: submit, child: const Text('Submit')),
           ],

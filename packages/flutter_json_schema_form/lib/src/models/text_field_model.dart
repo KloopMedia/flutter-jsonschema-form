@@ -27,6 +27,7 @@ class TextFieldModel extends FieldModel {
           isRequired: isRequired,
         );
 
+  @override
   TextFieldModel copyWith({String? id, PathModel? path}) {
     return TextFieldModel(
       id: id ?? this.id,

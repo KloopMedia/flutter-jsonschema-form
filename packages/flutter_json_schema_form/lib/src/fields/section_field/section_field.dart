@@ -21,8 +21,6 @@ class _SectionFieldState extends State<SectionField> {
       description: widget.model.description,
       child: FormConstructor(
         fields: widget.model.fields,
-        dependencies: widget.model.dependencies,
-        order: widget.model.order,
       ),
     );
   }

@@ -26,6 +26,7 @@ class NumberFieldModel extends FieldModel {
           isRequired: isRequired,
         );
 
+  @override
   NumberFieldModel copyWith({String? id, PathModel? path}) {
     return NumberFieldModel(
       id: id ?? this.id,
