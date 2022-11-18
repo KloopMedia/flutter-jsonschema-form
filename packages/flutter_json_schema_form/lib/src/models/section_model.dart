@@ -12,7 +12,6 @@ class SectionModel extends FieldModel {
     required String id,
     String? title,
     String? description,
-    FieldType? type,
     required PathModel path,
     required this.fields,
     required this.required,
@@ -20,7 +19,7 @@ class SectionModel extends FieldModel {
           id: id,
           title: title,
           description: description,
-          fieldType: type,
+          fieldType: FieldType.object,
           path: path,
           isRequired: false,
         );

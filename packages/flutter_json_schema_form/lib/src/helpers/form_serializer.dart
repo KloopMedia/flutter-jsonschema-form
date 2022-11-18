@@ -61,7 +61,6 @@ class FormSerializer {
           required: requiredFields,
           title: schema['title'],
           description: schema['description'],
-          type: type,
         );
       case FieldType.array:
         return _createArrayModel(
