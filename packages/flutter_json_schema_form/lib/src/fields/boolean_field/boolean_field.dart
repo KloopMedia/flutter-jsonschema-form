@@ -86,7 +86,7 @@ class _BooleanFieldState extends State<BooleanField> {
 
   @override
   Widget build(BuildContext context) {
-    if (widgetType is NullModel) {
+    if (widgetType is NullWidgetModel) {
       return DefaultWidgetBuilder(
         id: id,
         fieldType: type,

@@ -29,7 +29,7 @@ abstract class FieldModel {
     required this.isRequired,
     required this.disabled,
     required this.readOnly,
-  }): widgetType = widgetType is NullModel && enumItems != null ? const SelectModel() : widgetType;
+  }): widgetType = widgetType is NullWidgetModel && enumItems != null ? const SelectWidgetModel() : widgetType;
 
   factory FieldModel({
     required String id,

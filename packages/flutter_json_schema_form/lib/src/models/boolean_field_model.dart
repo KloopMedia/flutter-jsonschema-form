@@ -28,8 +28,8 @@ class BooleanFieldModel extends FieldModel {
           disabled: disabled ?? false,
           readOnly: readOnly ?? false,
           enumItems:
-              widgetType is SelectModel || widgetType is RadioModel ? const [true, false] : null,
-          enumNames: widgetType is SelectModel || widgetType is RadioModel
+              widgetType is SelectWidgetModel || widgetType is RadioWidgetModel ? const [true, false] : null,
+          enumNames: widgetType is SelectWidgetModel || widgetType is RadioWidgetModel
               ? enumNames ?? const ["Yes", "No"]
               : null,
         );

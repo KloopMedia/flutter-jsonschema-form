@@ -31,7 +31,9 @@ class FormWidgetBuilder<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (widgetType is SelectModel) {
+    final widgetModel = widgetType;
+
+    if (widgetModel is SelectWidgetModel) {
       return FormBuilderDropdown<T>(
         name: id,
         initialValue: value,
@@ -40,7 +42,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         items: dropdownItems!,
         onChanged: onChange,
       );
-    } else if (widgetType is RadioModel) {
+    } else if (widgetModel is RadioWidgetModel) {
       return FormBuilderRadioGroup<T>(
         name: id,
         initialValue: value,
@@ -50,13 +52,13 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         options: radioItems!,
         onChanged: onChange,
       );
-    } else if (widgetType is TextAreaModel) {
+    } else if (widgetModel is TextAreaWidgetModel) {
       return FormBuilderTextField(
         name: id,
         initialValue: value,
         decoration: decoration,
-        minLines: 4,
-        maxLines: 4,
+        minLines: widgetModel.rows,
+        maxLines: widgetModel.rows,
         validator: validator,
         onChanged: onChange,
         enabled: !disabled,

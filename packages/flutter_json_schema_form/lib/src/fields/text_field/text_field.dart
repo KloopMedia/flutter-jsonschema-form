@@ -87,7 +87,7 @@ class _TextFieldState extends State<TextField> {
       description: description,
       isRequired: isRequired,
       child: Builder(builder: (context) {
-        if (widgetType is NullModel) {
+        if (widgetType is NullWidgetModel) {
           return DefaultWidgetBuilder(
             id: id,
             fieldType: type,

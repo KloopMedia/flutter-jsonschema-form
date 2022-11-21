@@ -22,7 +22,7 @@ class SectionModel extends FieldModel {
           fieldType: FieldType.object,
           path: path,
           isRequired: false,
-          widgetType: const NullModel(),
+          widgetType: const NullWidgetModel(),
           disabled: false,
           readOnly: false,
         );
