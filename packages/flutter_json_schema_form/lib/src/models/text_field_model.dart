@@ -5,16 +5,19 @@ import 'models.dart';
 
 class TextFieldModel extends FieldModel {
   final String? defaultValue;
+
   const TextFieldModel({
     required String id,
-    String? title,
-    String? description,
+    required String? title,
+    required String? description,
     required WidgetModel widgetType,
-    List? enumItems,
-    List? enumNames,
+    required List? enumItems,
+    required List? enumNames,
     required bool isRequired,
     required PathModel path,
-    this.defaultValue
+    required bool? disabled,
+    required bool? readOnly,
+    this.defaultValue,
   }) : super.init(
           id: id,
           title: title,
@@ -25,6 +28,8 @@ class TextFieldModel extends FieldModel {
           enumItems: enumItems,
           enumNames: enumNames,
           isRequired: isRequired,
+          disabled: disabled ?? false,
+          readOnly: readOnly ?? false,
         );
 
   @override
@@ -39,6 +44,8 @@ class TextFieldModel extends FieldModel {
       enumNames: enumNames,
       isRequired: isRequired,
       defaultValue: defaultValue,
+      disabled: disabled,
+      readOnly: readOnly,
     );
   }
 

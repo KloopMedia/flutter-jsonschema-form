@@ -28,6 +28,8 @@ class _TextFieldState extends State<TextField> {
   late final isRequired = widget.model.isRequired;
   late final defaultValue = widget.model.defaultValue;
   late final value = widget.value ?? defaultValue;
+  late final disabled = widget.model.disabled;
+  late final readOnly = widget.model.readOnly;
   late bloc.FormBloc _bloc;
 
   void onChange(value) {
@@ -92,6 +94,8 @@ class _TextFieldState extends State<TextField> {
             value: value,
             onChange: onChange,
             validator: validator,
+            disabled: disabled,
+            readOnly: readOnly,
           );
         } else {
           return FormWidgetBuilder<String>(
@@ -102,6 +106,8 @@ class _TextFieldState extends State<TextField> {
             validator: validator,
             dropdownItems: widget.model.getDropdownItems(),
             radioItems: widget.model.getRadio(),
+            disabled: disabled,
+            readOnly: readOnly,
           );
         }
       }),

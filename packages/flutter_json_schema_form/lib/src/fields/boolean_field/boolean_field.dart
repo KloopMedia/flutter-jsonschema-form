@@ -28,6 +28,8 @@ class _BooleanFieldState extends State<BooleanField> {
   late final isRequired = widget.model.isRequired;
   late final defaultValue = widget.model.defaultValue;
   late final value = widget.value ?? defaultValue;
+  late final disabled = widget.model.disabled;
+  late final readOnly = widget.model.readOnly;
   late bloc.FormBloc _bloc;
 
   void onChange(value) {
@@ -92,6 +94,8 @@ class _BooleanFieldState extends State<BooleanField> {
         onChange: onChange,
         validator: validator,
         title: title,
+        disabled: disabled,
+        readOnly: readOnly,
       );
     } else {
       return FieldWrapper(
@@ -106,6 +110,8 @@ class _BooleanFieldState extends State<BooleanField> {
           validator: validator,
           dropdownItems: widget.model.getDropdownItems(),
           radioItems: widget.model.getRadio(),
+          disabled: disabled,
+          readOnly: readOnly,
         ),
       );
     }

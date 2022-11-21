@@ -18,13 +18,16 @@ class ArrayModel extends FieldModel {
   })  : isFixed = false,
         items = null,
         super.init(
-            id: id,
-            title: title,
-            description: description,
-            fieldType: FieldType.array,
-            widgetType: const NullModel(),
-            path: path,
-            isRequired: false);
+          id: id,
+          title: title,
+          description: description,
+          fieldType: FieldType.array,
+          widgetType: const NullModel(),
+          path: path,
+          isRequired: false,
+          disabled: false,
+          readOnly: false,
+        );
 
   ArrayModel.fixed({
     required String id,
@@ -42,5 +45,7 @@ class ArrayModel extends FieldModel {
           widgetType: const NullModel(),
           path: path,
           isRequired: false,
+          disabled: false,
+          readOnly: false,
         );
 }

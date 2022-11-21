@@ -8,7 +8,7 @@ class SectionModel extends FieldModel {
   @override
   void copyWith({String? id, PathModel? path}) {}
 
-   const SectionModel({
+  const SectionModel({
     required String id,
     String? title,
     String? description,
@@ -23,5 +23,7 @@ class SectionModel extends FieldModel {
           path: path,
           isRequired: false,
           widgetType: const NullModel(),
+          disabled: false,
+          readOnly: false,
         );
 }

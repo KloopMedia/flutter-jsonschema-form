@@ -13,6 +13,8 @@ class FormWidgetBuilder<T> extends StatelessWidget {
   final String? Function(dynamic value)? validator;
   final List<DropdownMenuItem<T>>? dropdownItems;
   final List<FormBuilderFieldOption<T>>? radioItems;
+  final bool disabled;
+  final bool readOnly;
 
   const FormWidgetBuilder({
     Key? key,
@@ -23,6 +25,8 @@ class FormWidgetBuilder<T> extends StatelessWidget {
     this.validator,
     this.dropdownItems,
     this.radioItems,
+    required this.readOnly,
+    required this.disabled,
   }) : super(key: key);
 
   @override
@@ -55,9 +59,10 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         maxLines: 4,
         validator: validator,
         onChanged: onChange,
+        enabled: !disabled,
       );
     } else {
-      return Text('Error');
+      return const Text('Error');
     }
   }
 }
@@ -69,6 +74,8 @@ class DefaultWidgetBuilder extends StatelessWidget {
   final void Function(dynamic value) onChange;
   final String? Function(dynamic value)? validator;
   final String? title;
+  final bool disabled;
+  final bool readOnly;
 
   const DefaultWidgetBuilder({
     Key? key,
@@ -78,6 +85,8 @@ class DefaultWidgetBuilder extends StatelessWidget {
     required this.onChange,
     this.validator,
     this.title,
+    required this.readOnly,
+    required this.disabled,
   }) : super(key: key);
 
   @override
@@ -111,7 +120,7 @@ class DefaultWidgetBuilder extends StatelessWidget {
           onChanged: onChange,
         );
       default:
-        return Text('Error');
+        return const Text('Error');
     }
   }
 }

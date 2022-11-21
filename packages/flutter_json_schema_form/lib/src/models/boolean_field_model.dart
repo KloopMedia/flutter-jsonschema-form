@@ -5,14 +5,17 @@ import 'models.dart';
 
 class BooleanFieldModel extends FieldModel {
   final bool? defaultValue;
+
   const BooleanFieldModel({
     required String id,
-    String? title,
-    String? description,
+    required String? title,
+    required String? description,
     required WidgetModel widgetType,
-    List? enumNames,
+    required List? enumNames,
     required PathModel path,
     required bool isRequired,
+    required bool? disabled,
+    required bool? readOnly,
     this.defaultValue,
   }) : super.init(
           id: id,
@@ -22,9 +25,10 @@ class BooleanFieldModel extends FieldModel {
           widgetType: widgetType,
           path: path,
           isRequired: isRequired,
-          enumItems: widgetType is SelectModel || widgetType is RadioModel
-              ? const [true, false]
-              : null,
+          disabled: disabled ?? false,
+          readOnly: readOnly ?? false,
+          enumItems:
+              widgetType is SelectModel || widgetType is RadioModel ? const [true, false] : null,
           enumNames: widgetType is SelectModel || widgetType is RadioModel
               ? enumNames ?? const ["Yes", "No"]
               : null,
@@ -41,6 +45,8 @@ class BooleanFieldModel extends FieldModel {
       enumNames: enumNames,
       isRequired: isRequired,
       defaultValue: defaultValue,
+      disabled: disabled,
+      readOnly: readOnly,
     );
   }
 

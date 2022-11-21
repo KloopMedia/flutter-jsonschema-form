@@ -14,6 +14,8 @@ abstract class FieldModel {
   final List? enumItems;
   final List? enumNames;
   final bool isRequired;
+  final bool disabled;
+  final bool readOnly;
 
   const FieldModel.init({
     required this.id,
@@ -25,6 +27,8 @@ abstract class FieldModel {
     this.enumItems,
     this.enumNames,
     required this.isRequired,
+    required this.disabled,
+    required this.readOnly,
   }): widgetType = widgetType is NullModel && enumItems != null ? const SelectModel() : widgetType;
 
   factory FieldModel({
@@ -38,6 +42,8 @@ abstract class FieldModel {
     List? enumNames,
     bool isRequired = false,
     dynamic defaultValue,
+    bool? disabled,
+    bool? readOnly,
   }) {
     switch (fieldType) {
       case FieldType.string:
@@ -51,6 +57,8 @@ abstract class FieldModel {
           path: path,
           isRequired: isRequired,
           defaultValue: defaultValue,
+          disabled: disabled,
+          readOnly: readOnly,
         );
       case FieldType.number:
       case FieldType.integer:
@@ -65,6 +73,8 @@ abstract class FieldModel {
           path: path,
           isRequired: isRequired,
           defaultValue: defaultValue,
+          disabled: disabled,
+          readOnly: readOnly,
         );
       case FieldType.boolean:
         return BooleanFieldModel(
@@ -76,6 +86,8 @@ abstract class FieldModel {
           path: path,
           isRequired: isRequired,
           defaultValue: defaultValue,
+          disabled: disabled,
+          readOnly: readOnly,
         );
       default:
         return TextFieldModel(
@@ -88,6 +100,8 @@ abstract class FieldModel {
           path: path,
           isRequired: isRequired,
           defaultValue: defaultValue,
+          disabled: disabled,
+          readOnly: readOnly,
         );
     }
   }

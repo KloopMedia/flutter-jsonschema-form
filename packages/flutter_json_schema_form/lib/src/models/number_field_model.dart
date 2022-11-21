@@ -3,16 +3,19 @@ import 'models.dart';
 
 class NumberFieldModel extends FieldModel {
   final num? defaultValue;
+
   const NumberFieldModel({
     required String id,
-    String? title,
-    String? description,
+    required String? title,
+    required String? description,
     required FieldType fieldType,
     required WidgetModel widgetType,
-    List? enumItems,
-    List? enumNames,
+    required List? enumItems,
+    required List? enumNames,
     required PathModel path,
     required bool isRequired,
+    required bool? disabled,
+    required bool? readOnly,
     this.defaultValue,
   }) : super.init(
           id: id,
@@ -24,6 +27,8 @@ class NumberFieldModel extends FieldModel {
           enumItems: enumItems,
           enumNames: enumNames,
           isRequired: isRequired,
+          disabled: disabled ?? false,
+          readOnly: readOnly ?? false,
         );
 
   @override
@@ -39,6 +44,8 @@ class NumberFieldModel extends FieldModel {
       enumNames: enumNames,
       isRequired: isRequired,
       defaultValue: defaultValue,
+      disabled: disabled,
+      readOnly: readOnly,
     );
   }
 

@@ -12,14 +12,18 @@ abstract class WidgetModel {
   });
 
   factory WidgetModel.fromUiSchema(Map<String, dynamic>? uiSchema) {
-    final type = decodeWidgetType(uiSchema?['ui:widget']);
+    if (uiSchema == null) {
+      return const NullModel();
+    }
+    final type = decodeWidgetType(uiSchema['ui:widget']);
     switch (type) {
       case WidgetType.radio:
         return RadioModel(type: type);
       case WidgetType.select:
         return SelectModel(type: type);
       case WidgetType.textarea:
-        return TextAreaModel(type: type);
+        final rows = uiSchema['ui:options']?['rows'];
+        return TextAreaModel(type: type, rows: rows);
       // case WidgetType.audio:
       //   // TODO: Handle this case.
       //   break;
@@ -54,7 +58,6 @@ abstract class WidgetModel {
 }
 
 class NullModel extends WidgetModel {
-
   const NullModel({super.type = WidgetType.none});
 }
 
@@ -78,11 +81,9 @@ class TextAreaModel extends WidgetModel {
   final int rows;
 
   const TextAreaModel({
-    this.rows = 4,
+    int? rows,
     super.type = WidgetType.textarea,
     super.disabled,
     super.readOnly,
-  });
+  }) : rows = rows ?? 4;
 }
-
-

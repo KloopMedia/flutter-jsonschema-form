@@ -28,7 +28,8 @@ class _NumberFieldState extends State<NumberField> {
   late final isRequired = widget.model.isRequired;
   late final defaultValue = widget.model.defaultValue;
   late final value = widget.value ?? defaultValue;
-
+  late final disabled = widget.model.disabled;
+  late final readOnly = widget.model.readOnly;
   late bloc.FormBloc _bloc;
 
   num? parseValue(value) {
@@ -117,6 +118,8 @@ class _NumberFieldState extends State<NumberField> {
               value: value,
               onChange: onChange,
               validator: validator,
+              disabled: disabled,
+              readOnly: readOnly,
             );
           } else {
             return FormWidgetBuilder<num>(
@@ -127,6 +130,8 @@ class _NumberFieldState extends State<NumberField> {
               validator: validator,
               dropdownItems: widget.model.getDropdownItems(),
               radioItems: widget.model.getRadio(),
+              disabled: disabled,
+              readOnly: readOnly,
             );
           }
         },

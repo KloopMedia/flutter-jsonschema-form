@@ -86,6 +86,8 @@ class FormSerializer {
           path: newPath,
           isRequired: isRequired,
           defaultValue: schema['default'],
+          disabled: uiSchema?['ui:disabled'],
+          readOnly: uiSchema?['ui:readonly'],
         );
       default:
         throw Exception("Model doesn't exist for type $type");
