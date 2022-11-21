@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
 
 import '../models/models.dart';
@@ -11,11 +12,11 @@ class FormWidgetBuilder<T> extends StatelessWidget {
   final WidgetModel widgetType;
   final dynamic value;
   final void Function(dynamic value) onChange;
-  final String? Function(dynamic value)? validator;
   final List<DropdownMenuItem<T>>? dropdownItems;
   final List<FormBuilderFieldOption<T>>? radioItems;
   final bool disabled;
   final bool readOnly;
+  final bool isRequired;
 
   const FormWidgetBuilder({
     Key? key,
@@ -23,11 +24,11 @@ class FormWidgetBuilder<T> extends StatelessWidget {
     required this.widgetType,
     required this.value,
     required this.onChange,
-    this.validator,
     this.dropdownItems,
     this.radioItems,
     required this.readOnly,
     required this.disabled,
+    required this.isRequired,
   }) : super(key: key);
 
   @override
@@ -39,7 +40,9 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         name: id,
         initialValue: value,
         decoration: decoration,
-        validator: validator,
+        validator: FormBuilderValidators.compose([
+          if (isRequired) FormBuilderValidators.required(),
+        ]),
         items: dropdownItems!,
         onChanged: onChange,
       );
@@ -49,7 +52,9 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         initialValue: value,
         decoration: decoration,
         orientation: OptionsOrientation.vertical,
-        validator: validator,
+        validator: FormBuilderValidators.compose([
+          if (isRequired) FormBuilderValidators.required(),
+        ]),
         options: radioItems!,
         onChanged: onChange,
       );
@@ -61,7 +66,9 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         minLines: widgetModel.rows,
         maxLines: widgetModel.rows,
         keyboardType: TextInputType.multiline,
-        validator: validator,
+        validator: FormBuilderValidators.compose([
+          if (isRequired) FormBuilderValidators.required(),
+        ]),
         onChanged: onChange,
         enabled: !disabled,
       );
@@ -70,12 +77,17 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         name: id,
         initialValue: value,
         decoration: decoration,
-        validator: validator,
+        validator: FormBuilderValidators.compose([
+          if (isRequired) FormBuilderValidators.required(),
+        ]),
         keyboardType: TextInputType.visiblePassword,
         onChanged: onChange,
         enabled: !disabled,
       );
     }
+    // else if (widgetModel is FileWidgetModel) {
+    //   return FormBuilderFilePicker(name: id);
+    // }
     // else if (widgetModel is AudioWidgetModel) {}
     // else if (widgetModel is FileWidgetModel) {}
     else {
@@ -89,19 +101,19 @@ class TextFormatWidgetBuilder extends StatelessWidget {
   final String id;
   final dynamic value;
   final void Function(dynamic value) onChange;
-  final String? Function(dynamic value)? validator;
   final bool disabled;
   final bool readOnly;
+  final bool isRequired;
 
   const TextFormatWidgetBuilder({
     Key? key,
     required this.type,
     required this.id,
-    this.value,
+    required this.value,
     required this.onChange,
-    this.validator,
     required this.disabled,
     required this.readOnly,
+    required this.isRequired,
   }) : super(key: key);
 
   @override
@@ -112,7 +124,10 @@ class TextFormatWidgetBuilder extends StatelessWidget {
           name: id,
           initialValue: value,
           decoration: decoration,
-          validator: validator,
+          validator: FormBuilderValidators.compose([
+            if (isRequired) FormBuilderValidators.required(),
+            FormBuilderValidators.email(),
+          ]),
           keyboardType: TextInputType.emailAddress,
           onChanged: onChange,
           enabled: !disabled,
@@ -122,7 +137,10 @@ class TextFormatWidgetBuilder extends StatelessWidget {
           name: id,
           initialValue: value,
           decoration: decoration,
-          validator: validator,
+          validator: FormBuilderValidators.compose([
+            if (isRequired) FormBuilderValidators.required(),
+            FormBuilderValidators.url(),
+          ]),
           keyboardType: TextInputType.url,
           onChanged: onChange,
           enabled: !disabled,
@@ -136,7 +154,9 @@ class TextFormatWidgetBuilder extends StatelessWidget {
           name: id,
           initialValue: value,
           decoration: decoration,
-          validator: validator,
+          validator: FormBuilderValidators.compose([
+            if (isRequired) FormBuilderValidators.required(),
+          ]),
           keyboardType: TextInputType.datetime,
           format: DateFormat('dd-MM-yyyy'),
           inputType: InputType.date,
@@ -155,7 +175,9 @@ class TextFormatWidgetBuilder extends StatelessWidget {
           name: id,
           initialValue: value,
           decoration: decoration,
-          validator: validator,
+          validator: FormBuilderValidators.compose([
+            if (isRequired) FormBuilderValidators.required(),
+          ]),
           keyboardType: TextInputType.datetime,
           format: DateFormat('dd-MM-yyyy HH:mm'),
           enabled: !disabled,
@@ -177,10 +199,10 @@ class DefaultWidgetBuilder extends StatelessWidget {
   final FieldType fieldType;
   final dynamic value;
   final void Function(dynamic value) onChange;
-  final String? Function(dynamic value)? validator;
   final String? title;
   final bool disabled;
   final bool readOnly;
+  final bool isRequired;
 
   const DefaultWidgetBuilder({
     Key? key,
@@ -188,10 +210,10 @@ class DefaultWidgetBuilder extends StatelessWidget {
     required this.fieldType,
     required this.value,
     required this.onChange,
-    this.validator,
     this.title,
     required this.readOnly,
     required this.disabled,
+    required this.isRequired,
   }) : super(key: key);
 
   @override
@@ -202,16 +224,33 @@ class DefaultWidgetBuilder extends StatelessWidget {
           name: id,
           initialValue: value,
           decoration: decoration,
-          validator: validator,
+          validator: FormBuilderValidators.compose([
+            if (isRequired) FormBuilderValidators.required(),
+          ]),
           onChanged: onChange,
         );
       case FieldType.number:
+        return FormBuilderTextField(
+          name: id,
+          initialValue: value?.toString(),
+          decoration: decoration,
+          validator: FormBuilderValidators.compose([
+            if (isRequired) FormBuilderValidators.required(),
+            FormBuilderValidators.numeric(),
+          ]),
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          onChanged: onChange,
+        );
       case FieldType.integer:
         return FormBuilderTextField(
           name: id,
           initialValue: value?.toString(),
           decoration: decoration,
-          validator: validator,
+          validator: FormBuilderValidators.compose([
+            if (isRequired) FormBuilderValidators.required(),
+            FormBuilderValidators.integer(),
+          ]),
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: onChange,
@@ -221,7 +260,9 @@ class DefaultWidgetBuilder extends StatelessWidget {
           name: id,
           title: Text(title!),
           initialValue: value,
-          validator: validator,
+          validator: FormBuilderValidators.compose([
+            if (isRequired) FormBuilderValidators.required(),
+          ]),
           onChanged: onChange,
         );
       default:

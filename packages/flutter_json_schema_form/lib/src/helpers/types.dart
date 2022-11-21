@@ -1,5 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
-
 typedef WidgetOnChangeCallback<T> = void Function(T? value);
 typedef WidgetValidator<T> = String? Function(T? value);
 
@@ -36,7 +34,7 @@ const widgetEnumMap = {
   WidgetType.audio: 'audio',
   WidgetType.link: 'link',
   WidgetType.password: 'password',
-  WidgetType.file: 'customfile',
+  WidgetType.file: ['customfile', 'file'],
   WidgetType.card: 'card',
   WidgetType.reader: 'reader',
 };
@@ -49,10 +47,30 @@ const formatEnumMap = {
   FormatType.dateTime: 'date-time',
 };
 
+K? enumDecodeNullable<K extends Enum, V>(Map<K, V> enumValues, Object? source) {
+  if (source == null) {
+    return null;
+  }
+
+  for (var entry in enumValues.entries) {
+    final value = entry.value;
+    if (value is List) {
+      if (value.contains(source)) {
+        return entry.key;
+      }
+    }
+    if (entry.value == source) {
+      return entry.key;
+    }
+  }
+
+  return null;
+}
+
 FieldType decodeFieldType(String? type) =>
-    $enumDecodeNullable(typeEnumMap, type) ?? FieldType.string;
+    enumDecodeNullable(typeEnumMap, type) ?? FieldType.string;
 
 WidgetType decodeWidgetType(String? type) =>
-    $enumDecodeNullable(widgetEnumMap, type) ?? WidgetType.none;
+    enumDecodeNullable(widgetEnumMap, type) ?? WidgetType.none;
 
-FormatType? decodeFormatType(String? type) => $enumDecodeNullable(formatEnumMap, type);
+FormatType? decodeFormatType(String? type) => enumDecodeNullable(formatEnumMap, type);

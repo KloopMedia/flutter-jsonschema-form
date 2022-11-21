@@ -92,10 +92,10 @@ class _BooleanFieldState extends State<BooleanField> {
         fieldType: type,
         value: value,
         onChange: onChange,
-        validator: validator,
         title: title,
         disabled: disabled,
         readOnly: readOnly,
+        isRequired: isRequired,
       );
     } else {
       return FieldWrapper(
@@ -107,11 +107,11 @@ class _BooleanFieldState extends State<BooleanField> {
           widgetType: widgetType,
           value: value,
           onChange: onChange,
-          validator: validator,
           dropdownItems: widget.model.getDropdownItems(),
           radioItems: widget.model.getRadio(),
           disabled: disabled,
           readOnly: readOnly,
+          isRequired: isRequired,
         ),
       );
     }

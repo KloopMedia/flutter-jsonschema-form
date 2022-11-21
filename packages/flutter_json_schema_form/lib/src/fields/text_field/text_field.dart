@@ -96,6 +96,8 @@ class _TextFieldState extends State<TextField> {
               onChange: onChange,
               disabled: disabled,
               readOnly: readOnly,
+              isRequired: isRequired,
+              value: value,
             );
           } else {
             return DefaultWidgetBuilder(
@@ -103,9 +105,9 @@ class _TextFieldState extends State<TextField> {
               fieldType: type,
               value: value,
               onChange: onChange,
-              validator: validator,
               disabled: disabled,
               readOnly: readOnly,
+              isRequired: isRequired,
             );
           }
         } else {
@@ -114,11 +116,11 @@ class _TextFieldState extends State<TextField> {
             widgetType: widgetType,
             value: value,
             onChange: onChange,
-            validator: validator,
             dropdownItems: widget.model.getDropdownItems(),
             radioItems: widget.model.getRadio(),
             disabled: disabled,
             readOnly: readOnly,
+            isRequired: isRequired,
           );
         }
       }),

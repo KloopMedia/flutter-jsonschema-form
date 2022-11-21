@@ -117,9 +117,9 @@ class _NumberFieldState extends State<NumberField> {
               fieldType: type,
               value: value,
               onChange: onChange,
-              validator: validator,
               disabled: disabled,
               readOnly: readOnly,
+              isRequired: isRequired,
             );
           } else {
             return FormWidgetBuilder<num>(
@@ -127,11 +127,11 @@ class _NumberFieldState extends State<NumberField> {
               widgetType: widgetType,
               value: value,
               onChange: onChange,
-              validator: validator,
               dropdownItems: widget.model.getDropdownItems(),
               radioItems: widget.model.getRadio(),
               disabled: disabled,
               readOnly: readOnly,
+              isRequired: isRequired,
             );
           }
         },
