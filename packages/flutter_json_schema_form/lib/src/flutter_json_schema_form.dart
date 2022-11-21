@@ -1,8 +1,10 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_json_schema_form/src/bloc/file_bloc/file_bloc.dart';
 
-import 'bloc/form_bloc.dart' as bloc;
+import 'bloc/form_bloc/form_bloc.dart' as bloc;
 import 'helpers/helpers.dart';
 
 typedef ChangeFormCallback = Function(Map<String, dynamic> formData);
@@ -12,6 +14,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final Map<String, dynamic>? uiSchema;
   final Map<String, dynamic>? formData;
   final ChangeFormCallback? onChange;
+  final Reference? storage;
 
   const FlutterJsonSchemaForm({
     Key? key,
@@ -19,6 +22,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
     this.uiSchema,
     this.formData,
     this.onChange,
+    this.storage,
   }) : super(key: key);
 
   @override
@@ -45,11 +49,20 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => bloc.FormBloc(
-        formData: widget.formData,
-        onChangeCallback: widget.onChange,
-      ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => bloc.FormBloc(
+            formData: widget.formData,
+            onChangeCallback: widget.onChange,
+          ),
+        ),
+        BlocProvider(
+          create: (context) => FileBloc(
+            storage: widget.storage,
+          ),
+        )
+      ],
       child: SingleChildScrollView(
         child: Column(
           children: [

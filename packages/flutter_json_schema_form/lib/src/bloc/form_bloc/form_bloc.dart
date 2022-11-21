@@ -2,8 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_json_schema_form/src/helpers/helpers.dart';
 
-import '../../flutter_json_schema_form.dart';
-import '../models/models.dart';
+import '../../../flutter_json_schema_form.dart';
+import '../../models/models.dart';
 
 part 'form_event.dart';
 

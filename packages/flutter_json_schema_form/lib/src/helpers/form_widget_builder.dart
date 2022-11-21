@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_json_schema_form/src/widgets/file_widget/file_widget.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
 
@@ -85,9 +86,9 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         enabled: !disabled,
       );
     }
-    // else if (widgetModel is FileWidgetModel) {
-    //   return FormBuilderFilePicker(name: id);
-    // }
+    else if (widgetModel is FileWidgetModel) {
+      return FileWidget(name: id, decoration: decoration);
+    }
     // else if (widgetModel is AudioWidgetModel) {}
     // else if (widgetModel is FileWidgetModel) {}
     else {
@@ -269,22 +270,4 @@ class DefaultWidgetBuilder extends StatelessWidget {
         return const Text('Error');
     }
   }
-}
-
-String parseDateTime(DateTime date, TimeOfDay time) {
-  String year = date.year.toString();
-  String month = date.month.toString().padLeft(2, '0');
-  String day = date.day.toString().padLeft(2, '0');
-  String hour = time.hour.toString().padLeft(2, '0');
-  String minute = time.minute.toString().padLeft(2, '0');
-
-  return '$day-$month-$year $hour:$minute';
-}
-
-String parseDate(DateTime date) {
-  String year = date.year.toString();
-  String month = date.month.toString().padLeft(2, '0');
-  String day = date.day.toString().padLeft(2, '0');
-
-  return '$day-$month-$year';
 }
