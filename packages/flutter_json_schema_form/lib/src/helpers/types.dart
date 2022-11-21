@@ -5,7 +5,21 @@ typedef WidgetValidator<T> = String? Function(T? value);
 
 enum FieldType { object, array, string, number, integer, boolean }
 
-enum WidgetType { radio, select, textarea }
+enum WidgetType {
+  radio,
+  select,
+  textarea,
+  // audio,
+  // link,
+  // password,
+  // email,
+  // date,
+  // dateTime,
+  // file,
+  // card,
+  // reader,
+  none,
+}
 
 const typeEnumMap = {
   FieldType.object: 'object',
@@ -20,8 +34,17 @@ const widgetEnumMap = {
   WidgetType.select: 'select',
   WidgetType.textarea: 'textarea',
   WidgetType.radio: 'radio',
+  // WidgetType.audio: 'audio',
+  // WidgetType.link: 'link',
+  // WidgetType.password: 'password',
+  // WidgetType.email: 'email',
+  // WidgetType.date: 'date',
+  // WidgetType.dateTime: 'datetime',
+  // WidgetType.file: 'customfile',
+  // WidgetType.card: 'card',
+  // WidgetType.reader: 'reader',
 };
 
-FieldType? decodeFieldType(String? type) => $enumDecodeNullable(typeEnumMap, type);
+FieldType decodeFieldType(String? type) => $enumDecodeNullable(typeEnumMap, type) ?? FieldType.string;
 
-WidgetType? decodeWidgetType(String? type) => $enumDecodeNullable(widgetEnumMap, type);
+WidgetType decodeWidgetType(String? type) => $enumDecodeNullable(widgetEnumMap, type) ?? WidgetType.none;

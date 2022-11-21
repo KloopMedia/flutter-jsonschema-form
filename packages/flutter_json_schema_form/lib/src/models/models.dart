@@ -6,3 +6,4 @@ export 'number_field_model.dart';
 export 'boolean_field_model.dart';
 export 'path_model.dart';
 export 'dependency_model.dart';
+export 'widget_model.dart';

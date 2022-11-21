@@ -1,3 +1,5 @@
+import 'package:flutter_json_schema_form/src/models/widget_model.dart';
+
 import '../models/models.dart';
 import 'helpers.dart';
 
@@ -78,7 +80,7 @@ class FormSerializer {
           title: schema['title'],
           description: schema['description'],
           fieldType: type,
-          widgetType: decodeWidgetType(uiSchema?['ui:widget']),
+          widgetType: WidgetModel.fromUiSchema(uiSchema),
           enumItems: schema['enum'],
           enumNames: schema['enumNames'],
           path: newPath,
@@ -173,12 +175,8 @@ class FormSerializer {
     return uiSchema['ui:order'];
   }
 
-  static FieldType? getFieldType(Map<String, dynamic> schema) {
-    if (schema.containsKey('type')) {
-      return decodeFieldType(schema['type']);
-    } else {
-      return FieldType.string;
-    }
+  static FieldType getFieldType(Map<String, dynamic> schema) {
+    return decodeFieldType(schema['type']);
   }
 
   static List<FieldModel> sortFields(List<FieldModel> fields, List<String>? order) {

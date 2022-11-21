@@ -13,7 +13,6 @@ class ArrayModel extends FieldModel {
     required String id,
     String? title,
     String? description,
-    WidgetType? widgetType,
     this.itemType,
     required PathModel path,
   })  : isFixed = false,
@@ -23,7 +22,7 @@ class ArrayModel extends FieldModel {
             title: title,
             description: description,
             fieldType: FieldType.array,
-            widgetType: widgetType,
+            widgetType: const NullModel(),
             path: path,
             isRequired: false);
 
@@ -31,7 +30,6 @@ class ArrayModel extends FieldModel {
     required String id,
     String? title,
     String? description,
-    WidgetType? widgetType,
     required this.items,
     required PathModel path,
   })  : itemType = null,
@@ -41,7 +39,7 @@ class ArrayModel extends FieldModel {
           title: title,
           description: description,
           fieldType: FieldType.array,
-          widgetType: widgetType,
+          widgetType: const NullModel(),
           path: path,
           isRequired: false,
         );

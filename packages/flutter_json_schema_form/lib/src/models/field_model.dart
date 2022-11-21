@@ -8,8 +8,8 @@ abstract class FieldModel {
   final String id;
   final String? title;
   final String? description;
-  final FieldType? fieldType;
-  final WidgetType? widgetType;
+  final FieldType fieldType;
+  final WidgetModel widgetType;
   final PathModel path;
   final List? enumItems;
   final List? enumNames;
@@ -19,21 +19,21 @@ abstract class FieldModel {
     required this.id,
     this.title,
     this.description,
-    this.fieldType,
-    WidgetType? widgetType,
+    required this.fieldType,
+    required widgetType,
     required this.path,
     this.enumItems,
     this.enumNames,
     required this.isRequired,
-  }) : widgetType = widgetType == null && enumItems != null ? WidgetType.select : widgetType;
+  }): widgetType = widgetType is NullModel && enumItems != null ? const SelectModel() : widgetType;
 
   factory FieldModel({
     required String id,
     required PathModel path,
     String? title,
     String? description,
-    FieldType? fieldType,
-    WidgetType? widgetType,
+    required FieldType fieldType,
+    required WidgetModel widgetType,
     List? enumItems,
     List? enumNames,
     bool isRequired = false,

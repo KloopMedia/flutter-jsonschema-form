@@ -9,7 +9,7 @@ class TextFieldModel extends FieldModel {
     required String id,
     String? title,
     String? description,
-    WidgetType? widgetType,
+    required WidgetModel widgetType,
     List? enumItems,
     List? enumNames,
     required bool isRequired,

@@ -9,7 +9,7 @@ class BooleanFieldModel extends FieldModel {
     required String id,
     String? title,
     String? description,
-    WidgetType? widgetType,
+    required WidgetModel widgetType,
     List? enumNames,
     required PathModel path,
     required bool isRequired,
@@ -22,10 +22,10 @@ class BooleanFieldModel extends FieldModel {
           widgetType: widgetType,
           path: path,
           isRequired: isRequired,
-          enumItems: widgetType == WidgetType.select || widgetType == WidgetType.radio
+          enumItems: widgetType is SelectModel || widgetType is RadioModel
               ? const [true, false]
               : null,
-          enumNames: widgetType == WidgetType.select || widgetType == WidgetType.radio
+          enumNames: widgetType is SelectModel || widgetType is RadioModel
               ? enumNames ?? const ["Yes", "No"]
               : null,
         );

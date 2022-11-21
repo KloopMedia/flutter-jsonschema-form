@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_json_schema_form/src/helpers/helpers.dart';
+
+import '../models/models.dart';
+import 'helpers.dart';
 
 class FormWidgetBuilder<T> extends StatelessWidget {
   final String id;
-  final WidgetType widgetType;
+  final WidgetModel widgetType;
   final dynamic value;
   final void Function(dynamic value) onChange;
   final String? Function(dynamic value)? validator;
@@ -25,7 +27,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (widgetType == WidgetType.select) {
+    if (widgetType is SelectModel) {
       return FormBuilderDropdown<T>(
         name: id,
         initialValue: value,
@@ -34,7 +36,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         items: dropdownItems!,
         onChanged: onChange,
       );
-    } else if (widgetType == WidgetType.radio) {
+    } else if (widgetType is RadioModel) {
       return FormBuilderRadioGroup<T>(
         name: id,
         initialValue: value,
@@ -44,12 +46,13 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         options: radioItems!,
         onChanged: onChange,
       );
-    } else if (widgetType == WidgetType.textarea) {
+    } else if (widgetType is TextAreaModel) {
       return FormBuilderTextField(
         name: id,
         initialValue: value,
         decoration: decoration,
         minLines: 4,
+        maxLines: 4,
         validator: validator,
         onChanged: onChange,
       );

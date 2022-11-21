@@ -84,29 +84,29 @@ class _BooleanFieldState extends State<BooleanField> {
 
   @override
   Widget build(BuildContext context) {
-    if (widgetType != null) {
+    if (widgetType is NullModel) {
+      return DefaultWidgetBuilder(
+        id: id,
+        fieldType: type,
+        value: value,
+        onChange: onChange,
+        validator: validator,
+        title: title,
+      );
+    } else {
       return FieldWrapper(
         title: title,
         description: description,
         isRequired: isRequired,
         child: FormWidgetBuilder<bool>(
           id: id,
-          widgetType: widgetType!,
+          widgetType: widgetType,
           value: value,
           onChange: onChange,
           validator: validator,
           dropdownItems: widget.model.getDropdownItems(),
           radioItems: widget.model.getRadio(),
         ),
-      );
-    } else {
-      return DefaultWidgetBuilder(
-        id: id,
-        fieldType: type!,
-        value: value,
-        onChange: onChange,
-        validator: validator,
-        title: title,
       );
     }
   }

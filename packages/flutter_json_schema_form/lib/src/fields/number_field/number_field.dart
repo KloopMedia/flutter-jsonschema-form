@@ -110,23 +110,23 @@ class _NumberFieldState extends State<NumberField> {
       isRequired: isRequired,
       child: Builder(
         builder: (context) {
-          if (widgetType != null) {
+          if (widgetType is NullModel) {
+            return DefaultWidgetBuilder(
+              id: id,
+              fieldType: type,
+              value: value,
+              onChange: onChange,
+              validator: validator,
+            );
+          } else {
             return FormWidgetBuilder<num>(
               id: id,
-              widgetType: widgetType!,
+              widgetType: widgetType,
               value: value,
               onChange: onChange,
               validator: validator,
               dropdownItems: widget.model.getDropdownItems(),
               radioItems: widget.model.getRadio(),
-            );
-          } else {
-            return DefaultWidgetBuilder(
-              id: id,
-              fieldType: type!,
-              value: value,
-              onChange: onChange,
-              validator: validator,
             );
           }
         },
