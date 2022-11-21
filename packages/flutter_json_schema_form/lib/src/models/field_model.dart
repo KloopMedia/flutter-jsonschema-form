@@ -44,6 +44,7 @@ abstract class FieldModel {
     dynamic defaultValue,
     bool? disabled,
     bool? readOnly,
+    FormatType? format,
   }) {
     switch (fieldType) {
       case FieldType.string:
@@ -59,6 +60,7 @@ abstract class FieldModel {
           defaultValue: defaultValue,
           disabled: disabled,
           readOnly: readOnly,
+          format: format,
         );
       case FieldType.number:
       case FieldType.integer:
@@ -102,6 +104,7 @@ abstract class FieldModel {
           defaultValue: defaultValue,
           disabled: disabled,
           readOnly: readOnly,
+          format: format,
         );
     }
   }

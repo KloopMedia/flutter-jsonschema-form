@@ -16,7 +16,7 @@ class NumberFieldModel extends FieldModel {
     required bool isRequired,
     required bool? disabled,
     required bool? readOnly,
-    this.defaultValue,
+    required this.defaultValue,
   }) : super.init(
           id: id,
           title: title,

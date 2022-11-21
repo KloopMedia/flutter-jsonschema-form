@@ -8,11 +8,8 @@ abstract class WidgetModel {
   });
 
   factory WidgetModel.fromUiSchema(Map<String, dynamic>? uiSchema) {
-    if (uiSchema == null) {
-      return const NullWidgetModel();
-    }
-    final type = decodeWidgetType(uiSchema['ui:widget']);
-    final Map<String, dynamic>? options = uiSchema['ui:options'];
+    final WidgetType type = decodeWidgetType(uiSchema?['ui:widget']);
+    final Map<String, dynamic>? options = uiSchema?['ui:options'];
 
     switch (type) {
       case WidgetType.radio:
@@ -23,12 +20,6 @@ abstract class WidgetModel {
         return const LinkWidgetModel();
       case WidgetType.password:
         return const PasswordWidgetModel();
-      case WidgetType.email:
-        return const EmailWidgetModel();
-      case WidgetType.date:
-        return const DateWidgetModel();
-      case WidgetType.dateTime:
-        return const DateTimeWidgetModel();
       case WidgetType.textarea:
         final rows = getOption<int>(options, 'rows');
         return TextAreaWidgetModel(rows: rows);
@@ -59,18 +50,6 @@ class FileWidgetModel extends WidgetModel {
       : private = private ?? false,
         multiple = multiple ?? false,
         super(type: WidgetType.file);
-}
-
-class DateTimeWidgetModel extends WidgetModel {
-  const DateTimeWidgetModel() : super(type: WidgetType.dateTime);
-}
-
-class DateWidgetModel extends WidgetModel {
-  const DateWidgetModel() : super(type: WidgetType.date);
-}
-
-class EmailWidgetModel extends WidgetModel {
-  const EmailWidgetModel() : super(type: WidgetType.email);
 }
 
 class PasswordWidgetModel extends WidgetModel {

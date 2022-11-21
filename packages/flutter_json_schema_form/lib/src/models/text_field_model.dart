@@ -5,6 +5,7 @@ import 'models.dart';
 
 class TextFieldModel extends FieldModel {
   final String? defaultValue;
+  final FormatType? format;
 
   const TextFieldModel({
     required String id,
@@ -17,7 +18,8 @@ class TextFieldModel extends FieldModel {
     required PathModel path,
     required bool? disabled,
     required bool? readOnly,
-    this.defaultValue,
+    required this.defaultValue,
+    required this.format,
   }) : super.init(
           id: id,
           title: title,
@@ -46,6 +48,7 @@ class TextFieldModel extends FieldModel {
       defaultValue: defaultValue,
       disabled: disabled,
       readOnly: readOnly,
+      format: format,
     );
   }
 

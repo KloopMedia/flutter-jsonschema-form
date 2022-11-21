@@ -88,6 +88,7 @@ class FormSerializer {
           defaultValue: schema['default'],
           disabled: uiSchema?['ui:disabled'],
           readOnly: uiSchema?['ui:readonly'],
+          format: decodeFormatType(schema['format']),
         );
       default:
         throw Exception("Model doesn't exist for type $type");

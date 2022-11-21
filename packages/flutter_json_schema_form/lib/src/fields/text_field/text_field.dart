@@ -30,6 +30,7 @@ class _TextFieldState extends State<TextField> {
   late final value = widget.value ?? defaultValue;
   late final disabled = widget.model.disabled;
   late final readOnly = widget.model.readOnly;
+  late final format = widget.model.format;
   late bloc.FormBloc _bloc;
 
   void onChange(value) {
@@ -88,15 +89,25 @@ class _TextFieldState extends State<TextField> {
       isRequired: isRequired,
       child: Builder(builder: (context) {
         if (widgetType is NullWidgetModel) {
-          return DefaultWidgetBuilder(
-            id: id,
-            fieldType: type,
-            value: value,
-            onChange: onChange,
-            validator: validator,
-            disabled: disabled,
-            readOnly: readOnly,
-          );
+          if (format != null) {
+            return TextFormatWidgetBuilder(
+              type: format!,
+              id: id,
+              onChange: onChange,
+              disabled: disabled,
+              readOnly: readOnly,
+            );
+          } else {
+            return DefaultWidgetBuilder(
+              id: id,
+              fieldType: type,
+              value: value,
+              onChange: onChange,
+              validator: validator,
+              disabled: disabled,
+              readOnly: readOnly,
+            );
+          }
         } else {
           return FormWidgetBuilder<String>(
             id: id,

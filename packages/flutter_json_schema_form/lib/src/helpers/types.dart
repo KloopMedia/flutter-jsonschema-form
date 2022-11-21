@@ -12,14 +12,13 @@ enum WidgetType {
   audio,
   link,
   password,
-  email,
-  date,
-  dateTime,
   file,
   card,
   reader,
   none,
 }
+
+enum FormatType { email, uri, file, date, dateTime }
 
 const typeEnumMap = {
   FieldType.object: 'object',
@@ -37,14 +36,23 @@ const widgetEnumMap = {
   WidgetType.audio: 'audio',
   WidgetType.link: 'link',
   WidgetType.password: 'password',
-  WidgetType.email: 'email',
-  WidgetType.date: 'date',
-  WidgetType.dateTime: 'datetime',
   WidgetType.file: 'customfile',
   WidgetType.card: 'card',
   WidgetType.reader: 'reader',
 };
 
-FieldType decodeFieldType(String? type) => $enumDecodeNullable(typeEnumMap, type) ?? FieldType.string;
+const formatEnumMap = {
+  FormatType.email: 'email',
+  FormatType.uri: 'uri',
+  FormatType.file: 'data-url',
+  FormatType.date: 'date',
+  FormatType.dateTime: 'date-time',
+};
 
-WidgetType decodeWidgetType(String? type) => $enumDecodeNullable(widgetEnumMap, type) ?? WidgetType.none;
+FieldType decodeFieldType(String? type) =>
+    $enumDecodeNullable(typeEnumMap, type) ?? FieldType.string;
+
+WidgetType decodeWidgetType(String? type) =>
+    $enumDecodeNullable(widgetEnumMap, type) ?? WidgetType.none;
+
+FormatType? decodeFormatType(String? type) => $enumDecodeNullable(formatEnumMap, type);
