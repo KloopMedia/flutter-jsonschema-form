@@ -1,74 +1,73 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_json_schema_form/src/models/file_model.dart';
-import 'package:form_builder_file_picker/form_builder_file_picker.dart';
+import 'package:mime/mime.dart';
 
 part 'file_event.dart';
 part 'file_state.dart';
 
 class FileBloc extends Bloc<FileEvent, FileState> {
-  final Reference? storage;
+  final Reference storage;
 
-  FileBloc({value, required this.storage}) : super(FilesInitial(files: _parseValue(value))) {
+  FileBloc({
+    required dynamic value,
+    required this.storage,
+  }) : super(FilesInitial(files: _parseValue(value))) {
     on<AddFileEvent>(onAddFileEvent);
     on<RemoveFileEvent>(onRemoveFileEvent);
     on<ViewFileEvent>(onViewFileEvent);
+    on<UploadSuccessEvent>(onUploadSuccessEvent);
   }
 
-  static List<FileModel> _parseValue(value) {
+  static List<Reference> _parseValue(dynamic value) {
+    Iterable<MapEntry> entries;
+    if (value is String) {
+      final Map<String, dynamic> parsedData = json.decode(value);
+      entries = parsedData.entries;
+    } else if (value is Map) {
+      entries = value.entries;
+    } else {
+      entries = [];
+    }
     return [];
+    // return entries
+    //     .map((file) => FileModel(
+    //           source: FileSource.web,
+    //           name: file.key,
+    //           type: FileType.media,
+    //         ))
+    //     .toList();
   }
 
   void onAddFileEvent(AddFileEvent event, Emitter<FileState> emit) async {
-    final ref = storage;
     final name = event.name;
     final bytes = event.bytes;
-    final type = event.type;
-
-    // if (ref == null) {
-    //   emit(
-    //     FileError(
-    //       error: Exception('FireBase Storage reference is null!'),
-    //       files: state.files,
-    //     ),
-    //   );
-    //   return;
-    // }
 
     if (bytes != null) {
+      final mime = lookupMimeType(name);
+      final ref = storage.child(name);
+
       final metadata = SettableMetadata(
-        contentType: 'image/jpeg',
+        contentType: mime,
       );
 
-      // final uploadTask = ref.putData(bytes, metadata);
-      // emit.forEach(
-      //   uploadTask.snapshotEvents,
-      //   onData: (snapshot) {
-      //     final progress = snapshot.bytesTransferred / snapshot.totalBytes;
-      //     final name = snapshot.ref.name;
-      //     return FileLoading(files: state.files, name: name, progress: progress);
-      //   },
-      //   onError: (error, trace) {
-      //     String errorMessage;
-      //     if (error is FirebaseException && error.code == 'canceled') {
-      //       errorMessage = 'Upload canceled.';
-      //     } else {
-      //       errorMessage = 'Something went wrong.';
-      //     }
-      //     return FileError(
-      //       error: Exception(errorMessage),
-      //       files: state.files,
-      //     );
-      //   },
-      // );
-      final updatedFiles = [...state.files, FileModel(source: FileSource.local, name: name, type: type)];
-      emit(FilesModified(files: updatedFiles));
+      final uploadTask = ref.putData(bytes, metadata);
+
+      emit(FileLoading(files: state.files, uploadTask: uploadTask));
     }
   }
 
   void onRemoveFileEvent(RemoveFileEvent event, Emitter<FileState> emit) {}
 
-  void onViewFileEvent(ViewFileEvent event, Emitter<FileState> emit) {}
+  void onViewFileEvent(ViewFileEvent event, Emitter<FileState> emit) {
+    emit(FilePreview(files: state.files, file: event.file));
+  }
+
+  void onUploadSuccessEvent(UploadSuccessEvent event, Emitter<FileState> emit) {
+    final files = [...state.files, event.file];
+    emit(FilesModified(files: files));
+  }
 }

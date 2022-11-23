@@ -1,17 +1,25 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_json_schema_form/src/bloc/file_bloc/file_bloc.dart';
-import 'package:form_builder_file_picker/form_builder_file_picker.dart';
+import 'package:flutter_json_schema_form/src/bloc/bloc.dart';
+import 'package:flutter_json_schema_form/src/widgets/file_widget/file_list.dart';
+import 'package:flutter_json_schema_form/src/widgets/file_widget/file_selector.dart';
+import 'package:flutter_json_schema_form/src/widgets/file_widget/file_viewer.dart';
+import 'package:flutter_json_schema_form/src/widgets/file_widget/upload_task_manager.dart';
 
 class FileWidget extends StatefulWidget {
   final String name;
-  final InputDecoration decoration;
+  final InputDecoration? decoration;
+  final dynamic initialValue;
+  final Reference storage;
 
   const FileWidget({
     Key? key,
     required this.name,
-    required this.decoration,
+    this.initialValue,
+    this.decoration,
+    required this.storage,
   }) : super(key: key);
 
   @override
@@ -21,64 +29,76 @@ class FileWidget extends StatefulWidget {
 class _FileWidgetState extends State<FileWidget> {
   @override
   Widget build(BuildContext context) {
-    return FormBuilderField(
-      name: widget.name,
-      builder: (field) {
-        return InputDecorator(
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            errorText: field.errorText,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ElevatedButton(
-                onPressed: () async {
-                  final bloc = context.read<FileBloc>();
-                  final picker = await FilePicker.platform.pickFiles(
-                    allowCompression: true,
-                    allowMultiple: false,
-                  );
-                  final files = picker?.files ?? [];
-                  if (files.isNotEmpty) {
-                    final fileName = files.first.name;
-                    final bytes = files.first.bytes;
-                    const type = FileType.media;
-                    bloc.add(AddFileEvent(name: fileName, bytes: bytes, type: type));
-                  }
-                },
-                child: const Text('File'),
-              ),
-              BlocBuilder<FileBloc, FileState>(
-                builder: (context, state) {
-                  if (state is FileError) {
-                    return Text('Error');
-                  } else if (state is FileLoading) {
-                    return Row(
-                      children: [
-                        Flexible(
-                          child: Text(state.name, softWrap: true, overflow: TextOverflow.ellipsis),
-                        ),
-                        Expanded(child: LinearProgressIndicator(value: state.progress)),
-                        Text('${state.progress.toInt() * 100}'),
-                      ],
-                    );
-                  } else {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: state.files.length,
-                      itemBuilder: (context, index) {
-                        return Text(state.files[index].name);
-                      },
-                    );
-                  }
-                },
-              ),
-            ],
-          ),
-        );
+    return BlocProvider(
+      create: (context) => FileBloc(
+        value: widget.initialValue,
+        storage: widget.storage,
+      ),
+      child: FormBuilderField(
+        name: widget.name,
+        builder: (field) {
+          return InputDecorator(
+            decoration: widget.decoration ??
+                InputDecoration(
+                  border: InputBorder.none,
+                  errorText: field.errorText,
+                ),
+            child: const FileFormField(),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class FileFormField extends StatelessWidget {
+  const FileFormField({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<FileBloc, FileState>(
+      listener: (context, state) {
+        if (state is FileError) {
+          print(state.error);
+        }
+        if (state is FilePreview) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return FileViewer(file: state.file);
+            },
+          );
+        }
       },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          FileSelector(
+            onSelect: (files) {
+              if (files.isNotEmpty) {
+                final fileName = files.first.name;
+                final bytes = files.first.bytes;
+
+                context.read<FileBloc>().add(AddFileEvent(name: fileName, bytes: bytes));
+              }
+            },
+          ),
+          UploadTaskManager(
+            onSuccess: (file) {
+              context.read<FileBloc>().add(UploadSuccessEvent(file));
+            },
+          ),
+          FileList(
+            onPreview: (file, index) {
+              context.read<FileBloc>().add(ViewFileEvent(file, index));
+            },
+            onRemove: (file, index) {
+              context.read<FileBloc>().add(RemoveFileEvent(file, index));
+            },
+            onCopy: (file, index) {},
+          ),
+        ],
+      ),
     );
   }
 }

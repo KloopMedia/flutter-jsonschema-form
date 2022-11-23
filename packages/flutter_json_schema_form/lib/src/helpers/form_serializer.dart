@@ -165,7 +165,7 @@ class FormSerializer {
 
   static List<String> getRequiredFields(Map<String, dynamic> schema) {
     if (schema.containsKey('required')) {
-      return schema['required'];
+      return (schema['required'] as List<dynamic>).cast();
     } else {
       return [];
     }
@@ -175,7 +175,7 @@ class FormSerializer {
     if (uiSchema == null || !uiSchema.containsKey('ui:order')) {
       return [];
     }
-    return uiSchema['ui:order'];
+    return (uiSchema['ui:order'] as List<dynamic>).cast();
   }
 
   static FieldType getFieldType(Map<String, dynamic> schema) {
@@ -235,7 +235,7 @@ class FormSerializer {
       final id = field.key;
       final value = field.value;
       if (value.containsKey('oneOf')) {
-        List<Map<String, dynamic>> dependencies = value['oneOf'];
+        List<Map<String, dynamic>> dependencies = (value['oneOf'] as List<dynamic>).cast();
         for (final dependency in dependencies) {
           Map<String, dynamic> fields = Map.of(dependency['properties']);
           final Map<String, dynamic>? condition = fields.remove(id);

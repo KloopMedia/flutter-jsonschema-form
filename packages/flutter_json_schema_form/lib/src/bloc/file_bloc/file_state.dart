@@ -1,7 +1,7 @@
 part of 'file_bloc.dart';
 
 abstract class FileState extends Equatable {
-  final List<FileModel> files;
+  final List<Reference> files;
 
   const FileState({required this.files});
 }
@@ -21,17 +21,12 @@ class FilesModified extends FileState {
 }
 
 class FileLoading extends FileState {
-  final String name;
-  final double progress;
+  final UploadTask uploadTask;
 
-  const FileLoading({
-    required super.files,
-    required this.name,
-    required this.progress,
-  });
+  const FileLoading({required super.files, required this.uploadTask});
 
   @override
-  List<Object> get props => [progress, files];
+  List<Object> get props => [uploadTask, files];
 }
 
 class FileError extends FileState {
@@ -41,4 +36,13 @@ class FileError extends FileState {
 
   @override
   List<Object?> get props => [files, error];
+}
+
+class FilePreview extends FileState {
+  final Reference file;
+
+  const FilePreview({required super.files, required this.file});
+
+  @override
+  List<Object?> get props => [file, files];
 }

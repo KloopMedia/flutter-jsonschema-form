@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_json_schema_form/src/helpers/helpers.dart';
 
 import '../../../flutter_json_schema_form.dart';
@@ -11,9 +12,11 @@ part 'form_state.dart';
 
 class FormBloc extends Bloc<FormEvent, FormState> {
   final ChangeFormCallback? onChangeCallback;
+  final Reference? storage;
 
   FormBloc({
     Map<String, dynamic>? formData,
+    this.storage,
     this.onChangeCallback,
   }) : super(FormInitial(formData ?? {})) {
     on<ChangeFormEvent>(_onChangeFormEvent);

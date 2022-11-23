@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_json_schema_form/src/widgets/file_widget/file_widget.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
 
+import '../bloc/bloc.dart';
 import '../models/models.dart';
 import 'helpers.dart';
 
@@ -85,9 +87,12 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         onChanged: onChange,
         enabled: !disabled,
       );
-    }
-    else if (widgetModel is FileWidgetModel) {
-      return FileWidget(name: id, decoration: decoration);
+    } else if (widgetModel is FileWidgetModel) {
+      final storage = context.read<FormBloc>().storage;
+      if (storage == null) {
+        return const Text('Error: Pass firebase storage reference to form!');
+      }
+      return FileWidget(name: id, decoration: decoration, initialValue: value, storage: storage);
     }
     // else if (widgetModel is AudioWidgetModel) {}
     // else if (widgetModel is FileWidgetModel) {}
