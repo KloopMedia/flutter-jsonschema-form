@@ -13,13 +13,17 @@ class FileWidget extends StatefulWidget {
   final InputDecoration? decoration;
   final dynamic initialValue;
   final Reference storage;
+  final bool allowMultiple;
+  final void Function(String? value) onChanged;
 
   const FileWidget({
     Key? key,
     required this.name,
+    required this.storage,
+    required this.onChanged,
     this.initialValue,
     this.decoration,
-    required this.storage,
+    this.allowMultiple = false,
   }) : super(key: key);
 
   @override
@@ -33,6 +37,8 @@ class _FileWidgetState extends State<FileWidget> {
       create: (context) => FileBloc(
         value: widget.initialValue,
         storage: widget.storage,
+        allowMultiple: widget.allowMultiple,
+        onChanged: widget.onChanged,
       ),
       child: FormBuilderField(
         name: widget.name,

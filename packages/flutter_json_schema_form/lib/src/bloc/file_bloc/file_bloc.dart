@@ -7,39 +7,54 @@ import 'package:flutter/foundation.dart';
 import 'package:mime/mime.dart';
 
 part 'file_event.dart';
+
 part 'file_state.dart';
 
 class FileBloc extends Bloc<FileEvent, FileState> {
   final Reference storage;
+  final bool allowMultiple;
+  final void Function(String? value) onChanged;
 
   FileBloc({
     required dynamic value,
     required this.storage,
-  }) : super(FilesInitial(files: _parseValue(value))) {
+    required this.allowMultiple,
+    required this.onChanged,
+  }) : super(FilesInitial(files: _decodeValue(storage, value))) {
     on<AddFileEvent>(onAddFileEvent);
     on<RemoveFileEvent>(onRemoveFileEvent);
     on<ViewFileEvent>(onViewFileEvent);
     on<UploadSuccessEvent>(onUploadSuccessEvent);
   }
 
-  static List<Reference> _parseValue(dynamic value) {
-    Iterable<MapEntry> entries;
+  static List<Reference> _decodeValue(Reference storage, dynamic value) {
+    Iterable<MapEntry<String, String>> entries;
     if (value is String) {
-      final Map<String, dynamic> parsedData = json.decode(value);
-      entries = parsedData.entries;
+      final decodedValue = Map<String, String>.from(jsonDecode(value));
+      entries = decodedValue.entries;
     } else if (value is Map) {
-      entries = value.entries;
+      entries = value.entries.cast();
     } else {
       entries = [];
     }
-    return [];
-    // return entries
-    //     .map((file) => FileModel(
-    //           source: FileSource.web,
-    //           name: file.key,
-    //           type: FileType.media,
-    //         ))
-    //     .toList();
+
+    final files = entries.map((file) => storage.storage.ref(file.value)).toList();
+
+    return files;
+  }
+
+  static String? _encodeValue(List<Reference> files) {
+    if (files.isEmpty) {
+      return null;
+    }
+
+    final Map<String, String> value = {};
+    for (final file in files) {
+      value[file.name] = file.fullPath;
+    }
+
+    final encodedValue = jsonEncode(value);
+    return encodedValue;
   }
 
   void onAddFileEvent(AddFileEvent event, Emitter<FileState> emit) async {
@@ -60,14 +75,25 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     }
   }
 
-  void onRemoveFileEvent(RemoveFileEvent event, Emitter<FileState> emit) {}
+  void onRemoveFileEvent(RemoveFileEvent event, Emitter<FileState> emit) {
+    final files = List.of(state.files);
+    files.removeAt(event.index);
+    emit(FilesModified(files: files));
+    onChanged(_encodeValue(files));
+  }
 
   void onViewFileEvent(ViewFileEvent event, Emitter<FileState> emit) {
     emit(FilePreview(files: state.files, file: event.file));
   }
 
   void onUploadSuccessEvent(UploadSuccessEvent event, Emitter<FileState> emit) {
-    final files = [...state.files, event.file];
+    List<Reference> files;
+    if (allowMultiple) {
+      files = [...state.files, event.file];
+    } else {
+      files = [event.file];
+    }
     emit(FilesModified(files: files));
+    onChanged(_encodeValue(files));
   }
 }

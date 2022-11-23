@@ -92,10 +92,18 @@ class FormWidgetBuilder<T> extends StatelessWidget {
       if (storage == null) {
         return const Text('Error: Pass firebase storage reference to form!');
       }
-      return FileWidget(name: id, decoration: decoration, initialValue: value, storage: storage);
+      final privacyPath = widgetModel.private ? 'private' : 'public';
+      final privateStorage = storage.storage.ref('$privacyPath/${storage.fullPath}');
+      return FileWidget(
+        name: id,
+        decoration: decoration,
+        initialValue: value,
+        storage: privateStorage,
+        onChanged: onChange,
+        allowMultiple: widgetModel.multiple,
+      );
     }
     // else if (widgetModel is AudioWidgetModel) {}
-    // else if (widgetModel is FileWidgetModel) {}
     else {
       return const Text('Error');
     }
