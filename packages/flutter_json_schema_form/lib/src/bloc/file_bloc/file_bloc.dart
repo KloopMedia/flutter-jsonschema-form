@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:mime/mime.dart';
 
 part 'file_event.dart';
-
 part 'file_state.dart';
 
 class FileBloc extends Bloc<FileEvent, FileState> {
@@ -24,7 +23,9 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     on<AddFileEvent>(onAddFileEvent);
     on<RemoveFileEvent>(onRemoveFileEvent);
     on<ViewFileEvent>(onViewFileEvent);
+    on<CloseFileViewerEvent>(onCloseFileViewerEvent);
     on<UploadSuccessEvent>(onUploadSuccessEvent);
+    on<UploadFailEvent>(onUploadFailEvent);
   }
 
   static List<Reference> _decodeValue(Reference storage, dynamic value) {
@@ -70,7 +71,6 @@ class FileBloc extends Bloc<FileEvent, FileState> {
       );
 
       final uploadTask = ref.putData(bytes, metadata);
-
       emit(FileLoading(files: state.files, uploadTask: uploadTask));
     }
   }
@@ -79,21 +79,31 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     final files = List.of(state.files);
     files.removeAt(event.index);
     emit(FilesModified(files: files));
-    onChanged(_encodeValue(files));
+    final value = _encodeValue(files);
+    onChanged(value);
   }
 
   void onViewFileEvent(ViewFileEvent event, Emitter<FileState> emit) {
     emit(FilePreview(files: state.files, file: event.file));
   }
 
+  void onCloseFileViewerEvent(CloseFileViewerEvent event, Emitter<FileState> emit) {
+    emit(FilesModified(files: state.files));
+  }
+
   void onUploadSuccessEvent(UploadSuccessEvent event, Emitter<FileState> emit) {
     List<Reference> files;
     if (allowMultiple) {
-      files = [...state.files, event.file];
+      files = [event.file, ...state.files];
     } else {
       files = [event.file];
     }
     emit(FilesModified(files: files));
-    onChanged(_encodeValue(files));
+    final value = _encodeValue(files);
+    onChanged(value);
+  }
+
+  void onUploadFailEvent(UploadFailEvent event, Emitter<FileState> emit) {
+    emit(FilesModified(files: state.files));
   }
 }

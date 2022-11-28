@@ -1,79 +1,31 @@
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_json_schema_form/src/bloc/bloc.dart';
-import 'package:flutter_json_schema_form/src/widgets/file_widget/file_list.dart';
-import 'package:flutter_json_schema_form/src/widgets/file_widget/file_selector.dart';
-import 'package:flutter_json_schema_form/src/widgets/file_widget/file_viewer.dart';
-import 'package:flutter_json_schema_form/src/widgets/file_widget/upload_task_manager.dart';
 
-class FileWidget extends StatefulWidget {
-  final String name;
-  final InputDecoration? decoration;
-  final dynamic initialValue;
-  final Reference storage;
-  final bool allowMultiple;
-  final void Function(String? value) onChanged;
+import '../../bloc/bloc.dart';
+import 'file_list.dart';
+import 'file_selector.dart';
+import 'file_viewer.dart';
+import 'upload_task_manager.dart';
 
-  const FileWidget({
-    Key? key,
-    required this.name,
-    required this.storage,
-    required this.onChanged,
-    this.initialValue,
-    this.decoration,
-    this.allowMultiple = false,
-  }) : super(key: key);
-
-  @override
-  State<FileWidget> createState() => _FileWidgetState();
-}
-
-class _FileWidgetState extends State<FileWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => FileBloc(
-        value: widget.initialValue,
-        storage: widget.storage,
-        allowMultiple: widget.allowMultiple,
-        onChanged: widget.onChanged,
-      ),
-      child: FormBuilderField(
-        name: widget.name,
-        builder: (field) {
-          return InputDecorator(
-            decoration: widget.decoration ??
-                InputDecoration(
-                  border: InputBorder.none,
-                  errorText: field.errorText,
-                ),
-            child: const FileFormField(),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class FileFormField extends StatelessWidget {
-  const FileFormField({Key? key}) : super(key: key);
+class FileWidget extends StatelessWidget {
+  const FileWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<FileBloc, FileState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is FileError) {
           print(state.error);
         }
         if (state is FilePreview) {
-          showDialog(
+          final bloc = context.read<FileBloc>();
+          await showDialog(
             context: context,
             builder: (context) {
               return FileViewer(file: state.file);
             },
           );
+          bloc.add(const CloseFileViewerEvent());
         }
       },
       child: Column(
@@ -92,6 +44,9 @@ class FileFormField extends StatelessWidget {
           UploadTaskManager(
             onSuccess: (file) {
               context.read<FileBloc>().add(UploadSuccessEvent(file));
+            },
+            onFail: () {
+              context.read<FileBloc>().add(const UploadFailEvent());
             },
           ),
           FileList(

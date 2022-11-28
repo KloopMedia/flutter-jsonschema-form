@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_json_schema_form/src/widgets/file_widget/file_widget.dart';
+import 'package:flutter_json_schema_form/src/widgets/file_widget/file_form_field.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
 
@@ -94,9 +94,12 @@ class FormWidgetBuilder<T> extends StatelessWidget {
       }
       final privacyPath = widgetModel.private ? 'private' : 'public';
       final privateStorage = storage.storage.ref('$privacyPath/${storage.fullPath}');
-      return FileWidget(
+      return FileFormField(
         name: id,
         decoration: decoration,
+        validator: FormBuilderValidators.compose([
+          if (isRequired) FormBuilderValidators.required(),
+        ]),
         initialValue: value,
         storage: privateStorage,
         onChanged: onChange,

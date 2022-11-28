@@ -1,5 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../bloc/bloc.dart';
 
 class FileSelector extends StatelessWidget {
   final void Function(List<PlatformFile>) onSelect;
@@ -8,16 +11,33 @@ class FileSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () async {
-        final picker = await FilePicker.platform.pickFiles(
-          allowCompression: true,
-          allowMultiple: false,
+    return BlocBuilder<FileBloc, FileState>(
+      builder: (context, state) {
+        if (state is FileLoading) {
+          return Row(
+            children: const [
+              ElevatedButton(
+                onPressed: null,
+                child: Text('Add File'),
+              ),
+              SizedBox(width: 16),
+              CircularProgressIndicator()
+            ],
+          );
+        }
+        return ElevatedButton(
+          onPressed: () async {
+            final picker = await FilePicker.platform.pickFiles(
+              allowCompression: true,
+              allowMultiple: false,
+              withData: true,
+            );
+            final files = picker?.files ?? [];
+            onSelect(files);
+          },
+          child: const Text('Add File'),
         );
-        final files = picker?.files ?? [];
-        onSelect(files);
       },
-      child: const Text('File'),
     );
   }
 }

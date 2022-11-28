@@ -14,16 +14,6 @@ class AddFileEvent extends FileEvent {
   List<Object?> get props => [name, bytes];
 }
 
-class UploadFileEvent extends FileEvent {
-  final double progress;
-  final String name;
-
-  const UploadFileEvent({required this.progress, required this.name});
-
-  @override
-  List<Object?> get props => [name, progress];
-}
-
 class UploadSuccessEvent extends FileEvent {
   final Reference file;
 
@@ -31,6 +21,13 @@ class UploadSuccessEvent extends FileEvent {
 
   @override
   List<Object?> get props => [file];
+}
+
+class UploadFailEvent extends FileEvent {
+  const UploadFailEvent();
+
+  @override
+  List<Object?> get props => [];
 }
 
 class RemoveFileEvent extends FileEvent {
@@ -50,5 +47,12 @@ class ViewFileEvent extends FileEvent {
   const ViewFileEvent(this.file, this.index);
 
   @override
-  List<Object?> get props => [file, index];
+  List<Object?> get props => [];
+}
+
+class CloseFileViewerEvent extends FileEvent {
+  const CloseFileViewerEvent();
+
+  @override
+  List<Object?> get props => [];
 }

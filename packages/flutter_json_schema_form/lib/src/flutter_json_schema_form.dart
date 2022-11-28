@@ -37,6 +37,8 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Processing Data')),
       );
+    } else {
+      print('SUBMIT ERROR ${_formKey.currentState?.value}');
     }
   }
 

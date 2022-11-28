@@ -6,8 +6,9 @@ import '../../bloc/bloc.dart';
 
 class UploadTaskManager extends StatelessWidget {
   final void Function(Reference file) onSuccess;
+  final void Function() onFail;
 
-  const UploadTaskManager({Key? key, required this.onSuccess}) : super(key: key);
+  const UploadTaskManager({Key? key, required this.onSuccess, required this.onFail}) : super(key: key);
 
   String _bytesTransferredString(TaskSnapshot snapshot) {
     return '${snapshot.bytesTransferred}/${snapshot.totalBytes}';
@@ -25,36 +26,36 @@ class UploadTaskManager extends StatelessWidget {
     TaskState.error: "Error",
     TaskState.canceled: "Canceled",
     TaskState.success: "Success",
+    TaskState.paused: "Paused",
   };
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<FileBloc, FileState>(
       builder: (context, state) {
-        if (state is FileError) {
-          return const Text('Error');
-        } else if (state is FileLoading) {
+        if (state is FileLoading) {
           final task = state.uploadTask;
           return StreamBuilder(
               stream: task.snapshotEvents,
               builder: (context, asyncSnapshot) {
                 Widget status = const Text('---');
                 TaskSnapshot? snapshot = asyncSnapshot.data;
-                TaskState? state = snapshot?.state;
+                TaskState? taskState = snapshot?.state;
                 if (asyncSnapshot.hasError) {
                   if (asyncSnapshot.error is FirebaseException &&
                       (asyncSnapshot.error as FirebaseException).code == 'canceled') {
-                    status = Text(enumTaskStateMap[state!]!);
+                    status = const Text('Canceled');
                   } else {
                     // ignore: avoid_print
                     print(asyncSnapshot.error);
                     status = const Text('Something went wrong.');
                   }
+                  onFail();
                 } else if (snapshot != null) {
                   status = Text(
-                    '${enumTaskStateMap[state!]!}: ${_bytesTransferredString(snapshot)} bytes sent',
+                    '${enumTaskStateMap[taskState!]!}: ${_bytesTransferredString(snapshot)} bytes sent',
                   );
-                  if (state == TaskState.success) {
+                  if (taskState == TaskState.success) {
                     onSuccess(snapshot.ref);
                   }
                 }
@@ -63,12 +64,12 @@ class UploadTaskManager extends StatelessWidget {
                   contentPadding: EdgeInsets.zero,
                   title: Text(snapshot?.ref.name ?? task.hashCode.toString()),
                   subtitle: UploadStatus(
-                    state: state,
+                    state: taskState,
                     status: status,
                     progress: _bytesTransferred(snapshot),
                   ),
                   trailing: ControlButtons(
-                    state: state,
+                    state: taskState,
                     onPause: task.pause,
                     onCancel: task.cancel,
                     onResume: task.resume,
