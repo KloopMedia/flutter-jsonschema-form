@@ -77,6 +77,27 @@ class Player {
     _audioPlayer.seek(position);
   }
 
+  void replay() {
+    final position = _audioPlayer.position;
+    const tenSeconds = Duration(seconds: 10);
+    if (position - tenSeconds > Duration.zero) {
+      _audioPlayer.seek(position - tenSeconds);
+    } else {
+      _audioPlayer.seek(Duration.zero);
+    }
+  }
+
+  void forward() {
+    final position = _audioPlayer.position;
+    final total = _audioPlayer.duration ?? Duration.zero;
+    const tenSeconds = Duration(seconds: 10);
+    if (position + tenSeconds < total) {
+      _audioPlayer.seek(position + tenSeconds);
+    } else {
+      _audioPlayer.seek(total);
+    }
+  }
+
   void dispose() {
     _audioPlayer.dispose();
   }

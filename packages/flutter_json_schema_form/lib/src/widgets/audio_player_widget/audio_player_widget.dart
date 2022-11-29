@@ -46,31 +46,44 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                 );
               },
             ),
-            ValueListenableBuilder<ButtonState>(
-              valueListenable: _player.buttonNotifier,
-              builder: (_, value, __) {
-                switch (value) {
-                  case ButtonState.loading:
-                    return Container(
-                      margin: const EdgeInsets.all(8.0),
-                      width: 32.0,
-                      height: 32.0,
-                      child: const CircularProgressIndicator(),
-                    );
-                  case ButtonState.paused:
-                    return IconButton(
-                      icon: const Icon(Icons.play_arrow),
-                      iconSize: 32.0,
-                      onPressed: _player.play,
-                    );
-                  case ButtonState.playing:
-                    return IconButton(
-                      icon: const Icon(Icons.pause),
-                      iconSize: 32.0,
-                      onPressed: _player.pause,
-                    );
-                }
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: _player.replay,
+                  icon: const Icon(Icons.replay_10),
+                ),
+                ValueListenableBuilder<ButtonState>(
+                  valueListenable: _player.buttonNotifier,
+                  builder: (_, value, __) {
+                    switch (value) {
+                      case ButtonState.loading:
+                        return Container(
+                          margin: const EdgeInsets.all(8.0),
+                          width: 32.0,
+                          height: 32.0,
+                          child: const CircularProgressIndicator(),
+                        );
+                      case ButtonState.paused:
+                        return IconButton(
+                          icon: const Icon(Icons.play_arrow),
+                          iconSize: 32.0,
+                          onPressed: _player.play,
+                        );
+                      case ButtonState.playing:
+                        return IconButton(
+                          icon: const Icon(Icons.pause),
+                          iconSize: 32.0,
+                          onPressed: _player.pause,
+                        );
+                    }
+                  },
+                ),
+                IconButton(
+                  onPressed: _player.forward,
+                  icon: const Icon(Icons.forward_10),
+                )
+              ],
             ),
           ],
         ),

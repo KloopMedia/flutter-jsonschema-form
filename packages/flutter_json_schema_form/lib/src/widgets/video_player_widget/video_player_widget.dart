@@ -31,7 +31,19 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   @override
   Widget build(BuildContext context) {
     if (videoPlayerController.value.isInitialized) {
-      return Chewie(controller: chewieController);
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: const Icon(Icons.close),
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        body: Chewie(controller: chewieController),
+      );
     } else {
       return const Dialog(
         child: SizedBox(

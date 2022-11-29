@@ -12,68 +12,56 @@ class FileViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          icon: const Icon(Icons.close),
-        ),
-      ),
-      backgroundColor: Colors.transparent,
-      body: Center(
-        child: FutureBuilder(
-          future: file.getDownloadURL(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              return const CircularProgressIndicator();
+    return Center(
+      child: FutureBuilder(
+        future: file.getDownloadURL(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const CircularProgressIndicator();
+          }
+          if (snapshot.hasData) {
+            final url = snapshot.data;
+            if (url == null) {
+              return const Text('Error: Failed to load the file! No file url!');
             }
-            if (snapshot.hasData) {
-              final url = snapshot.data;
-              if (url == null) {
-                return const Text('Error: Failed to load the file! No file url!');
-              }
 
-              final mimeType = lookupMimeType(file.name);
-              final type = mimeType?.split('/').first;
+            final mimeType = lookupMimeType(file.name);
+            final type = mimeType?.split('/').first;
 
-              switch (type) {
-                case "image":
-                  return ImageViewerWidget(url: url);
-                case "video":
-                  return VideoPlayerWidget(url: url);
-                case "audio":
-                  return AudioPlayerWidget(url: url);
-                default:
-                  return Dialog(
-                    child: SizedBox(
-                      width: 150,
-                      height: 150,
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "Can't open the file.",
-                              style: Theme.of(context).textTheme.headlineSmall,
-                            ),
-                            const SizedBox(height: 12),
-                            ElevatedButton(
-                              onPressed: () {},
-                              child: const Text('Download'),
-                            ),
-                          ],
-                        ),
+            switch (type) {
+              case "image":
+                return ImageViewerWidget(url: url);
+              case "video":
+                return VideoPlayerWidget(url: url);
+              case "audio":
+                return AudioPlayerWidget(url: url);
+              default:
+                return Dialog(
+                  child: SizedBox(
+                    width: 150,
+                    height: 150,
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "Can't open the file.",
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                          const SizedBox(height: 12),
+                          ElevatedButton(
+                            onPressed: () {},
+                            child: const Text('Download'),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-              }
+                  ),
+                );
             }
-            return const Text('Error: Failed to load the file!');
-          },
-        ),
+          }
+          return const Text('Error: Failed to load the file!');
+        },
       ),
     );
   }
