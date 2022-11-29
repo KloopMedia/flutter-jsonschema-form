@@ -14,13 +14,17 @@ class SectionField extends StatefulWidget {
 }
 
 class _SectionFieldState extends State<SectionField> {
+  late final title = widget.model.fieldTitle == '#' ? null : widget.model.fieldTitle;
+  late final description = widget.model.description;
+  late final fields = widget.model.fields;
+
   @override
   Widget build(BuildContext context) {
     return FieldWrapper.section(
-      title: widget.model.fieldTitle,
-      description: widget.model.description,
+      title: title,
+      description: description,
       child: FormConstructor(
-        fields: widget.model.fields,
+        fields: fields,
       ),
     );
   }
