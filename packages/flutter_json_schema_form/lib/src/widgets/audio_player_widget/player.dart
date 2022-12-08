@@ -13,13 +13,28 @@ class Player {
 
   late AudioPlayer _audioPlayer;
 
-  Player(String url) {
+  Player(String? url) {
     _init(url);
   }
 
-  void _init(String url) async {
+  void _init(String? url) async {
     _audioPlayer = AudioPlayer();
-    await _audioPlayer.setUrl(url);
+    try {
+      if (url != null) {
+        await _audioPlayer.setUrl(url.trim());
+      }
+    } on PlayerException catch (e) {
+      print("Error code: ${e.code}");
+      print("Error message: ${e.message}");
+    } on PlayerInterruptedException catch (e) {
+      // This call was interrupted since another audio source was loaded or the
+      // player was stopped or disposed before this audio source could complete
+      // loading.
+      print("Connection aborted: ${e.message}");
+    } catch (e) {
+      // Fallback for all errors
+      print(e);
+    }
 
     _audioPlayer.playerStateStream.listen((playerState) {
       final isPlaying = playerState.playing;

@@ -2,11 +2,11 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_json_schema_form/src/widgets/audio_recorder_widget/audio_recorder_widget.dart';
 
 import '../../bloc/bloc.dart';
+import 'recorder_widget.dart';
 
-class AudioRecorderFormField extends StatefulWidget {
+class RecorderFormField extends StatefulWidget {
   final String name;
   final InputDecoration decoration;
   final String? Function(dynamic value)? validator;
@@ -14,7 +14,7 @@ class AudioRecorderFormField extends StatefulWidget {
   final Reference storage;
   final void Function(String? value) onChanged;
 
-  const AudioRecorderFormField({
+  const RecorderFormField({
     Key? key,
     required this.name,
     required this.decoration,
@@ -25,10 +25,10 @@ class AudioRecorderFormField extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<AudioRecorderFormField> createState() => _AudioRecorderFormFieldState();
+  State<RecorderFormField> createState() => _RecorderFormFieldState();
 }
 
-class _AudioRecorderFormFieldState extends State<AudioRecorderFormField> {
+class _RecorderFormFieldState extends State<RecorderFormField> {
   @override
   Widget build(BuildContext context) {
     return FormBuilderField(
@@ -48,7 +48,7 @@ class _AudioRecorderFormFieldState extends State<AudioRecorderFormField> {
                 widget.onChanged(value);
               },
             ),
-            child: const AudioRecorderWidget(),
+            child: const RecorderWidget(),
           ),
         );
       },

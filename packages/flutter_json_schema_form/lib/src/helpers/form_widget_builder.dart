@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_json_schema_form/src/widgets/audio_recorder_widget/audio_recorder_form_field.dart';
-import 'package:flutter_json_schema_form/src/widgets/file_widget/file_form_field.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
 
 import '../bloc/bloc.dart';
 import '../models/models.dart';
+import '../widgets/widgets.dart';
 import 'helpers.dart';
 
 class FormWidgetBuilder<T> extends StatelessWidget {
@@ -106,15 +105,20 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         onChanged: onChange,
         allowMultiple: widgetModel.multiple,
       );
-    }
-    else if (widgetModel is AudioWidgetModel) {
+    } else if (widgetModel is AudioWidgetModel) {
+      return AudioFormField(
+        name: id,
+        initialValue: value ?? widgetModel.url,
+        decoration: decoration,
+      );
+    } else if (widgetModel is RecorderWidgetModel) {
       final storage = context.read<FormBloc>().storage;
       if (storage == null) {
         return const Text('Error: Pass firebase storage reference to form!');
       }
       final privacyPath = widgetModel.private ? 'private' : 'public';
       final privateStorage = storage.storage.ref('$privacyPath/${storage.fullPath}');
-      return AudioRecorderFormField(
+      return RecorderFormField(
         name: id,
         decoration: decoration,
         validator: FormBuilderValidators.compose([
@@ -124,8 +128,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         storage: privateStorage,
         onChanged: onChange,
       );
-    }
-    else {
+    } else {
       return const Text('Error');
     }
   }

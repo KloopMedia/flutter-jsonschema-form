@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_json_schema_form/src/widgets/audio_recorder_widget/audio_recorder.dart';
+import 'package:flutter_json_schema_form/src/widgets/audio_player_widget/audio_player_widget.dart';
 
 import '../../bloc/bloc.dart';
-import 'audio_player.dart';
+import 'audio_recorder.dart';
 
-class AudioRecorderWidget extends StatelessWidget {
-  const AudioRecorderWidget({super.key});
+class RecorderWidget extends StatelessWidget {
+  const RecorderWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,22 +22,18 @@ class AudioRecorderWidget extends StatelessWidget {
             if (files.isNotEmpty) {
               final file = files.first;
               return FutureBuilder(
-                future: file.getData(),
+                future: file.getDownloadURL(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState != ConnectionState.done) {
                     return const CircularProgressIndicator();
                   } else {
                     final url = snapshot.data;
-                    if (url != null) {
-                      return AudioPlayer(bytes: url);
-                    } else {
-                      return const AudioPlayer();
-                    }
+                    return AudioPlayerWidget(url: url);
                   }
                 },
               );
             }
-            return const AudioPlayer();
+            return const AudioPlayerWidget(url: null);
           },
         ),
       ],

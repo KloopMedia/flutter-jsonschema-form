@@ -25,7 +25,11 @@ abstract class WidgetModel {
         return TextAreaWidgetModel(rows: rows);
       case WidgetType.audio:
         final private = getOption<bool>(options, 'private');
-        return AudioWidgetModel(private: private);
+        final url = getOption<String>(options, 'default');
+        return AudioWidgetModel(private: private, url: url);
+      case WidgetType.recorder:
+        final private = getOption<bool>(options, 'private');
+        return RecorderWidgetModel(private: private);
       case WidgetType.file:
         final private = getOption<bool>(options, 'private');
         final multiple = getOption<bool>(options, 'multiple');
@@ -62,10 +66,19 @@ class LinkWidgetModel extends WidgetModel {
 
 class AudioWidgetModel extends WidgetModel {
   final bool private;
+  final String? url;
 
-  const AudioWidgetModel({required bool? private})
+  const AudioWidgetModel({required bool? private, required this.url})
       : private = private ?? false,
         super(type: WidgetType.audio);
+}
+
+class RecorderWidgetModel extends WidgetModel {
+  final bool private;
+
+  const RecorderWidgetModel({required bool? private})
+      : private = private ?? false,
+        super(type: WidgetType.recorder);
 }
 
 class SelectWidgetModel extends WidgetModel {

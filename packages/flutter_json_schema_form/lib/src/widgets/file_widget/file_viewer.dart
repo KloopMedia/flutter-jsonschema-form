@@ -34,7 +34,12 @@ class FileViewer extends StatelessWidget {
               case "video":
                 return VideoPlayerWidget(url: url);
               case "audio":
-                return AudioPlayerWidget(url: url);
+                return Dialog(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: AudioPlayerWidget(url: url),
+                  ),
+                );
               default:
                 return Dialog(
                   child: SizedBox(

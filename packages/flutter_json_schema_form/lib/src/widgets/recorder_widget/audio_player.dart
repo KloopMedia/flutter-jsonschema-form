@@ -10,14 +10,6 @@ import 'package:logger/logger.dart' show Level;
 /// Sample rate used for Streams
 const int tSTREAMSAMPLERATE = 44000; // 44100 does not work for recorder on iOS
 
-enum AudioState {
-  isPlaying,
-  isPaused,
-  isStopped,
-  isRecording,
-  isRecordingPaused,
-}
-
 class AudioPlayer extends StatefulWidget {
   final String? url;
   final bool disabled;
@@ -304,7 +296,7 @@ class ControlButtons extends StatelessWidget {
   }
 }
 
-class AudioSlider extends StatelessWidget {
+class AudioSlider extends StatefulWidget {
   final double currentPosition;
   final double maxDuration;
   final void Function(double value) onChanged;
@@ -316,6 +308,20 @@ class AudioSlider extends StatelessWidget {
     required this.onChanged,
   }) : super(key: key);
 
+  @override
+  State<AudioSlider> createState() => _AudioSliderState();
+}
+
+class _AudioSliderState extends State<AudioSlider> {
+  double? value;
+
+  // @override
+  // void initState() {
+  //   value = min(widget.currentPosition, widget.maxDuration);
+  //
+  //   super.initState();
+  // }
+
   String _printDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
@@ -325,8 +331,8 @@ class AudioSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final current = Duration(milliseconds: currentPosition.toInt());
-    final duration = Duration(milliseconds: maxDuration.toInt());
+    final current = Duration(milliseconds: widget.currentPosition.toInt());
+    final duration = Duration(milliseconds: widget.maxDuration.toInt());
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -334,11 +340,21 @@ class AudioSlider extends StatelessWidget {
       children: [
         Expanded(
           child: Slider(
-            value: min(currentPosition, maxDuration),
+            value: value ?? min(widget.currentPosition, widget.maxDuration),
             min: 0.0,
-            max: maxDuration,
-            onChanged: onChanged,
-            divisions: maxDuration == 0.0 ? 1 : maxDuration.toInt(),
+            max: widget.maxDuration,
+            onChanged: (val) {
+              setState(() {
+                value = val;
+              });
+            },
+            onChangeEnd: (val) {
+              widget.onChanged(val);
+              setState(() {
+                value = null;
+              });
+            },
+            divisions: widget.maxDuration == 0.0 ? 1 : widget.maxDuration.toInt(),
           ),
         ),
         Padding(
