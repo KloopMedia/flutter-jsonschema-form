@@ -5,8 +5,9 @@ import 'player.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
   final String url;
+  final bool disabled;
 
-  const AudioPlayerWidget({Key? key, required this.url}) : super(key: key);
+  const AudioPlayerWidget({Key? key, required this.url, this.disabled = false}) : super(key: key);
 
   @override
   State<AudioPlayerWidget> createState() => _AudioPlayerWidgetState();
@@ -42,7 +43,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                   progress: value.current,
                   buffered: value.buffered,
                   total: value.total,
-                  onSeek: _player.seek,
+                  onSeek: widget.disabled ? null : _player.seek,
                 );
               },
             ),
@@ -50,7 +51,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  onPressed: _player.replay,
+                  onPressed: widget.disabled ? null : _player.replay,
                   icon: const Icon(Icons.replay_10),
                 ),
                 ValueListenableBuilder<ButtonState>(
@@ -68,19 +69,19 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                         return IconButton(
                           icon: const Icon(Icons.play_arrow),
                           iconSize: 32.0,
-                          onPressed: _player.play,
+                          onPressed: widget.disabled ? null : _player.play,
                         );
                       case ButtonState.playing:
                         return IconButton(
                           icon: const Icon(Icons.pause),
                           iconSize: 32.0,
-                          onPressed: _player.pause,
+                          onPressed: widget.disabled ? null : _player.pause,
                         );
                     }
                   },
                 ),
                 IconButton(
-                  onPressed: _player.forward,
+                  onPressed: widget.disabled ? null : _player.forward,
                   icon: const Icon(Icons.forward_10),
                 )
               ],
