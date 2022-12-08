@@ -15,7 +15,7 @@ class FileWidget extends StatelessWidget {
     return BlocListener<FileBloc, FileState>(
       listener: (context, state) async {
         if (state is FileError) {
-          print(state.error);
+          print(state.errorMessage);
         }
         if (state is FilePreview) {
           final bloc = context.read<FileBloc>();
@@ -41,14 +41,7 @@ class FileWidget extends StatelessWidget {
               }
             },
           ),
-          UploadTaskManager(
-            onSuccess: (file) {
-              context.read<FileBloc>().add(UploadSuccessEvent(file));
-            },
-            onFail: () {
-              context.read<FileBloc>().add(const UploadFailEvent());
-            },
-          ),
+          const UploadTaskManager(),
           FileList(
             onPreview: (file, index) {
               context.read<FileBloc>().add(ViewFileEvent(file, index));

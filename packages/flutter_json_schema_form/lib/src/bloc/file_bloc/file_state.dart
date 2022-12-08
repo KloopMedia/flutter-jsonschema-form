@@ -30,12 +30,12 @@ class FileLoading extends FileState {
 }
 
 class FileError extends FileState {
-  final Exception error;
+  final String errorMessage;
 
-  const FileError({required this.error, required super.files});
+  const FileError({required this.errorMessage, required super.files});
 
   @override
-  List<Object?> get props => [files, error];
+  List<Object?> get props => [files, errorMessage];
 }
 
 class FilePreview extends FileState {

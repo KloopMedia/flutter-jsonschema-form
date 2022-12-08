@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:mime/mime.dart';
 
 part 'file_event.dart';
+
 part 'file_state.dart';
 
 class FileBloc extends Bloc<FileEvent, FileState> {
@@ -58,6 +59,18 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     return encodedValue;
   }
 
+  String _handleFirebaseStorageExceptions(FirebaseException e) {
+    if (e.code == 'object-not-found') {
+      return 'The specified object was not found in the storage bucket.';
+    } else if (e.code == 'unauthorized') {
+      return 'The user is not authorized to access the object in the storage bucket.';
+    } else if (e.code == 'canceled') {
+      return 'The operation was canceled by the user or by another request.';
+    } else {
+      return 'An unknown error occurred in the storage service.';
+    }
+  }
+
   void onAddFileEvent(AddFileEvent event, Emitter<FileState> emit) async {
     final name = event.name;
     final bytes = event.bytes;
@@ -72,6 +85,15 @@ class FileBloc extends Bloc<FileEvent, FileState> {
 
       final uploadTask = ref.putData(bytes, metadata);
       emit(FileLoading(files: state.files, uploadTask: uploadTask));
+      try {
+        final snapshot = await uploadTask;
+        add(UploadSuccessEvent(snapshot.ref));
+      } on FirebaseException catch (e) {
+        final errorMessage = _handleFirebaseStorageExceptions(e);
+        emit(FileError(errorMessage: errorMessage, files: state.files));
+      } catch (e) {
+        emit(FileError(errorMessage: 'Other error', files: state.files));
+      }
     }
   }
 

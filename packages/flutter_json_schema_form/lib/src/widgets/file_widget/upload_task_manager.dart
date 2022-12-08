@@ -5,10 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/bloc.dart';
 
 class UploadTaskManager extends StatelessWidget {
-  final void Function(Reference file) onSuccess;
-  final void Function() onFail;
-
-  const UploadTaskManager({Key? key, required this.onSuccess, required this.onFail}) : super(key: key);
+  const UploadTaskManager({Key? key}) : super(key: key);
 
   String _bytesTransferredString(TaskSnapshot snapshot) {
     return '${snapshot.bytesTransferred}/${snapshot.totalBytes}';
@@ -41,23 +38,10 @@ class UploadTaskManager extends StatelessWidget {
                 Widget status = const Text('---');
                 TaskSnapshot? snapshot = asyncSnapshot.data;
                 TaskState? taskState = snapshot?.state;
-                if (asyncSnapshot.hasError) {
-                  if (asyncSnapshot.error is FirebaseException &&
-                      (asyncSnapshot.error as FirebaseException).code == 'canceled') {
-                    status = const Text('Canceled');
-                  } else {
-                    // ignore: avoid_print
-                    print(asyncSnapshot.error);
-                    status = const Text('Something went wrong.');
-                  }
-                  onFail();
-                } else if (snapshot != null) {
+                if (snapshot != null) {
                   status = Text(
                     '${enumTaskStateMap[taskState!]!}: ${_bytesTransferredString(snapshot)} bytes sent',
                   );
-                  if (taskState == TaskState.success) {
-                    onSuccess(snapshot.ref);
-                  }
                 }
                 return ListTile(
                   dense: true,
