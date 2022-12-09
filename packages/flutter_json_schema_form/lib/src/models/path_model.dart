@@ -23,6 +23,9 @@ class PathModel {
 
   List<String> get stringPath => path.map((e) => e.toString()).toList();
 
+  @override
+  String toString() => path.map((e) => e.id).join('.');
+
   factory PathModel.fromString(String stringPath) {
     List<Map<String, dynamic>> parsedPath = json.decode(stringPath);
     List<PathItem> path = parsedPath

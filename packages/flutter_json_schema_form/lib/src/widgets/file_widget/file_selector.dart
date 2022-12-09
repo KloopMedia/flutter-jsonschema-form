@@ -13,6 +13,7 @@ class FileSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<FileBloc, FileState>(
       builder: (context, state) {
+        // Disable button when uploading file
         if (state is FileLoading) {
           return Row(
             children: const [
@@ -26,15 +27,17 @@ class FileSelector extends StatelessWidget {
           );
         }
         return ElevatedButton(
-          onPressed: () async {
-            final picker = await FilePicker.platform.pickFiles(
-              allowCompression: true,
-              allowMultiple: false,
-              withData: true,
-            );
-            final files = picker?.files ?? [];
-            onSelect(files);
-          },
+          onPressed: state.enabled
+              ? null
+              : () async {
+                  final picker = await FilePicker.platform.pickFiles(
+                    allowCompression: true,
+                    allowMultiple: false,
+                    withData: true,
+                  );
+                  final files = picker?.files ?? [];
+                  onSelect(files);
+                },
           child: const Text('Add File'),
         );
       },

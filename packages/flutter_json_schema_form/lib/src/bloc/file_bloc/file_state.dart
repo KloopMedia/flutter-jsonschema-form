@@ -2,12 +2,13 @@ part of 'file_bloc.dart';
 
 abstract class FileState extends Equatable {
   final List<Reference> files;
+  final bool enabled;
 
-  const FileState({required this.files});
+  const FileState({required this.files, this.enabled = true});
 }
 
 class FilesInitial extends FileState {
-  const FilesInitial({required super.files});
+  const FilesInitial({required super.files, super.enabled});
 
   @override
   List<Object> get props => [files];

@@ -58,6 +58,7 @@ class _CreatableArrayState extends State<CreatableArray> {
   Widget build(BuildContext context) {
     return BlocBuilder<bloc.FormBloc, bloc.FormState>(
       builder: (context, state) {
+        final globalDisabled = state.disabled;
         final List values = getFormDataByPath(state.formData, widget.model.path) ?? [];
         return Column(
           children: [
@@ -68,11 +69,11 @@ class _CreatableArrayState extends State<CreatableArray> {
             Row(
               children: [
                 ElevatedButton(
-                  onPressed: addItemToArray,
+                  onPressed: globalDisabled ? null : addItemToArray,
                   child: const Text('+'),
                 ),
                 ElevatedButton(
-                  onPressed: fields.isNotEmpty ? removeItemFromArray : null,
+                  onPressed: globalDisabled || fields.isEmpty ? null : removeItemFromArray,
                   child: const Text('-'),
                 ),
               ],

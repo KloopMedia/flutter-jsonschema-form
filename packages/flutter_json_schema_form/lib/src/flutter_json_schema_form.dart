@@ -6,13 +6,15 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'bloc/form_bloc/form_bloc.dart' as bloc;
 import 'helpers/helpers.dart';
 
-typedef ChangeFormCallback = Function(Map<String, dynamic> formData);
+typedef ChangeFormCallback = Function(Map<String, dynamic> formData, String path);
+typedef SubmitFormCallback = Function(Map<String, dynamic> formData);
 
 class FlutterJsonSchemaForm extends StatefulWidget {
   final Map<String, dynamic> schema;
   final Map<String, dynamic>? uiSchema;
   final Map<String, dynamic>? formData;
   final ChangeFormCallback? onChange;
+  final SubmitFormCallback? onSubmit;
   final Reference? storage;
 
   const FlutterJsonSchemaForm({
@@ -21,6 +23,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
     this.uiSchema,
     this.formData,
     this.onChange,
+    this.onSubmit,
     this.storage,
   }) : super(key: key);
 
@@ -52,21 +55,42 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => bloc.FormBloc(
+        formKey: _formKey,
         formData: widget.formData,
         storage: widget.storage,
         onChangeCallback: widget.onChange,
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            FormBuilder(
-              key: _formKey,
-              clearValueOnUnregister: true,
-              child: FormConstructor(fields: fields),
-            ),
-            ElevatedButton(onPressed: submit, child: const Text('Submit')),
-          ],
-        ),
+      child: Form(
+        formKey: _formKey,
+        fields: fields,
+      ),
+    );
+  }
+}
+
+class Form extends StatelessWidget {
+  final GlobalKey<FormBuilderState> formKey;
+  final List fields;
+
+  const Form({Key? key, required this.formKey, required this.fields}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          FormBuilder(
+            key: formKey,
+            clearValueOnUnregister: true,
+            child: FormConstructor(fields: fields),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
+            },
+            child: const Text('Submit'),
+          ),
+        ],
       ),
     );
   }

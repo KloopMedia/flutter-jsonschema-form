@@ -20,22 +20,14 @@ const int tSAMPLERATE = 8000;
 /// Sample rate used for Streams
 const int tSTREAMSAMPLERATE = 44000; // 44100 does not work for recorder on iOS
 
-enum AudioState {
-  isPlaying,
-  isPaused,
-  isStopped,
-  isRecording,
-  isRecordingPaused,
-}
-
 class AudioRecorder extends StatefulWidget {
   final String? url;
-  final bool disabled;
+  final bool enabled;
 
   const AudioRecorder({
     Key? key,
     this.url,
-    this.disabled = false,
+    this.enabled = true,
   }) : super(key: key);
 
   @override
@@ -231,7 +223,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      onPressed: widget.disabled ? null : onStartRecorderPressed(),
+      onPressed: widget.enabled ? onStartRecorderPressed() : null,
       icon: Icon(_isRecording ? Icons.stop : Icons.mic),
     );
   }

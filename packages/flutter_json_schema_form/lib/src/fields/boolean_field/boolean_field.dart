@@ -86,6 +86,8 @@ class _BooleanFieldState extends State<BooleanField> {
 
   @override
   Widget build(BuildContext context) {
+    final globalDisabled = context.read<bloc.FormBloc>().state.disabled;
+
     if (widgetType is NullWidgetModel) {
       return DefaultWidgetBuilder(
         id: id,
@@ -93,7 +95,7 @@ class _BooleanFieldState extends State<BooleanField> {
         value: value,
         onChange: onChange,
         title: title,
-        disabled: disabled,
+        disabled: globalDisabled || disabled,
         readOnly: readOnly,
         isRequired: isRequired,
       );
@@ -109,7 +111,7 @@ class _BooleanFieldState extends State<BooleanField> {
           onChange: onChange,
           dropdownItems: widget.model.getDropdownItems(),
           radioItems: widget.model.getRadio(),
-          disabled: disabled,
+          disabled: globalDisabled || disabled,
           readOnly: readOnly,
           isRequired: isRequired,
         ),

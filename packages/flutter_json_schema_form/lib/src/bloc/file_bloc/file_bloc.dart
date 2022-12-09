@@ -13,14 +13,16 @@ part 'file_state.dart';
 class FileBloc extends Bloc<FileEvent, FileState> {
   final Reference storage;
   final bool allowMultiple;
+  final bool enabled;
   final void Function(String? value) onChanged;
 
   FileBloc({
     required dynamic value,
     required this.storage,
     required this.allowMultiple,
+    required this.enabled,
     required this.onChanged,
-  }) : super(FilesInitial(files: _decodeValue(storage, value))) {
+  }) : super(FilesInitial(files: _decodeValue(storage, value), enabled: enabled)) {
     on<AddFileEvent>(onAddFileEvent);
     on<RemoveFileEvent>(onRemoveFileEvent);
     on<ViewFileEvent>(onViewFileEvent);

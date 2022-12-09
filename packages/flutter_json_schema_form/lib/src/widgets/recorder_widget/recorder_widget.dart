@@ -12,7 +12,11 @@ class RecorderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const AudioRecorder(),
+        BlocBuilder<FileBloc, FileState>(
+          builder: (context, state) {
+            return AudioRecorder(enabled: state.enabled);
+          },
+        ),
         BlocBuilder<FileBloc, FileState>(
           builder: (context, state) {
             final files = state.files;

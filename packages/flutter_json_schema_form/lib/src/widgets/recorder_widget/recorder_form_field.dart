@@ -12,6 +12,7 @@ class RecorderFormField extends StatefulWidget {
   final String? Function(dynamic value)? validator;
   final dynamic initialValue;
   final Reference storage;
+  final bool enabled;
   final void Function(String? value) onChanged;
 
   const RecorderFormField({
@@ -22,6 +23,7 @@ class RecorderFormField extends StatefulWidget {
     this.initialValue,
     required this.storage,
     required this.onChanged,
+    this.enabled = true,
   }) : super(key: key);
 
   @override
@@ -43,6 +45,7 @@ class _RecorderFormFieldState extends State<RecorderFormField> {
               value: widget.initialValue,
               storage: widget.storage,
               allowMultiple: false,
+              enabled: widget.enabled,
               onChanged: (String? value) {
                 field.didChange(value);
                 widget.onChanged(value);

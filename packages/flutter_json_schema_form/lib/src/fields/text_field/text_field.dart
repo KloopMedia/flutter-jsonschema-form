@@ -83,6 +83,7 @@ class _TextFieldState extends State<TextField> {
 
   @override
   Widget build(BuildContext context) {
+    final globalDisabled = context.read<bloc.FormBloc>().state.disabled;
     return FieldWrapper(
       title: title,
       description: description,
@@ -94,7 +95,7 @@ class _TextFieldState extends State<TextField> {
               type: format!,
               id: id,
               onChange: onChange,
-              disabled: disabled,
+              disabled: globalDisabled || disabled,
               readOnly: readOnly,
               isRequired: isRequired,
               value: value,
@@ -105,7 +106,7 @@ class _TextFieldState extends State<TextField> {
               fieldType: type,
               value: value,
               onChange: onChange,
-              disabled: disabled,
+              disabled: globalDisabled || disabled,
               readOnly: readOnly,
               isRequired: isRequired,
             );
@@ -118,7 +119,7 @@ class _TextFieldState extends State<TextField> {
             onChange: onChange,
             dropdownItems: widget.model.getDropdownItems(),
             radioItems: widget.model.getRadio(),
-            disabled: disabled,
+            disabled: globalDisabled || disabled,
             readOnly: readOnly,
             isRequired: isRequired,
           );

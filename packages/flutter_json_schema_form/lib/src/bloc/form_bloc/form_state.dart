@@ -2,11 +2,13 @@ part of 'form_bloc.dart';
 
 abstract class FormState extends Equatable {
   final Map<String, dynamic> formData;
+  final bool disabled;
+  final bool readOnly;
 
-  const FormState(this.formData);
+  const FormState(this.formData, {this.disabled = false, this.readOnly = false});
 
   @override
-  List<Object> get props => [formData];
+  List<Object> get props => [formData, disabled, readOnly];
 }
 
 class FormInitial extends FormState {
@@ -18,7 +20,7 @@ class FormModified extends FormState {
 }
 
 class FormSubmitted extends FormState {
-  const FormSubmitted(super.formData);
+  const FormSubmitted(super.formData, {super.disabled});
 }
 
 class FormDisabled extends FormState {

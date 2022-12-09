@@ -47,6 +47,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
           if (isRequired) FormBuilderValidators.required(),
         ]),
         items: dropdownItems!,
+        enabled: !disabled,
         onChanged: onChange,
       );
     } else if (widgetModel is RadioWidgetModel) {
@@ -59,6 +60,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
           if (isRequired) FormBuilderValidators.required(),
         ]),
         options: radioItems!,
+        enabled: !disabled,
         onChanged: onChange,
       );
     } else if (widgetModel is TextAreaWidgetModel) {
@@ -74,6 +76,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         ]),
         onChanged: onChange,
         enabled: !disabled,
+        style: const TextStyle().copyWith(color: disabled ? Colors.grey : null),
       );
     } else if (widgetModel is PasswordWidgetModel) {
       return FormBuilderTextField(
@@ -86,6 +89,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         keyboardType: TextInputType.visiblePassword,
         onChanged: onChange,
         enabled: !disabled,
+        style: const TextStyle().copyWith(color: disabled ? Colors.grey : null),
       );
     } else if (widgetModel is FileWidgetModel) {
       final storage = context.read<FormBloc>().storage;
@@ -104,6 +108,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         storage: privateStorage,
         onChanged: onChange,
         allowMultiple: widgetModel.multiple,
+        enabled: !disabled,
       );
     } else if (widgetModel is AudioWidgetModel) {
       return AudioFormField(
@@ -127,6 +132,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         initialValue: value,
         storage: privateStorage,
         onChanged: onChange,
+        enabled: !disabled,
       );
     } else {
       return const Text('Error');
@@ -169,6 +175,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
           keyboardType: TextInputType.emailAddress,
           onChanged: onChange,
           enabled: !disabled,
+          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null),
         );
       case FormatType.uri:
         return FormBuilderTextField(
@@ -182,6 +189,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
           keyboardType: TextInputType.url,
           onChanged: onChange,
           enabled: !disabled,
+          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null),
         );
       case FormatType.file:
         return FormBuilderTextField(
@@ -207,6 +215,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
               onChange(null);
             }
           },
+          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null),
         );
       case FormatType.dateTime:
         return FormBuilderDateTimePicker(
@@ -227,6 +236,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
               onChange(null);
             }
           },
+          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null),
         );
     }
   }
@@ -266,6 +276,8 @@ class DefaultWidgetBuilder extends StatelessWidget {
             if (isRequired) FormBuilderValidators.required(),
           ]),
           onChanged: onChange,
+          enabled: !disabled,
+          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null),
         );
       case FieldType.number:
         return FormBuilderTextField(
@@ -279,6 +291,8 @@ class DefaultWidgetBuilder extends StatelessWidget {
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: onChange,
+          enabled: !disabled,
+          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null),
         );
       case FieldType.integer:
         return FormBuilderTextField(
@@ -292,6 +306,8 @@ class DefaultWidgetBuilder extends StatelessWidget {
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: onChange,
+          enabled: !disabled,
+          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null),
         );
       case FieldType.boolean:
         return FormBuilderCheckbox(
@@ -302,6 +318,7 @@ class DefaultWidgetBuilder extends StatelessWidget {
             if (isRequired) FormBuilderValidators.required(),
           ]),
           onChanged: onChange,
+          enabled: !disabled,
         );
       default:
         return const Text('Error');

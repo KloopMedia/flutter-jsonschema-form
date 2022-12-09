@@ -23,7 +23,6 @@ class AudioFormField extends StatefulWidget {
 class _AudioFormFieldState extends State<AudioFormField> {
   @override
   Widget build(BuildContext context) {
-    print(widget.initialValue);
     return FormBuilderField(
       name: widget.name,
       validator: widget.validator,

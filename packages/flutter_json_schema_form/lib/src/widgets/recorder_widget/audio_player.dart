@@ -12,13 +12,13 @@ const int tSTREAMSAMPLERATE = 44000; // 44100 does not work for recorder on iOS
 
 class AudioPlayer extends StatefulWidget {
   final String? url;
-  final bool disabled;
+  final bool enabled;
   final Uint8List? bytes;
 
   const AudioPlayer({
     Key? key,
     this.url,
-    this.disabled = false,
+    this.enabled = true,
     this.bytes,
   }) : super(key: key);
 
