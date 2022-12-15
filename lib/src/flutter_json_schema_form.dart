@@ -59,6 +59,7 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
         formData: widget.formData,
         storage: widget.storage,
         onChangeCallback: widget.onChange,
+        onSubmitCallback: widget.onSubmit,
       ),
       child: Form(
         formKey: _formKey,

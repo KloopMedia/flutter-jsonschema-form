@@ -5,14 +5,17 @@ import 'helpers.dart';
 
 class FormSerializer {
   static List<dynamic> serialize(Map<String, dynamic> schema, Map<String, dynamic>? uiSchema) {
-    final model = _createModelFromSchema(
-      id: '#',
-      schema: schema,
-      uiSchema: uiSchema,
-      path: null,
-      isRequired: false,
-    );
-    return [model];
+    if (schema.isNotEmpty) {
+      final model = _createModelFromSchema(
+        id: '#',
+        schema: schema,
+        uiSchema: uiSchema,
+        path: null,
+        isRequired: false,
+      );
+      return [model];
+    }
+    return [];
   }
 
   static List<FieldModel> mapSchemaToFields(
@@ -158,9 +161,8 @@ class FormSerializer {
     final fields = mapSchemaToFields(schema, uiSchema, path);
     final dependencies = parseSchemaDependencies(schema, uiSchema, path);
     final order = getOrder(uiSchema);
-    final sorted = sortFields(fields, order);
-    final allInOne = insertDependencies(sorted, dependencies);
-    return allInOne;
+    final sorted = sortFields(fields, dependencies, order);
+    return sorted;
   }
 
   static List<String> getRequiredFields(Map<String, dynamic> schema) {
@@ -182,11 +184,13 @@ class FormSerializer {
     return decodeFieldType(schema['type']);
   }
 
-  static List<FieldModel> sortFields(List<FieldModel> fields, List<String>? order) {
+  static List<dynamic> sortFields(
+      List<FieldModel> fields, List<DependencyModel> dependencies, List<String>? order) {
     if (order == null) {
       return fields;
     }
-    final Map<String, FieldModel> fieldSchema = Map.fromIterable(fields, key: (field) => field.id);
+    final allFields = [...fields, ...dependencies];
+    final Map<String, dynamic> fieldSchema = Map.fromIterable(allFields, key: (field) => field.id);
     final other = fieldSchema.keys.where((element) => !order.contains(element));
     var orderSchema = List.of(order);
     if (order.contains('*')) {
@@ -196,11 +200,19 @@ class FormSerializer {
     } else {
       orderSchema.addAll(other);
     }
-    List<FieldModel> sortedFields = [];
+    List<dynamic> sortedFields = [];
     for (var element in orderSchema) {
       final field = fieldSchema[element];
       if (field != null) {
         sortedFields.add(field);
+      }
+    }
+    for (var dependency in dependencies) {
+      if (!order.contains(dependency.id)) {
+        final index = fields.indexWhere((field) => field.id == dependency.parentId);
+        if (!index.isNegative) {
+          sortedFields.insert(index + 1, dependency);
+        }
       }
     }
     return sortedFields;
@@ -242,18 +254,20 @@ class FormSerializer {
           final List<dynamic> conditionValues = condition?['enum'] ?? [];
           final required = getRequiredFields(dependency);
           for (final item in fields.entries) {
+            final depField = _createModelFromSchema(
+              id: item.key,
+              schema: item.value,
+              uiSchema: uiSchema?[item.key],
+              path: path,
+              isRequired: required.contains(id),
+            );
             deps.add(
               DependencyModel(
+                id: depField.id,
                 parentId: id,
                 parentPath: path.add(id, null),
                 values: conditionValues,
-                field: _createModelFromSchema(
-                  id: item.key,
-                  schema: item.value,
-                  uiSchema: uiSchema?[item.key],
-                  path: path,
-                  isRequired: required.contains(id),
-                ),
+                field: depField,
               ),
             );
           }
