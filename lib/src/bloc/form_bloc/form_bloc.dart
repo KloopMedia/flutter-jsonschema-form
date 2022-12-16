@@ -16,15 +16,19 @@ class FormBloc extends Bloc<FormEvent, FormState> {
   final ChangeFormCallback? onChangeCallback;
   final SubmitFormCallback? onSubmitCallback;
   final Reference? storage;
+  final bool disabled;
   final GlobalKey<FormBuilderState> formKey;
+  final ValidationWarningCallback? onValidationCallback;
 
   FormBloc({
     Map<String, dynamic>? formData,
     required this.formKey,
     this.storage,
+    this.disabled = false,
     this.onChangeCallback,
     this.onSubmitCallback,
-  }) : super(FormInitial(formData ?? {})) {
+    this.onValidationCallback,
+  }) : super(FormInitial(formData ?? {}, disabled: disabled)) {
     on<ChangeFormEvent>(_onChangeFormEvent);
     on<SubmitFormEvent>(_onSubmitFormEvent);
   }
@@ -62,6 +66,7 @@ class FormBloc extends Bloc<FormEvent, FormState> {
       emit(FormSubmitted(state.formData, disabled: true));
     } else {
       print('SUBMIT ERROR ${formKey.currentState?.value}');
+      onValidationCallback!();
     }
   }
 }

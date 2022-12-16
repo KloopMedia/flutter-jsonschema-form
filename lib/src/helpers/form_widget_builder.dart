@@ -76,7 +76,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         ]),
         onChanged: onChange,
         enabled: !disabled,
-        style: const TextStyle().copyWith(color: disabled ? Colors.grey : null),
+        style: const TextStyle().copyWith(color: disabled ? Colors.grey : null, fontSize: 18),
       );
     } else if (widgetModel is PasswordWidgetModel) {
       return FormBuilderTextField(
@@ -108,7 +108,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         storage: privateStorage,
         onChanged: onChange,
         allowMultiple: widgetModel.multiple,
-        enabled: !disabled,
+        enabled: disabled,
       );
     } else if (widgetModel is AudioWidgetModel) {
       return AudioFormField(
@@ -175,7 +175,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
           keyboardType: TextInputType.emailAddress,
           onChanged: onChange,
           enabled: !disabled,
-          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null),
+          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null, fontSize: 18),
         );
       case FormatType.uri:
         return FormBuilderTextField(
@@ -189,7 +189,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
           keyboardType: TextInputType.url,
           onChanged: onChange,
           enabled: !disabled,
-          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null),
+          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null, fontSize: 18),
         );
       case FormatType.file:
         return FormBuilderTextField(
@@ -215,7 +215,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
               onChange(null);
             }
           },
-          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null),
+          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null, fontSize: 18),
         );
       case FormatType.dateTime:
         return FormBuilderDateTimePicker(
@@ -236,7 +236,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
               onChange(null);
             }
           },
-          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null),
+          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null, fontSize: 18),
         );
     }
   }
@@ -277,7 +277,7 @@ class DefaultWidgetBuilder extends StatelessWidget {
           ]),
           onChanged: onChange,
           enabled: !disabled,
-          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null),
+          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null, fontSize: 18),
         );
       case FieldType.number:
         return FormBuilderTextField(
@@ -292,7 +292,7 @@ class DefaultWidgetBuilder extends StatelessWidget {
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: onChange,
           enabled: !disabled,
-          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null),
+          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null, fontSize: 18),
         );
       case FieldType.integer:
         return FormBuilderTextField(
@@ -307,7 +307,7 @@ class DefaultWidgetBuilder extends StatelessWidget {
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: onChange,
           enabled: !disabled,
-          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null),
+          style: const TextStyle().copyWith(color: disabled ? Colors.grey : null, fontSize: 18),
         );
       case FieldType.boolean:
         return FormBuilderCheckbox(

@@ -8,6 +8,7 @@ import 'helpers/helpers.dart';
 
 typedef ChangeFormCallback = Function(Map<String, dynamic> formData, String path);
 typedef SubmitFormCallback = Function(Map<String, dynamic> formData);
+typedef ValidationWarningCallback = void Function();
 
 class FlutterJsonSchemaForm extends StatefulWidget {
   final Map<String, dynamic> schema;
@@ -15,7 +16,9 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final Map<String, dynamic>? formData;
   final ChangeFormCallback? onChange;
   final SubmitFormCallback? onSubmit;
+  final ValidationWarningCallback? onValidationFailed;
   final Reference? storage;
+  final bool disabled;
 
   const FlutterJsonSchemaForm({
     Key? key,
@@ -24,7 +27,9 @@ class FlutterJsonSchemaForm extends StatefulWidget {
     this.formData,
     this.onChange,
     this.onSubmit,
+    this.onValidationFailed,
     this.storage,
+    this.disabled = false,
   }) : super(key: key);
 
   @override
@@ -58,12 +63,15 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
         formKey: _formKey,
         formData: widget.formData,
         storage: widget.storage,
+        disabled: widget.disabled,
         onChangeCallback: widget.onChange,
         onSubmitCallback: widget.onSubmit,
+        onValidationCallback: widget.onValidationFailed,
       ),
       child: Form(
         formKey: _formKey,
         fields: fields,
+        disabled: widget.disabled,
       ),
     );
   }
@@ -72,8 +80,14 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
 class Form extends StatelessWidget {
   final GlobalKey<FormBuilderState> formKey;
   final List fields;
+  final bool disabled;
 
-  const Form({Key? key, required this.formKey, required this.fields}) : super(key: key);
+  const Form({
+    Key? key,
+    required this.formKey,
+    required this.fields,
+    required this.disabled
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +99,7 @@ class Form extends StatelessWidget {
             clearValueOnUnregister: true,
             child: FormConstructor(fields: fields),
           ),
-          ElevatedButton(
+          if (!disabled) ElevatedButton(
             onPressed: () {
               context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
             },

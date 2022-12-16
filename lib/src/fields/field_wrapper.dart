@@ -63,7 +63,8 @@ class FieldTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final style =
-        type == WrapperType.section ? theme.textTheme.headline6 : theme.textTheme.titleMedium;
+        type == WrapperType.section ? theme.textTheme.headlineLarge : theme.textTheme.headlineSmall;
+        // type == WrapperType.section ? theme.textTheme.headline6 : theme.textTheme.titleMedium;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

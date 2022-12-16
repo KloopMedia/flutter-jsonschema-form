@@ -12,7 +12,7 @@ abstract class FormState extends Equatable {
 }
 
 class FormInitial extends FormState {
-  const FormInitial(super.formData);
+  const FormInitial(super.formData, {super.disabled});
 }
 
 class FormModified extends FormState {
