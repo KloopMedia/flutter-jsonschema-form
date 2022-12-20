@@ -103,7 +103,7 @@ class Form extends StatelessWidget {
             onPressed: () {
               context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
             },
-            child: const Text('Submit'),
+            child: const Text('Отправить/Жөнөтүү/Submit'),
           ),
         ],
       ),

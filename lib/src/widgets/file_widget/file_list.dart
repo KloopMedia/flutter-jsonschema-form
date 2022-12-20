@@ -64,7 +64,7 @@ class FileListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: Text(name, overflow: TextOverflow.ellipsis)),
+        Expanded(child: Text(name, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.headlineMedium,)),
         IconButton(onPressed: onPreview, icon: const Icon(Icons.visibility)),
         IconButton(onPressed: onRemove, icon: const Icon(Icons.delete)),
         IconButton(onPressed: onCopy, icon: const Icon(Icons.copy)),
