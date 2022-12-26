@@ -33,7 +33,7 @@ const widgetEnumMap = {
   WidgetType.textarea: 'textarea',
   WidgetType.radio: 'radio',
   WidgetType.audio: 'audio',
-  WidgetType.link: 'link',
+  WidgetType.link: ['customlink', 'link'],
   WidgetType.password: 'password',
   WidgetType.file: ['customfile', 'file'],
   WidgetType.card: 'card',

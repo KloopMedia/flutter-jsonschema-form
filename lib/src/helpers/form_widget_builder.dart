@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 
 import '../bloc/bloc.dart';
 import '../models/models.dart';
+import '../widgets/link_widget.dart';
 import '../widgets/widgets.dart';
 import 'helpers.dart';
 
@@ -77,7 +78,6 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         ]),
         onChanged: onChange,
         enabled: !disabled,
-        // style: const TextStyle().copyWith(color: disabled ? Colors.grey : null, fontSize: 18),
         style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
       );
     } else if (widgetModel is PasswordWidgetModel) {
@@ -91,7 +91,6 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         keyboardType: TextInputType.visiblePassword,
         onChanged: onChange,
         enabled: !disabled,
-        // style: const TextStyle().copyWith(color: disabled ? Colors.grey : null),
         style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
       );
     } else if (widgetModel is FileWidgetModel) {
@@ -137,6 +136,12 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         onChanged: onChange,
         enabled: !disabled,
       );
+    } else if (widgetModel is LinkWidgetModel){
+      return LinkFormField(
+        name: id,
+        initialValue: value,
+        decoration: decoration,
+      );
     } else {
       return const Text('Error');
     }
@@ -179,7 +184,6 @@ class TextFormatWidgetBuilder extends StatelessWidget {
           keyboardType: TextInputType.emailAddress,
           onChanged: onChange,
           enabled: !disabled,
-          // style: const TextStyle().copyWith(color: disabled ? Colors.grey : null, fontSize: 18),
           style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
         );
       case FormatType.uri:
@@ -194,7 +198,6 @@ class TextFormatWidgetBuilder extends StatelessWidget {
           keyboardType: TextInputType.url,
           onChanged: onChange,
           enabled: !disabled,
-          // style: const TextStyle().copyWith(color: disabled ? Colors.grey : null, fontSize: 18),
           style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
         );
       case FormatType.file:
@@ -221,7 +224,6 @@ class TextFormatWidgetBuilder extends StatelessWidget {
               onChange(null);
             }
           },
-          // style: const TextStyle().copyWith(color: disabled ? Colors.grey : null, fontSize: 18),
           style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
         );
       case FormatType.dateTime:
@@ -243,7 +245,6 @@ class TextFormatWidgetBuilder extends StatelessWidget {
               onChange(null);
             }
           },
-          // style: const TextStyle().copyWith(color: disabled ? Colors.grey : null, fontSize: 18),
           style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
         );
     }
@@ -286,7 +287,6 @@ class DefaultWidgetBuilder extends StatelessWidget {
           ]),
           onChanged: onChange,
           enabled: !disabled,
-          // style: const TextStyle().copyWith(color: disabled ? Colors.grey : null, fontSize: 18),
           style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
         );
       case FieldType.number:
@@ -302,7 +302,6 @@ class DefaultWidgetBuilder extends StatelessWidget {
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: onChange,
           enabled: !disabled,
-          // style: const TextStyle().copyWith(color: disabled ? Colors.grey : null, fontSize: 18),
           style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
         );
       case FieldType.integer:
@@ -318,7 +317,6 @@ class DefaultWidgetBuilder extends StatelessWidget {
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: onChange,
           enabled: !disabled,
-          // style: const TextStyle().copyWith(color: disabled ? Colors.grey : null, fontSize: 18),
           style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
         );
       case FieldType.boolean:

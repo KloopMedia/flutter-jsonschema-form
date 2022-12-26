@@ -31,6 +31,7 @@ dependencies:
   path_provider: ^2.0.11
   path: ^1.8.2
   logger: ^1.1.0
+  url_launcher: ^6.1.7
 
 dev_dependencies:
   flutter_test:
