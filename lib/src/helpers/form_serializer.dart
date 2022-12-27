@@ -259,7 +259,7 @@ class FormSerializer {
               schema: item.value,
               uiSchema: uiSchema?[item.key],
               path: path,
-              isRequired: required.contains(id),
+              isRequired: required.contains(item.key),
             );
             deps.add(
               DependencyModel(
