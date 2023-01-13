@@ -15,6 +15,7 @@ part 'form_state.dart';
 class FormBloc extends Bloc<FormEvent, FormState> {
   final ChangeFormCallback? onChangeCallback;
   final SubmitFormCallback? onSubmitCallback;
+  final WebhookTriggerCallback? onWebhookTriggerCallback;
   final Reference? storage;
   final bool disabled;
   final GlobalKey<FormBuilderState> formKey;
@@ -28,6 +29,7 @@ class FormBloc extends Bloc<FormEvent, FormState> {
     this.onChangeCallback,
     this.onSubmitCallback,
     this.onValidationCallback,
+    this.onWebhookTriggerCallback,
   }) : super(FormInitial(formData ?? {}, disabled: disabled)) {
     on<ChangeFormEvent>(_onChangeFormEvent);
     on<SubmitFormEvent>(_onSubmitFormEvent);

@@ -142,6 +142,8 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         initialValue: value,
         decoration: decoration,
       );
+    } else if (widgetModel is WebhookTriggerWidgetModel) {
+      return WebhookTriggerFormField(name: id);
     } else {
       return const Text('Error');
     }

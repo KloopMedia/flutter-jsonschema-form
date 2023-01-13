@@ -34,6 +34,8 @@ abstract class WidgetModel {
         final private = getOption<bool>(options, 'private');
         final multiple = getOption<bool>(options, 'multiple');
         return FileWidgetModel(private: private, multiple: multiple);
+      case WidgetType.webhook:
+        return WebhookTriggerWidgetModel();
       // case WidgetType.card:
       //   // TODO: Handle this case.
       //   break;
@@ -95,6 +97,10 @@ class TextAreaWidgetModel extends WidgetModel {
   const TextAreaWidgetModel({int? rows})
       : rows = rows ?? 4,
         super(type: WidgetType.textarea);
+}
+
+class WebhookTriggerWidgetModel extends WidgetModel {
+  WebhookTriggerWidgetModel() : super(type: WidgetType.webhook);
 }
 
 class NullWidgetModel extends WidgetModel {

@@ -14,6 +14,7 @@ enum WidgetType {
   card,
   reader,
   recorder,
+  webhook,
   none,
 }
 
@@ -38,7 +39,8 @@ const widgetEnumMap = {
   WidgetType.file: ['customfile', 'file'],
   WidgetType.card: 'card',
   WidgetType.reader: 'reader',
-  WidgetType.recorder: 'recorder'
+  WidgetType.recorder: 'recorder',
+  WidgetType.webhook: 'webhook',
 };
 
 const formatEnumMap = {
