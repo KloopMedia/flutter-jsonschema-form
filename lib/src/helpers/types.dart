@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 typedef WidgetOnChangeCallback<T> = void Function(T? value);
 typedef WidgetValidator<T> = String? Function(T? value);
 
@@ -76,3 +78,14 @@ WidgetType decodeWidgetType(String? type) =>
     enumDecodeNullable(widgetEnumMap, type) ?? WidgetType.none;
 
 FormatType? decodeFormatType(String? type) => enumDecodeNullable(formatEnumMap, type);
+
+DateTime? parseDateTime(String? value, String format) {
+  if (value == null) {
+    return null;
+  }
+  try {
+    return DateFormat(format).parse(value);
+  } on FormatException {
+    return null;
+  }
+}
