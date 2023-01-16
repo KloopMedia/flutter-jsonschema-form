@@ -136,7 +136,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         onChanged: onChange,
         enabled: !disabled,
       );
-    } else if (widgetModel is LinkWidgetModel){
+    } else if (widgetModel is LinkWidgetModel) {
       return LinkFormField(
         name: id,
         initialValue: value,
@@ -169,6 +169,17 @@ class TextFormatWidgetBuilder extends StatelessWidget {
     required this.readOnly,
     required this.isRequired,
   }) : super(key: key);
+
+  DateTime? parseDateTime(String? value, String format) {
+    if (value == null) {
+      return null;
+    }
+    try {
+      return DateFormat(format).parse(value);
+    } on FormatException {
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -209,7 +220,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
       case FormatType.date:
         return FormBuilderDateTimePicker(
           name: id,
-          initialValue: value,
+          initialValue: parseDateTime(value, 'dd-MM-yyyy'),
           decoration: decoration,
           validator: FormBuilderValidators.compose([
             if (isRequired) FormBuilderValidators.required(),
@@ -231,7 +242,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
       case FormatType.dateTime:
         return FormBuilderDateTimePicker(
           name: id,
-          initialValue: value,
+          initialValue: parseDateTime(value, 'dd-MM-yyyy HH:mm'),
           decoration: decoration,
           validator: FormBuilderValidators.compose([
             if (isRequired) FormBuilderValidators.required(),
