@@ -40,7 +40,6 @@ class FlutterJsonSchemaForm extends StatefulWidget {
 }
 
 class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
-  late List<dynamic> fields;
   final _formKey = GlobalKey<FormBuilderState>();
 
   void submit() {
@@ -54,13 +53,9 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
   }
 
   @override
-  void initState() {
-    fields = FormSerializer.serialize(widget.schema, widget.uiSchema);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final fields = FormSerializer.serialize(widget.schema, widget.uiSchema);
+
     return BlocProvider(
       create: (context) => bloc.FormBloc(
         formKey: _formKey,
