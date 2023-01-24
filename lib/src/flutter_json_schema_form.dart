@@ -9,6 +9,7 @@ import 'helpers/helpers.dart';
 typedef ChangeFormCallback = Function(Map<String, dynamic> formData, String path);
 typedef SubmitFormCallback = Function(Map<String, dynamic> formData);
 typedef ValidationWarningCallback = void Function();
+typedef WebhookTriggerCallback = void Function();
 
 class FlutterJsonSchemaForm extends StatefulWidget {
   final Map<String, dynamic> schema;
@@ -17,6 +18,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final ChangeFormCallback? onChange;
   final SubmitFormCallback? onSubmit;
   final ValidationWarningCallback? onValidationFailed;
+  final WebhookTriggerCallback? onWebhookTrigger;
   final Reference? storage;
   final bool disabled;
 
@@ -28,6 +30,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
     this.onChange,
     this.onSubmit,
     this.onValidationFailed,
+    this.onWebhookTrigger,
     this.storage,
     this.disabled = false,
   }) : super(key: key);
@@ -37,7 +40,6 @@ class FlutterJsonSchemaForm extends StatefulWidget {
 }
 
 class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
-  late List<dynamic> fields;
   final _formKey = GlobalKey<FormBuilderState>();
 
   void submit() {
@@ -51,13 +53,9 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
   }
 
   @override
-  void initState() {
-    fields = FormSerializer.serialize(widget.schema, widget.uiSchema);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final fields = FormSerializer.serialize(widget.schema, widget.uiSchema);
+
     return BlocProvider(
       create: (context) => bloc.FormBloc(
         formKey: _formKey,
@@ -67,6 +65,7 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
         onChangeCallback: widget.onChange,
         onSubmitCallback: widget.onSubmit,
         onValidationCallback: widget.onValidationFailed,
+        onWebhookTriggerCallback: widget.onWebhookTrigger,
       ),
       child: Form(
         formKey: _formKey,
@@ -82,12 +81,8 @@ class Form extends StatelessWidget {
   final List fields;
   final bool disabled;
 
-  const Form({
-    Key? key,
-    required this.formKey,
-    required this.fields,
-    required this.disabled
-  }) : super(key: key);
+  const Form({Key? key, required this.formKey, required this.fields, required this.disabled})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -99,12 +94,13 @@ class Form extends StatelessWidget {
             clearValueOnUnregister: true,
             child: FormConstructor(fields: fields),
           ),
-          if (!disabled) ElevatedButton(
-            onPressed: () {
-              context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
-            },
-            child: const Text('Отправить/Жөнөтүү/Submit'),
-          ),
+          if (!disabled)
+            ElevatedButton(
+              onPressed: () {
+                context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
+              },
+              child: const Text('Отправить/Жөнөтүү/Submit'),
+            ),
         ],
       ),
     );

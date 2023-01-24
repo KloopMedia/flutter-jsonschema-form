@@ -142,6 +142,8 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         initialValue: value,
         decoration: decoration,
       );
+    } else if (widgetModel is WebhookTriggerWidgetModel) {
+      return WebhookTriggerFormField(name: id);
     } else {
       return const Text('Error');
     }
@@ -167,6 +169,17 @@ class TextFormatWidgetBuilder extends StatelessWidget {
     required this.readOnly,
     required this.isRequired,
   }) : super(key: key);
+
+  DateTime? parseDateTime(String? value, String format) {
+    if (value == null) {
+      return null;
+    }
+    try {
+      return DateFormat(format).parse(value);
+    } on FormatException {
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
