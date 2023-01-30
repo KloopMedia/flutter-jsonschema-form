@@ -120,11 +120,14 @@ class ArrayBuilder extends StatelessWidget {
 
 Widget _mapModelToField(FieldModel model, dynamic value, [DependencyModel? dependency]) {
   if (model is TextFieldModel) {
-    return form_fields.TextField(model: model, value: value, dependency: dependency);
+    final val = value is String ? value : value.toString();
+    return form_fields.TextField(model: model, value: val, dependency: dependency);
   } else if (model is NumberFieldModel) {
-    return form_fields.NumberField(model: model, value: value, dependency: dependency);
+    final val = value is num ? value : num.tryParse(value);
+    return form_fields.NumberField(model: model, value: val, dependency: dependency);
   } else if (model is BooleanFieldModel) {
-    return form_fields.BooleanField(model: model, value: value, dependency: dependency);
+    final val = value is bool ? value : null;
+    return form_fields.BooleanField(model: model, value: val, dependency: dependency);
   }
   return const Text('Error: Field not found');
 }
