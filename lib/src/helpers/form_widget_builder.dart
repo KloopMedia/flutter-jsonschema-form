@@ -115,7 +115,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
     } else if (widgetModel is AudioWidgetModel) {
       return AudioFormField(
         name: id,
-        initialValue: value ?? widgetModel.url,
+        initialValue: widgetModel.url,
         decoration: decoration,
       );
     } else if (widgetModel is RecorderWidgetModel) {
