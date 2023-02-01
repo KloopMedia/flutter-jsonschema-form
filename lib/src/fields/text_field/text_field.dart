@@ -34,7 +34,12 @@ class _TextFieldState extends State<TextField> {
   late bloc.FormBloc _bloc;
 
   void onChange(value) {
-    _bloc.add(bloc.ChangeFormEvent(id, value, path));
+    if (value is String) {
+      var val = value.isNotEmpty ? value : null;
+      _bloc.add(bloc.ChangeFormEvent(id, val, path));
+    } else {
+      _bloc.add(bloc.ChangeFormEvent(id, value, path));
+    }
   }
 
   String? validator(value) {
