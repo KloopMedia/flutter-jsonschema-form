@@ -28,8 +28,7 @@ class FileSelector extends StatelessWidget {
         }
         return ElevatedButton(
           onPressed: state.enabled
-              ? null
-              : () async {
+              ? () async {
                   final picker = await FilePicker.platform.pickFiles(
                     allowCompression: true,
                     allowMultiple: false,
@@ -37,7 +36,8 @@ class FileSelector extends StatelessWidget {
                   );
                   final files = picker?.files ?? [];
                   onSelect(files);
-                },
+                }
+              : null,
           child: const Text('Add File'),
         );
       },

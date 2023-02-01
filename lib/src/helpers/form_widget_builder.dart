@@ -110,7 +110,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         storage: privateStorage,
         onChanged: onChange,
         allowMultiple: widgetModel.multiple,
-        enabled: disabled,
+        enabled: !disabled,
       );
     } else if (widgetModel is AudioWidgetModel) {
       return AudioFormField(
