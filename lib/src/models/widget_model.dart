@@ -35,7 +35,8 @@ abstract class WidgetModel {
         final multiple = getOption<bool>(options, 'multiple');
         return FileWidgetModel(private: private, multiple: multiple);
       case WidgetType.webhook:
-        return WebhookTriggerWidgetModel();
+        final label = getOption(options, 'label');
+        return WebhookTriggerWidgetModel(label: label);
       // case WidgetType.card:
       //   // TODO: Handle this case.
       //   break;
@@ -100,7 +101,9 @@ class TextAreaWidgetModel extends WidgetModel {
 }
 
 class WebhookTriggerWidgetModel extends WidgetModel {
-  WebhookTriggerWidgetModel() : super(type: WidgetType.webhook);
+  final String? label;
+
+  WebhookTriggerWidgetModel({this.label}) : super(type: WidgetType.webhook);
 }
 
 class NullWidgetModel extends WidgetModel {

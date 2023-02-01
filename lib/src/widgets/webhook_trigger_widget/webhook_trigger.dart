@@ -7,12 +7,14 @@ class WebhookTriggerFormField extends StatefulWidget {
   final String name;
   final InputDecoration decoration;
   final bool enabled;
+  final String? label;
 
   const WebhookTriggerFormField({
     Key? key,
     required this.name,
     this.decoration = const InputDecoration(),
     this.enabled = true,
+    this.label,
   }) : super(key: key);
 
   @override
@@ -31,7 +33,7 @@ class _WebhookTriggerFormFieldState extends State<WebhookTriggerFormField> {
             onPressed: () {
               context.read<FormBloc>().onWebhookTriggerCallback!();
             },
-            child: const Text('Webhook'),
+            child: Text(widget.label ?? 'Webhook'),
           ),
         );
       },

@@ -143,7 +143,10 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         decoration: decoration,
       );
     } else if (widgetModel is WebhookTriggerWidgetModel) {
-      return WebhookTriggerFormField(name: id);
+      return WebhookTriggerFormField(
+        name: id,
+        label: widgetModel.label,
+      );
     } else {
       return const Text('Error');
     }
