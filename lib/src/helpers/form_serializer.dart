@@ -189,8 +189,12 @@ class FormSerializer {
     if (order == null) {
       return fields;
     }
-    final allFields = [...fields, ...dependencies];
-    final Map<String, dynamic> fieldSchema = Map.fromIterable(allFields, key: (field) => field.id);
+    final List<dynamic> allFields = [...fields, ...dependencies];
+    final Map<String, List> fieldSchema = {};
+    for (var field in allFields) {
+      final schemaFields = fieldSchema[field.id] ?? [];
+      fieldSchema[field.id] = [...schemaFields, field];
+    }
     final other = fieldSchema.keys.where((element) => !order.contains(element));
     var orderSchema = List.of(order);
     if (order.contains('*')) {
@@ -202,9 +206,11 @@ class FormSerializer {
     }
     List<dynamic> sortedFields = [];
     for (var element in orderSchema) {
-      final field = fieldSchema[element];
-      if (field != null) {
-        sortedFields.add(field);
+      final schemaFields = fieldSchema[element];
+      if (schemaFields != null) {
+        for (var field in schemaFields) {
+          sortedFields.add(field);
+        }
       }
     }
     for (var dependency in dependencies) {
