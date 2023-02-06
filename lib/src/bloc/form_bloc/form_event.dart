@@ -9,8 +9,15 @@ class ChangeFormEvent extends FormEvent {
   final dynamic value;
   final PathModel path;
   final bool delete;
+  final bool isDependency;
 
-  const ChangeFormEvent(this.id, this.value, this.path, [this.delete = false]);
+  const ChangeFormEvent(
+    this.id,
+    this.value,
+    this.path, [
+    this.delete = false,
+    this.isDependency = false,
+  ]);
 
   @override
   List<Object?> get props => [id, value];

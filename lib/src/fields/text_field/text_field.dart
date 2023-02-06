@@ -72,7 +72,7 @@ class _TextFieldState extends State<TextField> {
       final parentValue = getFormDataByPath(formData, dependency.parentPath);
 
       if (!dependency.values.contains(parentValue)) {
-        _bloc.add(bloc.ChangeFormEvent(id, widget.value, path, true));
+        _bloc.add(bloc.ChangeFormEvent(id, widget.value, path, true, true));
       }
     }
 

@@ -43,6 +43,7 @@ class FormBloc extends Bloc<FormEvent, FormState> {
     final value = event.value;
     final path = event.path;
     final delete = event.delete;
+    final isDependency = event.isDependency;
 
     Map<String, dynamic> formData;
     if (delete || value == null) {
@@ -54,6 +55,11 @@ class FormBloc extends Bloc<FormEvent, FormState> {
         updateDeeply(path.path, state.formData, (prevValue) => value, false),
       );
     }
+
+    if (isDependency) {
+      emit(const FormModified({}));
+    }
+
     emit(FormModified(formData));
     if (onChangeCallback != null) {
       onChangeCallback!(formData, path.toString());
