@@ -36,7 +36,7 @@ class FormBloc extends Bloc<FormEvent, FormState> {
   }
 
   void _onChangeFormEvent(ChangeFormEvent event, Emitter<FormState> emit) {
-    if (state is FormSubmitted) {
+    if (state is FormSubmitted || disabled) {
       return;
     }
 
@@ -67,6 +67,10 @@ class FormBloc extends Bloc<FormEvent, FormState> {
   }
 
   void _onSubmitFormEvent(SubmitFormEvent event, Emitter<FormState> emit) {
+    if (disabled) {
+      return;
+    }
+
     if (formKey.currentState!.validate()) {
       if (onSubmitCallback != null) {
         onSubmitCallback!(state.formData);
