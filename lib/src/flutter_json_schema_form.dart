@@ -21,6 +21,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final WebhookTriggerCallback? onWebhookTrigger;
   final Reference? storage;
   final bool disabled;
+  final Text? submitButtonText;
 
   const FlutterJsonSchemaForm({
     Key? key,
@@ -33,6 +34,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
     this.onWebhookTrigger,
     this.storage,
     this.disabled = false,
+    this.submitButtonText,
   }) : super(key: key);
 
   @override
@@ -71,6 +73,7 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
         formKey: _formKey,
         fields: fields,
         disabled: widget.disabled,
+        submitButtonText: widget.submitButtonText,
       ),
     );
   }
@@ -80,9 +83,15 @@ class Form extends StatelessWidget {
   final GlobalKey<FormBuilderState> formKey;
   final List fields;
   final bool disabled;
+  final Text? submitButtonText;
 
-  const Form({Key? key, required this.formKey, required this.fields, required this.disabled})
-      : super(key: key);
+  const Form({
+    Key? key,
+    required this.formKey,
+    required this.fields,
+    required this.disabled,
+    this.submitButtonText,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +108,7 @@ class Form extends StatelessWidget {
               onPressed: () {
                 context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
               },
-              child: const Text('Отправить/Жөнөтүү/Submit'),
+              child: submitButtonText ?? const Text('Submit'),
             ),
         ],
       ),
