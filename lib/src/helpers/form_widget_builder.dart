@@ -77,7 +77,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
           if (isRequired) FormBuilderValidators.required(),
         ]),
         onChanged: onChange,
-        enabled: !disabled,
+        readOnly: disabled,
         style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
       );
     } else if (widgetModel is PasswordWidgetModel) {
@@ -90,7 +90,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         ]),
         keyboardType: TextInputType.visiblePassword,
         onChanged: onChange,
-        enabled: !disabled,
+        readOnly: disabled,
         style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
       );
     } else if (widgetModel is FileWidgetModel) {
@@ -199,7 +199,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
           ]),
           keyboardType: TextInputType.emailAddress,
           onChanged: onChange,
-          enabled: !disabled,
+          readOnly: disabled,
           style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
         );
       case FormatType.uri:
@@ -213,7 +213,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
           ]),
           keyboardType: TextInputType.url,
           onChanged: onChange,
-          enabled: !disabled,
+          readOnly: disabled,
           style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
         );
       case FormatType.file:
@@ -302,7 +302,7 @@ class DefaultWidgetBuilder extends StatelessWidget {
             if (isRequired) FormBuilderValidators.required(),
           ]),
           onChanged: onChange,
-          enabled: !disabled,
+          readOnly: disabled,
           style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
         );
       case FieldType.number:
@@ -317,7 +317,7 @@ class DefaultWidgetBuilder extends StatelessWidget {
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: onChange,
-          enabled: !disabled,
+          readOnly: disabled,
           style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
         );
       case FieldType.integer:
@@ -332,7 +332,7 @@ class DefaultWidgetBuilder extends StatelessWidget {
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: onChange,
-          enabled: !disabled,
+          readOnly: disabled,
           style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
         );
       case FieldType.boolean:
