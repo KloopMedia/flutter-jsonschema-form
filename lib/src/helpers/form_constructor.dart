@@ -27,19 +27,10 @@ class FormConstructor extends StatelessWidget {
         } else if (model is ArrayModel) {
           return form_fields.ArrayField(model: model);
         } else if (model is DependencyModel) {
-          final field = model.field;
-
-          if (field == null) {
+          if (model.field == null) {
             return const SizedBox.shrink();
           }
-
-          if (field is SectionModel) {
-            return form_fields.SectionField(model: field);
-          } else if (field is ArrayModel) {
-            return form_fields.ArrayField(model: field);
-          } else {
-            return DependencyBuilder(model: model);
-          }
+          return DependencyBuilder(model: model);
         } else {
           return FieldBuilder(model: model);
         }
@@ -128,6 +119,10 @@ Widget _mapModelToField(FieldModel model, dynamic value, [DependencyModel? depen
   } else if (model is BooleanFieldModel) {
     final val = value is bool? ? value : null;
     return form_fields.BooleanField(model: model, value: val, dependency: dependency);
+  } else if (model is SectionModel) {
+    return form_fields.SectionField(model: model);
+  } else if (model is ArrayModel) {
+    return form_fields.ArrayField(model: model);
   }
   return const Text('Error: Field not found');
 }
