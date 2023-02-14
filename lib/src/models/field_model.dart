@@ -29,7 +29,9 @@ abstract class FieldModel {
     required this.isRequired,
     required this.disabled,
     required this.readOnly,
-  }): widgetType = widgetType is NullWidgetModel && enumItems != null ? const SelectWidgetModel() : widgetType;
+  }) : widgetType = widgetType is NullWidgetModel && enumItems != null
+            ? const SelectWidgetModel()
+            : widgetType;
 
   factory FieldModel({
     required String id,
@@ -126,7 +128,12 @@ abstract class FieldModel {
 
       String name;
       try {
-        name = names[index].toString();
+        final enumName = names[index].toString();
+        if (enumName.isNotEmpty) {
+          name = enumName;
+        } else {
+          name = value.toString();
+        }
       } catch (_) {
         name = value.toString();
       }
@@ -168,7 +175,12 @@ abstract class FieldModel {
       final T value = _parseValue<T>(options[index]);
       String name;
       try {
-        name = names[index].toString();
+        final enumName = names[index].toString();
+        if (enumName.isNotEmpty) {
+          name = enumName;
+        } else {
+          name = value.toString();
+        }
       } catch (_) {
         name = value.toString();
       }
