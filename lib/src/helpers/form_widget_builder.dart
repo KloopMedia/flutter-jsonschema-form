@@ -178,7 +178,8 @@ class TextFormatWidgetBuilder extends StatelessWidget {
       return null;
     }
     try {
-      return DateFormat(format).parse(value);
+      // return DateFormat(format).parse(value);
+      return DateTime.parse(value);
     } on FormatException {
       return null;
     }
