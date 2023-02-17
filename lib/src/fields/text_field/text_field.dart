@@ -67,7 +67,7 @@ class _TextFieldState extends State<TextField> {
   @override
   void dispose() {
     final dependency = widget.dependency;
-    if (dependency != null) {
+    if (dependency != null && value != null) {
       final formData = _bloc.state.formData;
       final parentValue = getFormDataByPath(formData, dependency.parentPath);
 
