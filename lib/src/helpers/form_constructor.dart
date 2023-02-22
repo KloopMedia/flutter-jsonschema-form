@@ -120,7 +120,7 @@ Widget _mapModelToField(FieldModel model, dynamic value, [DependencyModel? depen
     final val = value is bool? ? value : null;
     return form_fields.BooleanField(model: model, value: val, dependency: dependency);
   } else if (model is SectionModel) {
-    return form_fields.SectionField(model: model);
+    return form_fields.SectionField(model: model, value: value, dependency: dependency);
   } else if (model is ArrayModel) {
     return form_fields.ArrayField(model: model);
   }

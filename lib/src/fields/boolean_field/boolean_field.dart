@@ -65,7 +65,7 @@ class _BooleanFieldState extends State<BooleanField> {
   @override
   void dispose() {
     final dependency = widget.dependency;
-    if (dependency != null) {
+    if (dependency != null && value != null) {
       final formData = _bloc.state.formData;
       final parentValue = getFormDataByPath(formData, dependency.parentPath);
 
