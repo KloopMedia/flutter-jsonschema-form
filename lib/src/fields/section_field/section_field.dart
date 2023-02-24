@@ -40,7 +40,6 @@ class _SectionFieldState extends State<SectionField> {
   void dispose() {
     final dependency = widget.dependency;
     final value = widget.value;
-    print(value);
     if (dependency != null && value != null) {
       final formData = _bloc.state.formData;
       final parentValue = getFormDataByPath(formData, dependency.parentPath);
