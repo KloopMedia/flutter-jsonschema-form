@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:mime/mime.dart';
 
 part 'file_event.dart';
@@ -15,6 +16,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   final bool allowMultiple;
   final bool enabled;
   final void Function(String? value) onChanged;
+  final Text? addFileText;
 
   FileBloc({
     required dynamic value,
@@ -22,7 +24,8 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     required this.allowMultiple,
     required this.enabled,
     required this.onChanged,
-  }) : super(FilesInitial(files: _decodeValue(storage, value), enabled: enabled)) {
+    this.addFileText,
+  }) : super(FilesInitial(files: _decodeValue(storage, value), enabled: enabled, addFileText: addFileText)) {
     on<AddFileEvent>(onAddFileEvent);
     on<RemoveFileEvent>(onRemoveFileEvent);
     on<ViewFileEvent>(onViewFileEvent);

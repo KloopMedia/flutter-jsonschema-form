@@ -16,13 +16,13 @@ class FileSelector extends StatelessWidget {
         // Disable button when uploading file
         if (state is FileLoading) {
           return Row(
-            children: const [
+            children: [
               ElevatedButton(
                 onPressed: null,
-                child: Text('Add File'),
+                child: state.addFileText ?? const Text('Add File'),
               ),
-              SizedBox(width: 16),
-              CircularProgressIndicator()
+              const SizedBox(width: 16),
+              const CircularProgressIndicator()
             ],
           );
         }
@@ -38,7 +38,7 @@ class FileSelector extends StatelessWidget {
                   onSelect(files);
                 }
               : null,
-          child: const Text('Add File'),
+          child: state.addFileText ?? const Text('Add File'),
         );
       },
     );

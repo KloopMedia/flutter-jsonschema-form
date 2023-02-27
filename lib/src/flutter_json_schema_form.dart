@@ -22,6 +22,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final Reference? storage;
   final bool disabled;
   final Text? submitButtonText;
+  final Text? addFileText;
 
   const FlutterJsonSchemaForm({
     Key? key,
@@ -35,6 +36,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
     this.storage,
     this.disabled = false,
     this.submitButtonText,
+    this.addFileText,
   }) : super(key: key);
 
   @override
@@ -68,6 +70,7 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
         onSubmitCallback: widget.onSubmit,
         onValidationCallback: widget.onValidationFailed,
         onWebhookTriggerCallback: widget.onWebhookTrigger,
+        addFileText: widget.addFileText,
       ),
       child: Form(
         formKey: _formKey,

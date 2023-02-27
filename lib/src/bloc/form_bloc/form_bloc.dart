@@ -20,6 +20,7 @@ class FormBloc extends Bloc<FormEvent, FormState> {
   final bool disabled;
   final GlobalKey<FormBuilderState> formKey;
   final ValidationWarningCallback? onValidationCallback;
+  final Text? addFileText;
 
   FormBloc({
     Map<String, dynamic>? formData,
@@ -30,7 +31,8 @@ class FormBloc extends Bloc<FormEvent, FormState> {
     this.onSubmitCallback,
     this.onValidationCallback,
     this.onWebhookTriggerCallback,
-  }) : super(FormInitial(formData ?? {}, disabled: disabled)) {
+    this.addFileText,
+  }) : super(FormInitial(formData ?? {}, disabled: disabled, addFileText: addFileText)) {
     on<ChangeFormEvent>(_onChangeFormEvent);
     on<SubmitFormEvent>(_onSubmitFormEvent);
   }

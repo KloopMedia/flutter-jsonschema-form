@@ -15,6 +15,7 @@ class FileFormField extends StatefulWidget {
   final bool allowMultiple;
   final void Function(String? value) onChanged;
   final bool enabled;
+  final Text? addFileText;
 
   const FileFormField({
     Key? key,
@@ -26,6 +27,7 @@ class FileFormField extends StatefulWidget {
     this.validator,
     this.allowMultiple = false,
     this.enabled = true,
+    this.addFileText,
   }) : super(key: key);
 
   @override
@@ -52,6 +54,7 @@ class _FileFormFieldState extends State<FileFormField> {
                 field.didChange(value);
                 widget.onChanged(value);
               },
+              addFileText: widget.addFileText,
             ),
             child: const FileWidget(),
           ),

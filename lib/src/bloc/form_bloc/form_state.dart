@@ -4,15 +4,16 @@ abstract class FormState extends Equatable {
   final Map<String, dynamic> formData;
   final bool disabled;
   final bool readOnly;
+  final Text? addFileText;
 
-  const FormState(this.formData, {this.disabled = false, this.readOnly = false});
+  const FormState(this.formData, {this.disabled = false, this.readOnly = false, this.addFileText});
 
   @override
   List<Object> get props => [formData, disabled, readOnly];
 }
 
 class FormInitial extends FormState {
-  const FormInitial(super.formData, {super.disabled});
+  const FormInitial(super.formData, {super.disabled, super.addFileText});
 }
 
 class FormModified extends FormState {
