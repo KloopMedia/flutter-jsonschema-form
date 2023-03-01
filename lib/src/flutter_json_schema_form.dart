@@ -8,7 +8,7 @@ import 'helpers/helpers.dart';
 
 typedef ChangeFormCallback = Function(Map<String, dynamic> formData, String path);
 typedef SubmitFormCallback = Function(Map<String, dynamic> formData);
-typedef ValidationWarningCallback = void Function();
+typedef ValidationWarningCallback = void Function(String? error);
 typedef WebhookTriggerCallback = void Function();
 
 class FlutterJsonSchemaForm extends StatefulWidget {
@@ -45,16 +45,6 @@ class FlutterJsonSchemaForm extends StatefulWidget {
 
 class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
   final _formKey = GlobalKey<FormBuilderState>();
-
-  void submit() {
-    if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Processing Data')),
-      );
-    } else {
-      print('SUBMIT ERROR ${_formKey.currentState?.value}');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
