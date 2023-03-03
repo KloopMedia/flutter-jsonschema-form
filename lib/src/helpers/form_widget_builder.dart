@@ -73,7 +73,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         name: id,
         initialValue: value,
         decoration: decoration,
-        minLines: widgetModel.rows,
+        minLines: widgetModel.rows ?? 4,
         maxLines: widgetModel.rows,
         keyboardType: TextInputType.multiline,
         validator: FormBuilderValidators.compose([
