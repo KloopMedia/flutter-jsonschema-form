@@ -82,6 +82,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         onChanged: onChange,
         readOnly: disabled,
         style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
+        scrollPhysics: const NeverScrollableScrollPhysics(),
       );
     } else if (widgetModel is PasswordWidgetModel) {
       return FormBuilderTextField(
