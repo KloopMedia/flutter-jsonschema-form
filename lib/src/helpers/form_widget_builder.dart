@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 
 import '../bloc/bloc.dart';
 import '../models/models.dart';
-import '../widgets/link_widget.dart';
 import '../widgets/widgets.dart';
 import 'helpers.dart';
 

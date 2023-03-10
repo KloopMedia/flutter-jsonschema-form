@@ -40,9 +40,8 @@ abstract class WidgetModel {
       // case WidgetType.card:
       //   // TODO: Handle this case.
       //   break;
-      // case WidgetType.reader:
-      //   // TODO: Handle this case.
-      //   break;
+      case WidgetType.reader:
+        return const ReaderWidgetModel();
       default:
         return const NullWidgetModel();
     }
@@ -104,6 +103,10 @@ class WebhookTriggerWidgetModel extends WidgetModel {
   final String? label;
 
   WebhookTriggerWidgetModel({this.label}) : super(type: WidgetType.webhook);
+}
+
+class ReaderWidgetModel extends WidgetModel {
+  const ReaderWidgetModel() : super(type: WidgetType.reader);
 }
 
 class NullWidgetModel extends WidgetModel {

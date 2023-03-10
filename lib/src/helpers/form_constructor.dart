@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_json_schema_form/src/widgets/reader_widget/reader_form_field.dart';
 
 import '../bloc/bloc.dart' as bloc;
 import '../fields/fields.dart' as form_fields;
@@ -123,6 +124,8 @@ Widget _mapModelToField(FieldModel model, dynamic value, [DependencyModel? depen
     return form_fields.SectionField(model: model, value: value, dependency: dependency);
   } else if (model is ArrayModel) {
     return form_fields.ArrayField(model: model);
+  } else if (model is ReaderFieldModel) {
+    return ReaderFormField(model: model, value: value);
   }
   return const Text('Error: Field not found');
 }

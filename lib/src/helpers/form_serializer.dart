@@ -1,5 +1,3 @@
-import 'package:flutter_json_schema_form/src/models/widget_model.dart';
-
 import '../models/models.dart';
 import 'helpers.dart';
 
@@ -68,6 +66,17 @@ class FormSerializer {
           description: schema['description'],
         );
       case FieldType.array:
+        final widgetType = decodeWidgetType(uiSchema?['ui:widget']);
+        if (widgetType == WidgetType.reader) {
+          return ReaderFieldModel(
+            id: id,
+            title: schema['title'],
+            description: schema['description'],
+            fieldType: type,
+            widgetType: WidgetModel.fromUiSchema(uiSchema),
+            path: newPath,
+          );
+        }
         return _createArrayModel(
           id: id,
           schema: schema,
