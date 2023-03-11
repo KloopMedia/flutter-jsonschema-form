@@ -37,7 +37,9 @@ class FileWidget extends StatelessWidget {
                 final fileName = files.first.name;
                 final bytes = files.first.bytes;
 
-                context.read<FileBloc>().add(AddFileEvent(name: fileName, bytes: bytes));
+                context
+                    .read<FileBloc>()
+                    .add(AddFileEvent(name: fileName, bytes: bytes));
               }
             },
           ),
