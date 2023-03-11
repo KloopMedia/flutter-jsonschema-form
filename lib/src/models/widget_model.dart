@@ -93,11 +93,10 @@ class RadioWidgetModel extends WidgetModel {
 }
 
 class TextAreaWidgetModel extends WidgetModel {
-  final int rows;
+  final int? rows;
 
-  const TextAreaWidgetModel({int? rows})
-      : rows = rows ?? 4,
-        super(type: WidgetType.textarea);
+  const TextAreaWidgetModel({this.rows})
+      : super(type: WidgetType.textarea);
 }
 
 class WebhookTriggerWidgetModel extends WidgetModel {

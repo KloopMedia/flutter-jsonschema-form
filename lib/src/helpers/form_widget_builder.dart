@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart' hide FormBuilderRadioGroup;
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
 
@@ -66,13 +66,14 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         options: radioItems!,
         enabled: !disabled,
         onChanged: onChange,
+        physics: const NeverScrollableScrollPhysics(),
       );
     } else if (widgetModel is TextAreaWidgetModel) {
       return FormBuilderTextField(
         name: id,
         initialValue: value,
         decoration: decoration,
-        minLines: widgetModel.rows,
+        minLines: widgetModel.rows ?? 4,
         maxLines: widgetModel.rows,
         keyboardType: TextInputType.multiline,
         validator: FormBuilderValidators.compose([
@@ -81,6 +82,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         onChanged: onChange,
         readOnly: disabled,
         style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
+        scrollPhysics: const NeverScrollableScrollPhysics(),
       );
     } else if (widgetModel is PasswordWidgetModel) {
       return FormBuilderTextField(
