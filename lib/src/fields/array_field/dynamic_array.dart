@@ -5,20 +5,20 @@ import '../../helpers/helpers.dart';
 import '../../models/models.dart';
 import '../../bloc/bloc.dart' as bloc;
 
-class CreatableArray extends StatefulWidget {
-  final ArrayModel model;
+class DynamicArray extends StatefulWidget {
+  final DynamicArrayModel model;
 
-  const CreatableArray({
+  const DynamicArray({
     Key? key,
     required this.model,
   }) : super(key: key);
 
   @override
-  State<CreatableArray> createState() => _CreatableArrayState();
+  State<DynamicArray> createState() => _DynamicArrayState();
 }
 
-class _CreatableArrayState extends State<CreatableArray> {
-  late final FieldModel fieldModel = widget.model.itemType!;
+class _DynamicArrayState extends State<DynamicArray> {
+  late final BaseModel fieldModel = widget.model.itemType;
   List<FieldModel> fields = [];
 
   void addItemToArray() {
@@ -29,9 +29,10 @@ class _CreatableArrayState extends State<CreatableArray> {
     });
   }
 
-  FieldModel createArrayItemFromModel(FieldModel model, String id) {
+  FieldModel createArrayItemFromModel(BaseModel model, String id) {
     final path = model.path.removeLast().add(id, model.fieldType);
-    return model.copyWith(id: id, path: path);
+    throw UnimplementedError();
+    // return model.copyWith(id: id, path: path);
   }
 
   void removeItemFromArray() {

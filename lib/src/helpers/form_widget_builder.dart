@@ -16,26 +16,24 @@ class FormWidgetBuilder<T> extends StatelessWidget {
   final WidgetModel widgetType;
   final dynamic value;
   final void Function(dynamic value) onChange;
-  final List<DropdownMenuItem<T>>? dropdownItems;
-  final List<FormBuilderFieldOption<T>>? radioItems;
+  final List<MapEntry<dynamic, String>>? enumItems;
   final bool disabled;
   final bool readOnly;
   final bool isRequired;
   final Text? addFileText;
 
-  const FormWidgetBuilder({
-    Key? key,
-    required this.id,
-    required this.widgetType,
-    required this.value,
-    required this.onChange,
-    this.dropdownItems,
-    this.radioItems,
-    required this.readOnly,
-    required this.disabled,
-    required this.isRequired,
-    this.addFileText
-  }) : super(key: key);
+  const FormWidgetBuilder(
+      {Key? key,
+      required this.id,
+      required this.widgetType,
+      required this.value,
+      required this.onChange,
+      required this.readOnly,
+      required this.disabled,
+      required this.isRequired,
+      this.enumItems,
+      this.addFileText})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +48,12 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         validator: FormBuilderValidators.compose([
           if (isRequired) FormBuilderValidators.required(),
         ]),
-        items: dropdownItems!,
+        items: enumItems!
+            .map((e) => DropdownMenuItem<T>(
+                  value: e.key,
+                  child: Text(e.value),
+                ))
+            .toList(),
         enabled: !disabled,
         onChanged: onChange,
       );
@@ -63,7 +66,12 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         validator: FormBuilderValidators.compose([
           if (isRequired) FormBuilderValidators.required(),
         ]),
-        options: radioItems!,
+        options: enumItems!
+            .map((e) => FormBuilderFieldOption<T>(
+                  value: e.key,
+                  child: Text(e.value),
+                ))
+            .toList(),
         enabled: !disabled,
         onChanged: onChange,
       );

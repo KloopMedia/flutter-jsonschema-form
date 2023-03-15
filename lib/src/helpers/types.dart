@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-
 typedef WidgetOnChangeCallback<T> = void Function(T? value);
 typedef WidgetValidator<T> = String? Function(T? value);
 
@@ -31,19 +29,19 @@ const typeEnumMap = {
   FieldType.boolean: 'boolean',
 };
 
-const widgetEnumMap = {
-  WidgetType.select: 'select',
-  WidgetType.textarea: 'textarea',
-  WidgetType.radio: 'radio',
-  WidgetType.audio: 'audio',
-  WidgetType.link: ['customlink', 'link'],
-  WidgetType.password: 'password',
-  WidgetType.file: ['customfile', 'file'],
-  WidgetType.card: 'card',
-  WidgetType.reader: 'reader',
-  WidgetType.recorder: 'recorder',
-  WidgetType.webhook: 'webhook',
-};
+// const widgetEnumMap = {
+//   'select': SelectWidgetModel,
+//   'textarea': TextAreaWidgetModel,
+//   'radio': RadioWidgetModel,
+//   'audio': AudioWidgetModel,
+//   'customlink': LinkWidgetModel,
+//   'link': LinkWidgetModel,
+//   'password': PasswordWidgetModel,
+//   'customfile': FileWidgetModel,
+//   'file': FileWidgetModel,
+//   'recorder': RecorderWidgetModel,
+//   'webhook': WebhookTriggerWidgetModel,
+// };
 
 const formatEnumMap = {
   FormatType.email: 'email',
@@ -52,42 +50,3 @@ const formatEnumMap = {
   FormatType.date: 'date',
   FormatType.dateTime: 'date-time',
 };
-
-K? enumDecodeNullable<K extends Enum, V>(Map<K, V> enumValues, Object? source) {
-  if (source == null) {
-    return null;
-  }
-
-  for (var entry in enumValues.entries) {
-    final value = entry.value;
-    if (value is List) {
-      if (value.contains(source)) {
-        return entry.key;
-      }
-    }
-    if (entry.value == source) {
-      return entry.key;
-    }
-  }
-
-  return null;
-}
-
-FieldType decodeFieldType(String? type) =>
-    enumDecodeNullable(typeEnumMap, type) ?? FieldType.string;
-
-WidgetType decodeWidgetType(String? type) =>
-    enumDecodeNullable(widgetEnumMap, type) ?? WidgetType.none;
-
-FormatType? decodeFormatType(String? type) => enumDecodeNullable(formatEnumMap, type);
-
-DateTime? parseDateTime(String? value, String format) {
-  if (value == null) {
-    return null;
-  }
-  try {
-    return DateFormat(format).parse(value);
-  } on FormatException {
-    return null;
-  }
-}

@@ -26,12 +26,14 @@ class FormConstructor extends StatelessWidget {
           return form_fields.SectionField(model: model);
         } else if (model is ArrayModel) {
           return form_fields.ArrayField(model: model);
-        } else if (model is DependencyModel) {
-          if (model.field == null) {
-            return const SizedBox.shrink();
-          }
-          return DependencyBuilder(model: model);
-        } else {
+        }
+        // else if (model is DependencyModel) {
+        //   if (model.field == null) {
+        //     return const SizedBox.shrink();
+        //   }
+        //   return DependencyBuilder(model: model);
+        // }
+        else {
           return FieldBuilder(model: model);
         }
       },
@@ -55,30 +57,30 @@ class FieldBuilder extends StatelessWidget {
   }
 }
 
-class DependencyBuilder extends StatelessWidget {
-  final DependencyModel model;
-
-  const DependencyBuilder({Key? key, required this.model}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final field = model.field!;
-    return BlocBuilder<bloc.FormBloc, bloc.FormState>(
-      builder: (context, state) {
-        final parentValue = getFormDataByPath(state.formData, model.parentPath);
-        if (model.values.contains(parentValue)) {
-          final value = getFormDataByPath(state.formData, field.path);
-          return _mapModelToField(field, value, model);
-        } else {
-          return const SizedBox.shrink();
-        }
-      },
-    );
-  }
-}
+// class DependencyBuilder extends StatelessWidget {
+//   final DependencyModel model;
+//
+//   const DependencyBuilder({Key? key, required this.model}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final field = model.field!;
+//     return BlocBuilder<bloc.FormBloc, bloc.FormState>(
+//       builder: (context, state) {
+//         final parentValue = getFormDataByPath(state.formData, model.parentPath);
+//         if (model.values.contains(parentValue)) {
+//           final value = getFormDataByPath(state.formData, field.path);
+//           return _mapModelToField(field, value, model);
+//         } else {
+//           return const SizedBox.shrink();
+//         }
+//       },
+//     );
+//   }
+// }
 
 class ArrayBuilder extends StatelessWidget {
-  final List<FieldModel> fields;
+  final List<BaseModel> fields;
   final List values;
 
   const ArrayBuilder({Key? key, required this.fields, required this.values}) : super(key: key);
@@ -109,7 +111,7 @@ class ArrayBuilder extends StatelessWidget {
   }
 }
 
-Widget _mapModelToField(FieldModel model, dynamic value, [DependencyModel? dependency]) {
+Widget _mapModelToField(BaseModel model, dynamic value, [DependencyModel? dependency]) {
   if (model is TextFieldModel) {
     final val = value is String? ? value : value.toString();
     return form_fields.TextField(model: model, value: val, dependency: dependency);

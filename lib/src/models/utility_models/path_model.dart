@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import '../helpers/helpers.dart';
+import '../../helpers/helpers.dart';
 
 class PathModel {
   final List<PathItem> path;

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/models.dart';
 import '../../fields/fields.dart';
 import 'dynamic_array.dart';
-import 'fixed_array.dart';
+import 'static_array.dart';
 
 class ArrayField extends StatelessWidget {
   final ArrayModel model;
@@ -17,10 +17,11 @@ class ArrayField extends StatelessWidget {
       description: model.description,
       child: Builder(
         builder: (context) {
-          if (model.isFixed) {
-            return FixedArray(items: model.items!);
+          if (model is StaticArrayModel) {
+            final items = (model as StaticArrayModel).items;
+            return StaticArray(items: items);
           } else {
-            return CreatableArray(model: model);
+            return DynamicArray(model: model as DynamicArrayModel);
           }
         },
       ),

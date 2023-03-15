@@ -24,7 +24,7 @@ class _BooleanFieldState extends State<BooleanField> {
   late final title = widget.model.fieldTitle;
   late final description = widget.model.description;
   late final type = widget.model.fieldType;
-  late final widgetType = widget.model.widgetType;
+  late final widgetType = widget.model.widget;
   late final isRequired = widget.model.isRequired;
   late final defaultValue = widget.model.defaultValue;
   late final value = widget.value ?? defaultValue;
@@ -109,8 +109,7 @@ class _BooleanFieldState extends State<BooleanField> {
           widgetType: widgetType,
           value: value,
           onChange: onChange,
-          dropdownItems: widget.model.getDropdownItems(),
-          radioItems: widget.model.getRadio(),
+          enumItems: widget.model.getEnumItems(),
           disabled: globalDisabled || disabled,
           readOnly: readOnly,
           isRequired: isRequired,

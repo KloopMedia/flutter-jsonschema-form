@@ -24,7 +24,7 @@ class _TextFieldState extends State<TextField> {
   late final title = widget.model.fieldTitle;
   late final description = widget.model.description;
   late final type = widget.model.fieldType;
-  late final widgetType = widget.model.widgetType;
+  late final widgetType = widget.model.widget;
   late final isRequired = widget.model.isRequired;
   late final defaultValue = widget.model.defaultValue;
   late final value = widget.value ?? defaultValue;
@@ -95,7 +95,7 @@ class _TextFieldState extends State<TextField> {
       description: description,
       isRequired: isRequired,
       child: Builder(builder: (context) {
-        if (widgetType is NullWidgetModel) {
+        if (widgetType == null) {
           if (format != null) {
             return TextFormatWidgetBuilder(
               type: format!,
@@ -123,8 +123,7 @@ class _TextFieldState extends State<TextField> {
             widgetType: widgetType,
             value: value,
             onChange: onChange,
-            dropdownItems: widget.model.getDropdownItems(),
-            radioItems: widget.model.getRadio(),
+            enumItems: widget.model.getEnumItems<String>(),
             disabled: globalDisabled || disabled,
             readOnly: readOnly,
             isRequired: isRequired,

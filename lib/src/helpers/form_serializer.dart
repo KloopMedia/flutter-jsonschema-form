@@ -1,24 +1,23 @@
-import 'package:flutter_json_schema_form/src/models/widget_model.dart';
-
 import '../models/models.dart';
 import 'helpers.dart';
 
 class FormSerializer {
   static List<dynamic> serialize(Map<String, dynamic> schema, Map<String, dynamic>? uiSchema) {
     if (schema.isNotEmpty) {
-      final model = _createModelFromSchema(
+      final model = createModelFromSchema(
         id: '#',
         schema: schema,
         uiSchema: uiSchema,
         path: null,
         isRequired: false,
+        dependency: null,
       );
       return [model];
     }
     return [];
   }
 
-  static List<FieldModel> mapSchemaToFields(
+  static List<BaseModel> mapSchemaToFields(
     Map<String, dynamic> schema,
     Map<String, dynamic>? uiSchema,
     PathModel path,
@@ -28,33 +27,32 @@ class FormSerializer {
     }
     Map<String, dynamic> fieldMap = schema['properties'];
     final required = getRequiredFields(schema);
-    List<FieldModel> fields = fieldMap.entries.map((field) {
+    List<BaseModel> fields = fieldMap.entries.map((field) {
       final isRequired = required.contains(field.key);
-      return _createModelFromSchema(
+      return createModelFromSchema(
         id: field.key,
         schema: field.value,
         uiSchema: uiSchema?[field.key],
         path: path,
         isRequired: isRequired,
+        dependency: null,
       );
     }).toList();
     return fields;
   }
 
-  static FieldModel _createModelFromSchema({
+  static BaseModel createModelFromSchema({
     required String id,
     required Map<String, dynamic> schema,
     required Map<String, dynamic>? uiSchema,
     required PathModel? path,
     required bool isRequired,
+    required DependencyModel? dependency,
   }) {
     final type = getFieldType(schema);
-    PathModel newPath;
-    if (path == null) {
-      newPath = const PathModel.empty();
-    } else {
-      newPath = path.add(id, type);
-    }
+    final newPath = addPath(path, id, type);
+    final widget = WidgetModel.fromUiSchema(uiSchema);
+
     switch (type) {
       case FieldType.object:
         final requiredFields = getRequiredFields(schema);
@@ -66,91 +64,54 @@ class FormSerializer {
           required: requiredFields,
           title: schema['title'],
           description: schema['description'],
+          dependency: null,
         );
       case FieldType.array:
-        return _createArrayModel(
+        return ArrayModel.fromSchema(
           id: id,
           schema: schema,
           uiSchema: uiSchema,
           path: newPath,
+          dependency: dependency,
         );
       case FieldType.string:
+        return TextFieldModel.fromSchema(
+            id: id,
+            path: newPath,
+            schema: schema,
+            uiSchema: uiSchema,
+            isRequired: isRequired,
+            widget: widget,
+            dependency: dependency,
+            format: decodeFormatType(schema['format']));
       case FieldType.number:
       case FieldType.integer:
+        return NumberFieldModel.fromSchema(
+          id: id,
+          path: newPath,
+          schema: schema,
+          uiSchema: uiSchema,
+          isRequired: isRequired,
+          widget: widget,
+          dependency: dependency,
+        );
       case FieldType.boolean:
-        return FieldModel(
+        return BooleanFieldModel(
           id: id,
           title: schema['title'],
           description: schema['description'],
-          fieldType: type,
-          widgetType: WidgetModel.fromUiSchema(uiSchema),
-          enumItems: schema['enum'],
+          widget: WidgetModel.fromUiSchema(uiSchema),
           enumNames: schema['enumNames'],
           path: newPath,
           isRequired: isRequired,
           defaultValue: schema['default'],
           disabled: uiSchema?['ui:disabled'],
           readOnly: uiSchema?['ui:readonly'],
-          format: decodeFormatType(schema['format']),
+          dependency: dependency,
         );
       default:
         throw Exception("Model doesn't exist for type $type");
     }
-  }
-
-  static ArrayModel _createArrayModel({
-    required String id,
-    required Map<String, dynamic> schema,
-    required Map<String, dynamic>? uiSchema,
-    required PathModel path,
-  }) {
-    final items = schema['items'];
-    final itemsUi = uiSchema?['items'] ?? [];
-    final String? title = schema['title'];
-    final String? description = schema['description'];
-
-    if (items is List) {
-      final fields = _createFixedArrayFields(items, itemsUi, path);
-      return ArrayModel.fixed(
-        id: id,
-        items: fields,
-        path: path,
-        title: title,
-        description: description,
-      );
-    } else if (items is Map<String, dynamic>) {
-      final itemType = _createModelFromSchema(
-        id: '',
-        schema: items,
-        uiSchema: uiSchema,
-        path: path,
-        isRequired: true,
-      );
-      return ArrayModel.dynamic(
-        id: id,
-        itemType: itemType,
-        path: path,
-        title: title,
-        description: description,
-      );
-    } else {
-      throw Exception('Incorrect type of items in $id');
-    }
-  }
-
-  static List<FieldModel> _createFixedArrayFields(List items, List itemsUi, PathModel path) {
-    final fields = items.mapWithIndex((item, index) {
-      final field = item as Map<String, dynamic>;
-      Map<String, dynamic> ui;
-      try {
-        ui = itemsUi[index];
-      } on RangeError {
-        ui = {};
-      }
-      return _createModelFromSchema(
-          id: index.toString(), schema: field, uiSchema: ui, path: path, isRequired: true);
-    }).toList();
-    return fields;
   }
 
   static List<dynamic> createSectionFieldList(
@@ -161,8 +122,9 @@ class FormSerializer {
     final fields = mapSchemaToFields(schema, uiSchema, path);
     final dependencies = parseSchemaDependencies(schema, uiSchema, path);
     final order = getOrder(uiSchema);
-    final sorted = sortFields(fields, dependencies, order);
-    return sorted;
+    // final sorted = sortFields(fields, dependencies, order);
+    // return sorted;
+    return [...fields, ...dependencies];
   }
 
   static List<String> getRequiredFields(Map<String, dynamic> schema) {
@@ -184,45 +146,45 @@ class FormSerializer {
     return decodeFieldType(schema['type']);
   }
 
-  static List<dynamic> sortFields(
-      List<FieldModel> fields, List<DependencyModel> dependencies, List<String>? order) {
-    if (order == null) {
-      return fields;
-    }
-    final List<dynamic> allFields = [...fields, ...dependencies];
-    final Map<String, List> fieldSchema = {};
-    for (var field in allFields) {
-      final schemaFields = fieldSchema[field.id] ?? [];
-      fieldSchema[field.id] = [...schemaFields, field];
-    }
-    final other = fieldSchema.keys.where((element) => !order.contains(element));
-    var orderSchema = List.of(order);
-    if (order.contains('*')) {
-      final wildCardIndex = order.indexOf('*');
-      orderSchema.insertAll(wildCardIndex, other);
-      orderSchema.remove('*');
-    } else {
-      orderSchema.addAll(other);
-    }
-    List<dynamic> sortedFields = [];
-    for (var element in orderSchema) {
-      final schemaFields = fieldSchema[element];
-      if (schemaFields != null) {
-        for (var field in schemaFields) {
-          sortedFields.add(field);
-        }
-      }
-    }
-    for (var dependency in dependencies) {
-      if (!order.contains(dependency.id)) {
-        final index = fields.indexWhere((field) => field.id == dependency.parentId);
-        if (!index.isNegative) {
-          sortedFields.insert(index + 1, dependency);
-        }
-      }
-    }
-    return sortedFields;
-  }
+  // static List<dynamic> sortFields(
+  //     List<BaseModel> fields, List<DependencyModel> dependencies, List<String>? order) {
+  //   if (order == null) {
+  //     return fields;
+  //   }
+  //   final List<dynamic> allFields = [...fields, ...dependencies];
+  //   final Map<String, List> fieldSchema = {};
+  //   for (var field in allFields) {
+  //     final schemaFields = fieldSchema[field.id] ?? [];
+  //     fieldSchema[field.id] = [...schemaFields, field];
+  //   }
+  //   final other = fieldSchema.keys.where((element) => !order.contains(element));
+  //   var orderSchema = List.of(order);
+  //   if (order.contains('*')) {
+  //     final wildCardIndex = order.indexOf('*');
+  //     orderSchema.insertAll(wildCardIndex, other);
+  //     orderSchema.remove('*');
+  //   } else {
+  //     orderSchema.addAll(other);
+  //   }
+  //   List<dynamic> sortedFields = [];
+  //   for (var element in orderSchema) {
+  //     final schemaFields = fieldSchema[element];
+  //     if (schemaFields != null) {
+  //       for (var field in schemaFields) {
+  //         sortedFields.add(field);
+  //       }
+  //     }
+  //   }
+  //   for (var dependency in dependencies) {
+  //     if (!order.contains(dependency.id)) {
+  //       final index = fields.indexWhere((field) => field.id == dependency.parentId);
+  //       if (!index.isNegative) {
+  //         sortedFields.insert(index + 1, dependency);
+  //       }
+  //     }
+  //   }
+  //   return sortedFields;
+  // }
 
   static List<dynamic> insertDependencies(
     List<FieldModel> fields,
@@ -238,7 +200,7 @@ class FormSerializer {
     return newFields;
   }
 
-  static List<DependencyModel> parseSchemaDependencies(
+  static List<BaseModel> parseSchemaDependencies(
     Map<String, dynamic>? schema,
     Map<String, dynamic>? uiSchema,
     PathModel path,
@@ -248,48 +210,85 @@ class FormSerializer {
     }
     final Map<String, dynamic> fieldMap = schema['dependencies'];
 
-    List<DependencyModel> deps = [];
-    for (final field in fieldMap.entries) {
-      final id = field.key;
-      final value = field.value;
-      if (value.containsKey('oneOf')) {
-        List<Map<String, dynamic>> dependencies = (value['oneOf'] as List<dynamic>).cast();
-        for (final dependency in dependencies) {
-          Map<String, dynamic> fields = Map.of(dependency['properties']);
-          final Map<String, dynamic>? condition = fields.remove(id);
-          final List<dynamic> conditionValues = condition?['enum'] ?? [];
-          final required = getRequiredFields(dependency);
-          for (final item in fields.entries) {
-            final depField = _createModelFromSchema(
-              id: item.key,
-              schema: item.value,
-              uiSchema: uiSchema?[item.key],
-              path: path,
-              isRequired: required.contains(item.key),
-            );
-            deps.add(
-              DependencyModel(
-                id: depField.id,
-                parentId: id,
-                parentPath: path.add(id, null),
-                values: conditionValues,
-                field: depField,
-              ),
-            );
-          }
-        }
-      }
+    return fieldMap.entries
+        .map((field) => _parseDependencySchema(field, uiSchema, path))
+        .expand((e) => e)
+        .toList();
+  }
+
+  static Iterable<BaseModel> _parseDependencySchema(
+    MapEntry<String, dynamic> field,
+    Map<String, dynamic>? uiSchema,
+    PathModel path,
+  ) {
+    final id = field.key;
+    final value = field.value;
+    if (value.containsKey('oneOf')) {
+      List<Map<String, dynamic>> dependencySchemaList = (value['oneOf'] as List<dynamic>).cast();
+      return dependencySchemaList
+          .map((dependency) => _parseSubDependencySchema(id, path, dependency, uiSchema).toList())
+          .expand((e) => e);
     }
-    return deps;
+    return [];
+  }
+
+  static Iterable<BaseModel> _parseSubDependencySchema(
+    String id,
+    PathModel path,
+    Map<String, dynamic> schema,
+    Map<String, dynamic>? uiSchema,
+  ) {
+    Map<String, dynamic> fields = Map.of(schema['properties']);
+
+    final Map<String, dynamic>? conditionField = fields.remove(id);
+    final List<dynamic> displayConditions = conditionField?['enum'] ?? [];
+
+    final required = getRequiredFields(schema);
+
+    return fields.entries.map((field) {
+      final isRequired = required.contains(field.key);
+      final ui = uiSchema?[field.key];
+      return _createFieldWithDependency(id, path, field, ui, isRequired, displayConditions);
+    });
+  }
+
+  static BaseModel _createFieldWithDependency(
+    String id,
+    PathModel path,
+    MapEntry<String, dynamic> field,
+    Map<String, dynamic>? uiSchema,
+    bool isRequired,
+    List conditions,
+  ) {
+    final dependency = DependencyModel(
+      parentId: id,
+      parentPath: path.add(id, null),
+      values: conditions,
+    );
+
+    return createModelFromSchema(
+      id: field.key,
+      schema: field.value,
+      uiSchema: uiSchema,
+      path: path,
+      isRequired: isRequired,
+      dependency: dependency,
+    );
   }
 }
 
-extension on Iterable {
-  Iterable<T> mapWithIndex<T, E>(T Function(E e, int i) toElement) sync* {
-    int index = 0;
-    for (var value in this) {
-      yield toElement(value, index);
-      index++;
-    }
-  }
-}
+// extension Flatten<T extends Object> on Iterable<T> {
+//   Iterable<T> flatten() {
+//     Iterable<T> _flatten(Iterable<T> list) sync* {
+//       for (final value in list) {
+//         if (value is List<T>) {
+//           yield* _flatten(value);
+//         } else {
+//           yield value;
+//         }
+//       }
+//     }
+//
+//     return _flatten(this);
+//   }
+// }
