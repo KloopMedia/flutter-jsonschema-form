@@ -23,6 +23,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final bool disabled;
   final Text? submitButtonText;
   final Text? addFileText;
+  final PageStorageKey? pageStorageKey;
 
   const FlutterJsonSchemaForm({
     Key? key,
@@ -37,6 +38,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
     this.disabled = false,
     this.submitButtonText,
     this.addFileText,
+    this.pageStorageKey,
   }) : super(key: key);
 
   @override
@@ -77,6 +79,7 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
         fields: fields,
         disabled: widget.disabled,
         submitButtonText: widget.submitButtonText,
+        pageStorageKey: widget.pageStorageKey,
       ),
     );
   }
@@ -84,6 +87,7 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
 
 class Form extends StatelessWidget {
   final GlobalKey<FormBuilderState> formKey;
+  final PageStorageKey? pageStorageKey;
   final List fields;
   final bool disabled;
   final Text? submitButtonText;
@@ -94,12 +98,14 @@ class Form extends StatelessWidget {
     required this.fields,
     required this.disabled,
     this.submitButtonText,
+    this.pageStorageKey,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SelectionArea(
       child: SingleChildScrollView(
+        key: pageStorageKey,
         child: Column(
           children: [
             FormBuilder(
