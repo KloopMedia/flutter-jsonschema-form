@@ -10,6 +10,7 @@ class Player {
     ),
   );
   final buttonNotifier = ValueNotifier<ButtonState>(ButtonState.paused);
+  final speedNotifier = ValueNotifier<SpeedState>(SpeedState.normal);
 
   late AudioPlayer _audioPlayer;
 
@@ -78,6 +79,14 @@ class Player {
         total: totalDuration ?? Duration.zero,
       );
     });
+
+    _audioPlayer.speedStream.listen((event) {
+      if (_audioPlayer.speed == 0.5) {
+        speedNotifier.value = SpeedState.slow;
+      } else {
+        speedNotifier.value = SpeedState.normal;
+      }
+    });
   }
 
   void play() {
@@ -116,6 +125,14 @@ class Player {
   void dispose() {
     _audioPlayer.dispose();
   }
+
+  void setSpeedSlow() {
+    _audioPlayer.setSpeed(0.5);
+  }
+
+  void setSpeedNormal() {
+    _audioPlayer.setSpeed(1.0);
+  }
 }
 
 class ProgressBarState {
@@ -131,3 +148,5 @@ class ProgressBarState {
 }
 
 enum ButtonState { paused, playing, loading }
+
+enum SpeedState { slow, normal }

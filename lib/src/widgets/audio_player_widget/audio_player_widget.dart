@@ -50,6 +50,22 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            ValueListenableBuilder(
+              valueListenable: _player.speedNotifier,
+              builder: (_, value, __) {
+                return TextButton(
+                  onPressed: _disabled ? null : _player.setSpeedSlow,
+                  child: Text(
+                      '0.5x',
+                      style: TextStyle(
+                          color: (value == SpeedState.slow)
+                              ? Colors.black
+                              : Colors.black45
+                      )
+                  ),
+                );
+              },
+            ),
             IconButton(
               onPressed: _disabled ? null : _player.replay,
               icon: const Icon(Icons.replay_10),
@@ -83,7 +99,23 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
             IconButton(
               onPressed: _disabled ? null : _player.forward,
               icon: const Icon(Icons.forward_10),
-            )
+            ),
+            ValueListenableBuilder(
+              valueListenable: _player.speedNotifier,
+              builder: (_, value, __) {
+                return TextButton(
+                  onPressed: _disabled ? null : _player.setSpeedNormal,
+                  child: Text(
+                      '1.0x',
+                      style: TextStyle(
+                          color: (value == SpeedState.normal)
+                              ? Colors.black
+                              : Colors.black45
+                      )
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ],
