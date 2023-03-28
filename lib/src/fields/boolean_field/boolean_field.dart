@@ -19,25 +19,25 @@ class BooleanField extends StatefulWidget {
 }
 
 class _BooleanFieldState extends State<BooleanField> {
-  late final id = widget.model.id;
-  late final path = widget.model.path;
-  late final title = widget.model.fieldTitle;
-  late final description = widget.model.description;
-  late final type = widget.model.fieldType;
-  late final widgetType = widget.model.widgetType;
-  late final isRequired = widget.model.isRequired;
-  late final defaultValue = widget.model.defaultValue;
-  late final value = widget.value ?? defaultValue;
-  late final disabled = widget.model.disabled;
-  late final readOnly = widget.model.readOnly;
+  // late final id = widget.model.id;
+  // late final path = widget.model.path;
+  // late final title = widget.model.fieldTitle;
+  // late final description = widget.model.description;
+  // late final type = widget.model.fieldType;
+  // late final widgetType = widget.model.widgetType;
+  // late final isRequired = widget.model.isRequired;
+  // late final defaultValue = widget.model.defaultValue;
+  // late final value = widget.value ?? defaultValue;
+  // late final disabled = widget.model.disabled;
+  // late final readOnly = widget.model.readOnly;
   late bloc.FormBloc _bloc;
 
   void onChange(value) {
-    _bloc.add(bloc.ChangeFormEvent(id, value, path));
+    _bloc.add(bloc.ChangeFormEvent(widget.model.id, value, widget.model.path));
   }
 
   String? validator(value) {
-    if (isRequired && value == null) {
+    if (widget.model.isRequired && value == null) {
       return 'Required';
     }
     return null;
@@ -46,11 +46,11 @@ class _BooleanFieldState extends State<BooleanField> {
   @override
   void initState() {
     _bloc = context.read<bloc.FormBloc>();
-    if (defaultValue != null) {
+    if (widget.model.defaultValue != null) {
       final formData = context.read<bloc.FormBloc>().state.formData;
-      final value = getFormDataByPath(formData, path);
+      final value = getFormDataByPath(formData, widget.model.path);
       if (value == null) {
-        onChange(defaultValue);
+        onChange(widget.model.defaultValue);
       }
     }
     super.initState();
@@ -70,14 +70,14 @@ class _BooleanFieldState extends State<BooleanField> {
       final parentValue = getFormDataByPath(formData, dependency.parentPath);
 
       if (!dependency.values.contains(parentValue)) {
-        _bloc.add(bloc.ChangeFormEvent(id, widget.value, path, true, true));
+        _bloc.add(bloc.ChangeFormEvent(widget.model.id, widget.value, widget.model.path, true, true));
       }
     }
 
     try {
-      bool isArrayItem = path.path[path.path.length - 2].fieldType == FieldType.array;
+      bool isArrayItem = widget.model.path.path[widget.model.path.path.length - 2].fieldType == FieldType.array;
       if (isArrayItem) {
-        _bloc.add(bloc.ChangeFormEvent(id, widget.value, path, true));
+        _bloc.add(bloc.ChangeFormEvent(widget.model.id, widget.value, widget.model.path, true));
       }
     } catch (_) {}
 
@@ -88,32 +88,32 @@ class _BooleanFieldState extends State<BooleanField> {
   Widget build(BuildContext context) {
     final globalDisabled = context.read<bloc.FormBloc>().state.disabled;
 
-    if (widgetType is NullWidgetModel) {
+    if (widget.model.widgetType is NullWidgetModel) {
       return DefaultWidgetBuilder(
-        id: id,
-        fieldType: type,
-        value: value,
+        id: widget.model.id,
+        fieldType: widget.model.fieldType,
+        value: widget.value ?? widget.model.defaultValue,
         onChange: onChange,
-        title: title,
-        disabled: globalDisabled || disabled,
-        readOnly: readOnly,
-        isRequired: isRequired,
+        title: widget.model.fieldTitle,
+        disabled: globalDisabled || widget.model.disabled,
+        readOnly: widget.model.readOnly,
+        isRequired: widget.model.isRequired,
       );
     } else {
       return FieldWrapper(
-        title: title,
-        description: description,
-        isRequired: isRequired,
+        title: widget.model.fieldTitle,
+        description: widget.model.description,
+        isRequired: widget.model.isRequired,
         child: FormWidgetBuilder<bool>(
-          id: id,
-          widgetType: widgetType,
-          value: value,
+          id: widget.model.id,
+          widgetType: widget.model.widgetType,
+          value: widget.value ?? widget.model.defaultValue,
           onChange: onChange,
           dropdownItems: widget.model.getDropdownItems(),
           radioItems: widget.model.getRadio(),
-          disabled: globalDisabled || disabled,
-          readOnly: readOnly,
-          isRequired: isRequired,
+          disabled: globalDisabled || widget.model.disabled,
+          readOnly: widget.model.readOnly,
+          isRequired: widget.model.isRequired,
         ),
       );
     }

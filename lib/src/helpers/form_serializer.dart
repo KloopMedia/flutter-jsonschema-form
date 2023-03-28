@@ -59,6 +59,18 @@ class FormSerializer {
       case FieldType.object:
         final requiredFields = getRequiredFields(schema);
         final fields = createSectionFieldList(schema, uiSchema, newPath);
+        final widgetType = decodeWidgetType(uiSchema?['ui:widget']);
+        if (widgetType == WidgetType.card) {
+          return CardFieldModel(
+            id: id,
+            fields: fields,
+            path: newPath,
+            schema: schema,
+            uiSchema: uiSchema,
+            title: schema['title'],
+            description: schema['description'],
+          );
+        }
         return SectionModel(
           id: id,
           fields: fields,

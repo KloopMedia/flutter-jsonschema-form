@@ -37,9 +37,9 @@ abstract class WidgetModel {
       case WidgetType.webhook:
         final label = getOption(options, 'label');
         return WebhookTriggerWidgetModel(label: label);
-      // case WidgetType.card:
-      //   // TODO: Handle this case.
-      //   break;
+      case WidgetType.card:
+        return const CardWidgetModel();
+        break;
       // case WidgetType.reader:
       //   // TODO: Handle this case.
       //   break;
@@ -103,6 +103,10 @@ class WebhookTriggerWidgetModel extends WidgetModel {
   final String? label;
 
   WebhookTriggerWidgetModel({this.label}) : super(type: WidgetType.webhook);
+}
+
+class CardWidgetModel extends WidgetModel {
+  const CardWidgetModel() : super(type: WidgetType.card);
 }
 
 class NullWidgetModel extends WidgetModel {

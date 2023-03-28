@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/bloc.dart' as bloc;
 import '../fields/fields.dart' as form_fields;
 import '../models/models.dart';
+import '../widgets/card_widget/card_form_field.dart';
 import 'helpers.dart';
 
 class FormConstructor extends StatelessWidget {
@@ -123,6 +124,8 @@ Widget _mapModelToField(FieldModel model, dynamic value, [DependencyModel? depen
     return form_fields.SectionField(model: model, value: value, dependency: dependency);
   } else if (model is ArrayModel) {
     return form_fields.ArrayField(model: model);
+  } else if (model is CardFieldModel) {
+    return CardFormField(model: model);
   }
   return const Text('Error: Field not found');
 }

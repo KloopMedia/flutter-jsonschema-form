@@ -23,11 +23,11 @@ class SectionField extends StatefulWidget {
 }
 
 class _SectionFieldState extends State<SectionField> {
-  late final title = widget.model.fieldTitle == '#' ? null : widget.model.fieldTitle;
-  late final description = widget.model.description;
-  late final fields = widget.model.fields;
-  late final id = widget.model.id;
-  late final path = widget.model.path;
+  // late final title = widget.model.fieldTitle == '#' ? null : widget.model.fieldTitle;
+  // late final description = widget.model.description;
+  // late final fields = widget.model.fields;
+  // late final id = widget.model.id;
+  // late final path = widget.model.path;
   late bloc.FormBloc _bloc;
 
   @override
@@ -45,14 +45,14 @@ class _SectionFieldState extends State<SectionField> {
       final parentValue = getFormDataByPath(formData, dependency.parentPath);
 
       if (!dependency.values.contains(parentValue)) {
-        _bloc.add(bloc.ChangeFormEvent(id, null, path, true, true));
+        _bloc.add(bloc.ChangeFormEvent(widget.model.id, null, widget.model.path, true, true));
       }
     }
 
     try {
-      bool isArrayItem = path.path[path.path.length - 2].fieldType == FieldType.array;
+      bool isArrayItem = widget.model.path.path[widget.model.path.path.length - 2].fieldType == FieldType.array;
       if (isArrayItem) {
-        _bloc.add(bloc.ChangeFormEvent(id, null, path, true));
+        _bloc.add(bloc.ChangeFormEvent(widget.model.id, null, widget.model.path, true));
       }
     } catch (_) {}
 
@@ -62,10 +62,10 @@ class _SectionFieldState extends State<SectionField> {
   @override
   Widget build(BuildContext context) {
     return FieldWrapper.section(
-      title: title,
-      description: description,
+      title: widget.model.fieldTitle == '#' ? null : widget.model.fieldTitle,
+      description: widget.model.description,
       child: FormConstructor(
-        fields: fields,
+        fields: widget.model.fields,
       ),
     );
   }

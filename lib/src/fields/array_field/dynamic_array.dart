@@ -18,12 +18,12 @@ class CreatableArray extends StatefulWidget {
 }
 
 class _CreatableArrayState extends State<CreatableArray> {
-  late final FieldModel fieldModel = widget.model.itemType!;
+  // late final FieldModel fieldModel = widget.model.itemType!;
   List<FieldModel> fields = [];
 
   void addItemToArray() {
     final id = fields.length.toString();
-    final field = createArrayItemFromModel(fieldModel, id);
+    final field = createArrayItemFromModel(widget.model.itemType!, id);
     setState(() {
       fields.add(field);
     });

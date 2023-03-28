@@ -19,31 +19,31 @@ class TextField extends StatefulWidget {
 }
 
 class _TextFieldState extends State<TextField> {
-  late final id = widget.model.id;
-  late final path = widget.model.path;
-  late final title = widget.model.fieldTitle;
-  late final description = widget.model.description;
-  late final type = widget.model.fieldType;
-  late final widgetType = widget.model.widgetType;
-  late final isRequired = widget.model.isRequired;
-  late final defaultValue = widget.model.defaultValue;
-  late final value = widget.value ?? defaultValue;
-  late final disabled = widget.model.disabled;
-  late final readOnly = widget.model.readOnly;
-  late final format = widget.model.format;
+  // late final id = widget.model.id;
+  // late final path = widget.model.path;
+  // late final title = widget.model.fieldTitle;
+  // late final description = widget.model.description;
+  // late final type = widget.model.fieldType;
+  // late final widgetType = widget.model.widgetType;
+  // late final isRequired = widget.model.isRequired;
+  // late final defaultValue = widget.model.defaultValue;
+  // late final value = widget.value ?? defaultValue;
+  // late final disabled = widget.model.disabled;
+  // late final readOnly = widget.model.readOnly;
+  // late final format = widget.model.format;
   late bloc.FormBloc _bloc;
 
   void onChange(value) {
     if (value is String) {
       var val = value.isNotEmpty ? value : null;
-      _bloc.add(bloc.ChangeFormEvent(id, val, path));
+      _bloc.add(bloc.ChangeFormEvent(widget.model.id, val, widget.model.path));
     } else {
-      _bloc.add(bloc.ChangeFormEvent(id, value, path));
+      _bloc.add(bloc.ChangeFormEvent(widget.model.id, value, widget.model.path));
     }
   }
 
   String? validator(value) {
-    if (isRequired && (value == null || value.isEmpty)) {
+    if (widget.model.isRequired && (value == null || value.isEmpty)) {
       return 'Required';
     }
     return null;
@@ -52,8 +52,8 @@ class _TextFieldState extends State<TextField> {
   @override
   void initState() {
     _bloc = context.read<bloc.FormBloc>();
-    if (defaultValue != null && widget.value == null) {
-      onChange(defaultValue);
+    if (widget.model.defaultValue != null && widget.value == null) {
+      onChange(widget.model.defaultValue);
     }
     super.initState();
   }
@@ -72,14 +72,14 @@ class _TextFieldState extends State<TextField> {
       final parentValue = getFormDataByPath(formData, dependency.parentPath);
 
       if (!dependency.values.contains(parentValue)) {
-        _bloc.add(bloc.ChangeFormEvent(id, widget.value, path, true, true));
+        _bloc.add(bloc.ChangeFormEvent(widget.model.id, widget.value, widget.model.path, true, true));
       }
     }
 
     try {
-      bool isArrayItem = path.path[path.path.length - 2].fieldType == FieldType.array;
+      bool isArrayItem = widget.model.path.path[widget.model.path.path.length - 2].fieldType == FieldType.array;
       if (isArrayItem) {
-        _bloc.add(bloc.ChangeFormEvent(id, widget.value, path, true));
+        _bloc.add(bloc.ChangeFormEvent(widget.model.id, widget.value, widget.model.path, true));
       }
     } catch (_) {}
 
@@ -91,43 +91,43 @@ class _TextFieldState extends State<TextField> {
     final globalDisabled = context.read<bloc.FormBloc>().state.disabled;
     final addFileText = _bloc.state.addFileText;
     return FieldWrapper(
-      title: title,
-      description: description,
-      isRequired: isRequired,
+      title: widget.model.fieldTitle,
+      description: widget.model.description,
+      isRequired: widget.model.isRequired,
       child: Builder(builder: (context) {
-        if (widgetType is NullWidgetModel) {
-          if (format != null) {
+        if (widget.model.widgetType is NullWidgetModel) {
+          if (widget.model.format != null) {
             return TextFormatWidgetBuilder(
-              type: format!,
-              id: id,
+              type: widget.model.format!,
+              id: widget.model.id,
               onChange: onChange,
-              disabled: globalDisabled || disabled,
-              readOnly: readOnly,
-              isRequired: isRequired,
-              value: value,
+              disabled: globalDisabled || widget.model.disabled,
+              readOnly: widget.model.readOnly,
+              isRequired: widget.model.isRequired,
+              value: widget.value ?? widget.model.defaultValue,
             );
           } else {
             return DefaultWidgetBuilder(
-              id: id,
-              fieldType: type,
-              value: value,
+              id: widget.model.id,
+              fieldType: widget.model.fieldType,
+              value: widget.value ?? widget.model.defaultValue,
               onChange: onChange,
-              disabled: globalDisabled || disabled,
-              readOnly: readOnly,
-              isRequired: isRequired,
+              disabled: globalDisabled || widget.model.disabled,
+              readOnly: widget.model.readOnly,
+              isRequired: widget.model.isRequired,
             );
           }
         } else {
           return FormWidgetBuilder<String>(
-            id: id,
-            widgetType: widgetType,
-            value: value,
+            id: widget.model.id,
+            widgetType: widget.model.widgetType,
+            value: widget.value ?? widget.model.defaultValue,
             onChange: onChange,
             dropdownItems: widget.model.getDropdownItems(),
             radioItems: widget.model.getRadio(),
-            disabled: globalDisabled || disabled,
-            readOnly: readOnly,
-            isRequired: isRequired,
+            disabled: globalDisabled || widget.model.disabled,
+            readOnly: widget.model.readOnly,
+            isRequired: widget.model.isRequired,
             addFileText: addFileText,
           );
         }
