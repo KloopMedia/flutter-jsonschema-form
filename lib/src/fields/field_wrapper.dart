@@ -69,7 +69,7 @@ class FieldTitle extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text.rich(
+        SelectableText.rich(
           TextSpan(
             text: title,
             style: style,

@@ -103,25 +103,23 @@ class Form extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SelectionArea(
-      child: SingleChildScrollView(
-        key: pageStorageKey,
-        child: Column(
-          children: [
-            FormBuilder(
-              key: formKey,
-              clearValueOnUnregister: true,
-              child: FormConstructor(fields: fields),
+    return SingleChildScrollView(
+      key: pageStorageKey,
+      child: Column(
+        children: [
+          FormBuilder(
+            key: formKey,
+            clearValueOnUnregister: true,
+            child: FormConstructor(fields: fields),
+          ),
+          if (!disabled)
+            ElevatedButton(
+              onPressed: () {
+                context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
+              },
+              child: submitButtonText ?? const Text('Submit'),
             ),
-            if (!disabled)
-              ElevatedButton(
-                onPressed: () {
-                  context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
-                },
-                child: submitButtonText ?? const Text('Submit'),
-              ),
-          ],
-        ),
+        ],
       ),
     );
   }
