@@ -16,6 +16,7 @@ class FormBloc extends Bloc<FormEvent, FormState> {
   final ChangeFormCallback? onChangeCallback;
   final SubmitFormCallback? onSubmitCallback;
   final WebhookTriggerCallback? onWebhookTriggerCallback;
+  final DownloadFileCallback? onDownloadFileCallback;
   final Reference? storage;
   final bool disabled;
   final GlobalKey<FormBuilderState> formKey;
@@ -31,6 +32,7 @@ class FormBloc extends Bloc<FormEvent, FormState> {
     this.onSubmitCallback,
     this.onValidationCallback,
     this.onWebhookTriggerCallback,
+    this.onDownloadFileCallback,
     this.addFileText,
   }) : super(FormInitial(formData ?? {}, disabled: disabled, addFileText: addFileText)) {
     on<ChangeFormEvent>(_onChangeFormEvent);

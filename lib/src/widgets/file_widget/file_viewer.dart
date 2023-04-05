@@ -1,5 +1,6 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_json_schema_form/flutter_json_schema_form.dart';
 import 'package:flutter_json_schema_form/src/widgets/audio_player_widget/audio_player_widget.dart';
 import 'package:mime/mime.dart';
 
@@ -7,8 +8,9 @@ import '../widgets.dart';
 
 class FileViewer extends StatelessWidget {
   final Reference file;
+  final DownloadFileCallback? downloadFile;
 
-  const FileViewer({Key? key, required this.file}) : super(key: key);
+  const FileViewer({Key? key, required this.file, required this.downloadFile}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +57,13 @@ class FileViewer extends StatelessWidget {
                           ),
                           const SizedBox(height: 12),
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              await downloadFile!(url).then((value) {
+                                if (value != null) {
+                                  Navigator.pop(context);
+                                }
+                              });
+                            },
                             child: const Text('Download'),
                           ),
                         ],

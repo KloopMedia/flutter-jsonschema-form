@@ -10,6 +10,7 @@ typedef ChangeFormCallback = Function(Map<String, dynamic> formData, String path
 typedef SubmitFormCallback = Function(Map<String, dynamic> formData);
 typedef ValidationWarningCallback = void Function();
 typedef WebhookTriggerCallback = void Function();
+typedef DownloadFileCallback = Future<String?> Function(String url);
 
 class FlutterJsonSchemaForm extends StatefulWidget {
   final Map<String, dynamic> schema;
@@ -19,6 +20,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final SubmitFormCallback? onSubmit;
   final ValidationWarningCallback? onValidationFailed;
   final WebhookTriggerCallback? onWebhookTrigger;
+  final DownloadFileCallback? onDownloadFile;
   final Reference? storage;
   final bool disabled;
   final Text? submitButtonText;
@@ -39,6 +41,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
     this.submitButtonText,
     this.addFileText,
     this.pageStorageKey,
+    this.onDownloadFile,
   }) : super(key: key);
 
   @override
@@ -72,6 +75,7 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
         onSubmitCallback: widget.onSubmit,
         onValidationCallback: widget.onValidationFailed,
         onWebhookTriggerCallback: widget.onWebhookTrigger,
+        onDownloadFileCallback: widget.onDownloadFile,
         addFileText: widget.addFileText,
       ),
       child: Form(

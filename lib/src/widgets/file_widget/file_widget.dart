@@ -19,10 +19,11 @@ class FileWidget extends StatelessWidget {
         }
         if (state is FilePreview) {
           final bloc = context.read<FileBloc>();
+          final downloadFile = context.read<FormBloc>().onDownloadFileCallback;
           await showDialog(
             context: context,
             builder: (context) {
-              return FileViewer(file: state.file);
+              return FileViewer(file: state.file, downloadFile: downloadFile);
             },
           );
           bloc.add(const CloseFileViewerEvent());
