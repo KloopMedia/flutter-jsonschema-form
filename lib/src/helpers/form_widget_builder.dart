@@ -40,7 +40,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final widgetModel = widgetType;
-    TextTheme textTheme = Theme.of(context).textTheme;
+    final theme = const TextStyle().copyWith(color: disabled ? Colors.grey : null);
 
     if (widgetModel is SelectWidgetModel) {
       return FormBuilderDropdown<T>(
@@ -81,8 +81,8 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         ]),
         onChanged: onChange,
         readOnly: disabled,
-        style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
         scrollPhysics: const NeverScrollableScrollPhysics(),
+        style: theme,
       );
     } else if (widgetModel is PasswordWidgetModel) {
       return FormBuilderTextField(
@@ -95,7 +95,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         keyboardType: TextInputType.visiblePassword,
         onChanged: onChange,
         readOnly: disabled,
-        style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
+        style: theme,
       );
     } else if (widgetModel is FileWidgetModel) {
       final storage = context.read<FormBloc>().storage;
@@ -180,7 +180,8 @@ class TextFormatWidgetBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
+    final theme = const TextStyle().copyWith(color: disabled ? Colors.grey : null);
+
     switch (type) {
       case FormatType.email:
         return FormBuilderTextField(
@@ -194,7 +195,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
           keyboardType: TextInputType.emailAddress,
           onChanged: onChange,
           readOnly: disabled,
-          style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
+          style: theme,
         );
       case FormatType.uri:
         return FormBuilderTextField(
@@ -208,7 +209,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
           keyboardType: TextInputType.url,
           onChanged: onChange,
           readOnly: disabled,
-          style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
+          style: theme,
         );
       case FormatType.file:
         return FormBuilderTextField(
@@ -234,7 +235,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
               onChange(null);
             }
           },
-          style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
+          style: theme,
         );
       case FormatType.dateTime:
         return FormBuilderDateTimePicker(
@@ -255,7 +256,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
               onChange(null);
             }
           },
-          style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
+          style: theme,
         );
     }
   }
@@ -285,7 +286,8 @@ class DefaultWidgetBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
+    final theme = const TextStyle().copyWith(color: disabled ? Colors.grey : null);
+
     switch (fieldType) {
       case FieldType.string:
         return FormBuilderTextField(
@@ -297,7 +299,7 @@ class DefaultWidgetBuilder extends StatelessWidget {
           ]),
           onChanged: onChange,
           readOnly: disabled,
-          style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
+          style: theme,
         );
       case FieldType.number:
         return FormBuilderTextField(
@@ -312,7 +314,7 @@ class DefaultWidgetBuilder extends StatelessWidget {
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: onChange,
           readOnly: disabled,
-          style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
+          style: theme,
         );
       case FieldType.integer:
         return FormBuilderTextField(
@@ -327,7 +329,7 @@ class DefaultWidgetBuilder extends StatelessWidget {
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: onChange,
           readOnly: disabled,
-          style: textTheme.titleSmall!.copyWith(color: disabled ? Colors.grey : null),
+          style: theme,
         );
       case FieldType.boolean:
         return FormBuilderCheckbox(

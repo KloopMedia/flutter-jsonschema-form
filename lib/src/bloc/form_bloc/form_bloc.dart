@@ -79,10 +79,12 @@ class FormBloc extends Bloc<FormEvent, FormState> {
       if (onSubmitCallback != null) {
         onSubmitCallback!(state.formData);
       }
-      emit(FormSubmitted(state.formData/*, disabled: true*/));
+      emit(FormSubmitted(state.formData));
     } else {
       print('SUBMIT ERROR ${formKey.currentState?.value}');
-      onValidationCallback!();
+      if (onValidationCallback != null) {
+        onValidationCallback!(formKey.currentState?.value.toString());
+      }
     }
   }
 }
