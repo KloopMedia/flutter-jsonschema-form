@@ -107,11 +107,21 @@ class Form extends StatelessWidget {
             child: FormConstructor(fields: fields),
           ),
           if (!disabled)
-            ElevatedButton(
-              onPressed: () {
-                context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
-              },
-              child: submitButtonText ?? const Text('Submit'),
+            SizedBox(
+              height: 52,
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                ),
+                onPressed: () {
+                  context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
+                },
+                child: submitButtonText ?? const Text('Submit'),
+              ),
             ),
         ],
       ),
