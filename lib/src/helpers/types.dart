@@ -17,6 +17,7 @@ enum WidgetType {
   reader,
   recorder,
   webhook,
+  paragraph,
   none,
 }
 
@@ -43,6 +44,7 @@ const widgetEnumMap = {
   WidgetType.reader: 'reader',
   WidgetType.recorder: 'recorder',
   WidgetType.webhook: 'webhook',
+  WidgetType.paragraph: 'paragraph',
 };
 
 const formatEnumMap = {

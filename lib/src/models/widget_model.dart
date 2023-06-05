@@ -43,6 +43,9 @@ abstract class WidgetModel {
       // case WidgetType.reader:
       //   // TODO: Handle this case.
       //   break;
+      case WidgetType.paragraph:
+        final paragraph = getOption<String>(options, 'paragraph') ?? "";
+        return ParagraphWidgetModel(paragraph: paragraph);
       default:
         return const NullWidgetModel();
     }
@@ -95,14 +98,19 @@ class RadioWidgetModel extends WidgetModel {
 class TextAreaWidgetModel extends WidgetModel {
   final int? rows;
 
-  const TextAreaWidgetModel({this.rows})
-      : super(type: WidgetType.textarea);
+  const TextAreaWidgetModel({this.rows}) : super(type: WidgetType.textarea);
 }
 
 class WebhookTriggerWidgetModel extends WidgetModel {
   final String? label;
 
   WebhookTriggerWidgetModel({this.label}) : super(type: WidgetType.webhook);
+}
+
+class ParagraphWidgetModel extends WidgetModel {
+  final String paragraph;
+
+  ParagraphWidgetModel({required this.paragraph}) : super(type: WidgetType.paragraph);
 }
 
 class NullWidgetModel extends WidgetModel {

@@ -34,7 +34,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
     required this.readOnly,
     required this.disabled,
     required this.isRequired,
-    this.addFileText
+    this.addFileText,
   }) : super(key: key);
 
   @override
@@ -151,6 +151,13 @@ class FormWidgetBuilder<T> extends StatelessWidget {
       return WebhookTriggerFormField(
         name: id,
         label: widgetModel.label,
+      );
+    } else if (widgetModel is ParagraphWidgetModel) {
+      return ParagraphField(
+        name: id,
+        decoration: decoration,
+        initialValue: value,
+        paragraph: widgetModel.paragraph,
       );
     } else {
       return const Text('Error');
