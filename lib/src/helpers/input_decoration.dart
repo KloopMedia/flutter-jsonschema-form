@@ -8,9 +8,9 @@ const decoration = InputDecoration(
       width: 1.0,
     ),
   ),
-  enabledBorder: OutlineInputBorder(
-    borderSide: BorderSide(width: 1.0),
-  ),
+  // enabledBorder: OutlineInputBorder(
+  //   borderSide: BorderSide(width: 1.0, color:  Color(0xFF8E9192)),
+  // ),
   disabledBorder: OutlineInputBorder(
     borderSide: BorderSide(width: 1.0),
   ),
