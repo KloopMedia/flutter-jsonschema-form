@@ -37,6 +37,14 @@ class FormBloc extends Bloc<FormEvent, FormState> {
   }) : super(FormInitial(formData ?? {}, disabled: disabled, addFileText: addFileText)) {
     on<ChangeFormEvent>(_onChangeFormEvent);
     on<SubmitFormEvent>(_onSubmitFormEvent);
+    on<DownloadFileEvent>(_onDownloadFileEvent);
+  }
+
+  Future<void> _onDownloadFileEvent(DownloadFileEvent event, Emitter<FormState> emit) async {
+    final url = await event.file.getDownloadURL();
+    if (onDownloadFileCallback != null) {
+      onDownloadFileCallback!(url: url, automatically: true);
+    }
   }
 
   void _onChangeFormEvent(ChangeFormEvent event, Emitter<FormState> emit) {

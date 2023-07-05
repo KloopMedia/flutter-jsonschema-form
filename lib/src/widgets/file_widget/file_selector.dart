@@ -1,4 +1,5 @@
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -26,19 +27,84 @@ class FileSelector extends StatelessWidget {
             ],
           );
         }
-        return ElevatedButton(
-          onPressed: state.enabled
-              ? () async {
-                  final picker = await FilePicker.platform.pickFiles(
-                    allowCompression: true,
-                    allowMultiple: false,
-                    withData: true,
-                  );
-                  final files = picker?.files ?? [];
-                  onSelect(files);
-                }
-              : null,
-          child: state.addFileText ?? const Text('Add File'),
+        return Column(
+          children: [
+            IconButton(
+              icon: Image.asset('assets/images/import.png'),
+              onPressed: state.enabled
+                  ? () async {
+                final picker = await FilePicker.platform.pickFiles(
+                  allowCompression: true,
+                  allowMultiple: false,
+                  withData: true,
+                );
+                final files = picker?.files ?? [];
+                onSelect(files);
+              }
+                  : null,
+            ),
+            Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Выберите файл ',
+                    style: const TextStyle(
+                      color: Color(0xFF5E80FA),
+                      fontSize: 16,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w400,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = state.enabled
+                          ? () async {
+                        final picker = await FilePicker.platform.pickFiles(
+                          allowCompression: true,
+                          allowMultiple: false,
+                          withData: true,
+                        );
+                        final files = picker?.files ?? [];
+                        onSelect(files);
+                      }
+                          : null,
+                  ),
+                  const TextSpan(
+                    text: 'для загрузки',
+                    style: TextStyle(
+                      color: Color(0xFF5C5F5F),
+                      fontSize: 16,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const Text(
+              '(4 MB max)',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Color(0xFFC4C7C7),
+                fontSize: 14,
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            // ElevatedButton(
+            //   onPressed: state.enabled
+            //       ? () async {
+            //           final picker = await FilePicker.platform.pickFiles(
+            //             allowCompression: true,
+            //             allowMultiple: false,
+            //             withData: true,
+            //           );
+            //           final files = picker?.files ?? [];
+            //           onSelect(files);
+            //         }
+            //       : null,
+            //   child: state.addFileText ?? const Text('Add File'),
+            // ),
+          ],
         );
       },
     );

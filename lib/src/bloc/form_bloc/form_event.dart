@@ -37,3 +37,12 @@ class ReadOnlyFormEvent extends FormEvent {
   @override
   List<Object?> get props => [];
 }
+
+class DownloadFileEvent extends FormEvent {
+  final Reference file;
+
+  const DownloadFileEvent(this.file);
+
+  @override
+  List<Object?> get props => [];
+}

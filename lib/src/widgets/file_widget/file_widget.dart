@@ -52,7 +52,9 @@ class FileWidget extends StatelessWidget {
             onRemove: (file, index) {
               context.read<FileBloc>().add(RemoveFileEvent(file, index));
             },
-            onCopy: (file, index) {},
+            onDownload: (file, index) {
+              context.read<FormBloc>().add(DownloadFileEvent(file));
+            },
           ),
         ],
       ),
