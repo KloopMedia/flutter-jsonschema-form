@@ -10,7 +10,7 @@ typedef ChangeFormCallback = Function(Map<String, dynamic> formData, String path
 typedef SubmitFormCallback = Function(Map<String, dynamic> formData);
 typedef ValidationWarningCallback = void Function(String? error);
 typedef WebhookTriggerCallback = void Function();
-typedef DownloadFileCallback = Future<String?> Function(String url);
+typedef DownloadFileCallback = Future<String?> Function(String url, String? filename);
 
 class FlutterJsonSchemaForm extends StatefulWidget {
   final Map<String, dynamic> schema;
