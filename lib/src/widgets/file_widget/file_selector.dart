@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -16,21 +18,22 @@ class FileSelector extends StatelessWidget {
       builder: (context, state) {
         // Disable button when uploading file
         if (state is FileLoading) {
-          return Row(
-            children: [
-              ElevatedButton(
-                onPressed: null,
-                child: state.addFileText ?? const Text('Add File'),
-              ),
-              const SizedBox(width: 16),
-              const CircularProgressIndicator()
-            ],
-          );
+          return const CircularProgressIndicator();
+          // return Row(
+          //   children: [
+          //     ElevatedButton(
+          //       onPressed: null,
+          //       child: state.addFileText ?? const Text('Add File'),
+          //     ),
+          //     const SizedBox(width: 16),
+          //     const CircularProgressIndicator()
+          //   ],
+          // );
         }
         return Column(
           children: [
             IconButton(
-              icon: Image.asset('assets/images/import.png'),
+              icon: const Icon(Icons.download, color:  Color(0xFF5E80FA)),
               onPressed: state.enabled
                   ? () async {
                 final picker = await FilePicker.platform.pickFiles(
@@ -80,8 +83,9 @@ class FileSelector extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 10),
             const Text(
-              '(4 MB max)',
+              '(5 MB max)',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Color(0xFFC4C7C7),

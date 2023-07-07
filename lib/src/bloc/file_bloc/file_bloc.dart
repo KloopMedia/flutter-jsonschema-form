@@ -1,12 +1,15 @@
 import 'dart:convert';
-
+import 'dart:io' as io;
+// import 'dart:typed_data';
+// import 'dart:html' as html;
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mime/mime.dart';
-
+import 'package:video_compress/video_compress.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 part 'file_event.dart';
 
 part 'file_state.dart';
@@ -82,22 +85,74 @@ class FileBloc extends Bloc<FileEvent, FileState> {
 
     if (bytes != null) {
       final mime = lookupMimeType(name);
-      final ref = storage.child(name);
-
       final metadata = SettableMetadata(
         contentType: mime,
       );
+      final type = mime?.split('/').first;
+      final ref = storage.child(name);
 
-      final uploadTask = ref.putData(bytes, metadata);
-      emit(FileLoading(files: state.files, uploadTask: uploadTask));
-      try {
-        final snapshot = await uploadTask;
-        add(UploadSuccessEvent(snapshot.ref));
-      } on FirebaseException catch (e) {
-        final errorMessage = _handleFirebaseStorageExceptions(e);
-        emit(FileError(errorMessage: errorMessage, files: state.files));
-      } catch (e) {
-        emit(FileError(errorMessage: 'Other error', files: state.files));
+      ///compress
+      if (type == 'video') {
+        ///mobile
+        final systemTempDir = io.Directory.systemTemp;
+        final tempFilePath = '${systemTempDir.path}/${DateTime.now().millisecondsSinceEpoch}.tmp';
+        final tempFile = io.File(tempFilePath);
+        final compressedVideoInfo = await VideoCompress.compressVideo(
+          tempFile.path,
+          quality: VideoQuality.MediumQuality,
+          deleteOrigin: false,
+          includeAudio: true,
+        );
+        // var filePath = compressedVideoInfo!.file!.path;
+        // var fileName = (filePath.split('/').last);
+        final compressedVideoBytes = await compressedVideoInfo?.file?.readAsBytes();
+
+        final uploadTask = ref.putData( compressedVideoBytes!, metadata);
+        emit(FileLoading(files: state.files, uploadTask: uploadTask));
+        try {
+          final snapshot = await uploadTask;
+          add(UploadSuccessEvent(snapshot.ref));
+        } on FirebaseException catch (e) {
+          final errorMessage = _handleFirebaseStorageExceptions(e);
+          emit(FileError(errorMessage: errorMessage, files: state.files));
+        } catch (e) {
+          emit(FileError(errorMessage: 'Other error', files: state.files));
+        }
+
+        // final videoThumbnailFile = await VideoCompress.getFileThumbnail(
+        //     path,
+        //     quality: 50, // default(100)
+        //     position: -1 // default(-1)
+        // );
+      } else if (type == 'image') {
+        var compressedImageBytes = await FlutterImageCompress.compressWithList(
+          bytes,
+          minHeight: 1920,
+          minWidth: 1080,
+        );
+        final uploadTask = ref.putData(compressedImageBytes, metadata);
+        emit(FileLoading(files: state.files, uploadTask: uploadTask));
+        try {
+          final snapshot = await uploadTask;
+          add(UploadSuccessEvent(snapshot.ref));
+        } on FirebaseException catch (e) {
+          final errorMessage = _handleFirebaseStorageExceptions(e);
+          emit(FileError(errorMessage: errorMessage, files: state.files));
+        } catch (e) {
+          emit(FileError(errorMessage: 'Other error', files: state.files));
+        }
+      } else {
+        final uploadTask = ref.putData(bytes, metadata);
+        emit(FileLoading(files: state.files, uploadTask: uploadTask));
+        try {
+          final snapshot = await uploadTask;
+          add(UploadSuccessEvent(snapshot.ref));
+        } on FirebaseException catch (e) {
+          final errorMessage = _handleFirebaseStorageExceptions(e);
+          emit(FileError(errorMessage: errorMessage, files: state.files));
+        } catch (e) {
+          emit(FileError(errorMessage: 'Other error', files: state.files));
+        }
       }
     }
   }

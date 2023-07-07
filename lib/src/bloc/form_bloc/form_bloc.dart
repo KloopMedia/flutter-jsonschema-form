@@ -42,8 +42,11 @@ class FormBloc extends Bloc<FormEvent, FormState> {
 
   Future<void> _onDownloadFileEvent(DownloadFileEvent event, Emitter<FormState> emit) async {
     final url = await event.file.getDownloadURL();
+    final name = event.file.name;
+    final metaData = await event.file.getMetadata();
+    final bytes = metaData.size;
     if (onDownloadFileCallback != null) {
-      onDownloadFileCallback!(url: url, automatically: true);
+      onDownloadFileCallback!([url, name, bytes]);
     }
   }
 

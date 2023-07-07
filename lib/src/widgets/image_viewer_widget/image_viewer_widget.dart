@@ -18,14 +18,14 @@ class ImageViewerWidget extends StatelessWidget {
             },
             errorWidget: (context, url, error) {
               print(error);
-              return Dialog(
+              return const Dialog(
                 child: SizedBox(
                   width: 150,
                   height: 150,
                   child: Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
+                      children: [
                         Icon(Icons.error),
                         SizedBox(height: 12),
                         Text('Error: Failed to load the image!'),

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -30,7 +32,6 @@ class FileWidget extends StatelessWidget {
         }
       },
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           FileSelector(
             onSelect: (files) {
