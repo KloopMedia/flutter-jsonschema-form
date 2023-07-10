@@ -6,9 +6,10 @@ abstract class FileEvent extends Equatable {
 
 class AddFileEvent extends FileEvent {
   final String name;
+  final String? path;
   final Uint8List? bytes;
 
-  const AddFileEvent({required this.name, required this.bytes});
+  const AddFileEvent({required this.name, required this.bytes, this.path});
 
   @override
   List<Object?> get props => [name, bytes];

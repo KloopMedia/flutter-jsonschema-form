@@ -82,6 +82,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   void onAddFileEvent(AddFileEvent event, Emitter<FileState> emit) async {
     final name = event.name;
     final bytes = event.bytes;
+    final path = event.path;
 
     if (bytes != null) {
       final mime = lookupMimeType(name);
@@ -92,7 +93,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
       final ref = storage.child(name);
 
       ///compress
-      if (type == 'video') {
+      if (type == "video") {
         ///mobile
         final systemTempDir = io.Directory.systemTemp;
         final tempFilePath = '${systemTempDir.path}/${DateTime.now().millisecondsSinceEpoch}.tmp';
@@ -124,7 +125,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
         //     quality: 50, // default(100)
         //     position: -1 // default(-1)
         // );
-      } else if (type == 'image') {
+      } else if (type == "image") {
         var compressedImageBytes = await FlutterImageCompress.compressWithList(
           bytes,
           minHeight: 1920,
