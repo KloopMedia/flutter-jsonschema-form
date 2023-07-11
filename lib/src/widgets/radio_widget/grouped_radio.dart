@@ -250,7 +250,7 @@ class _GroupedRadioState<T> extends State<GroupedRadio<T?>> {
     final optionValue = option.value;
     final isOptionDisabled = true == widget.disabled?.contains(optionValue);
     final control = Transform.scale(
-      scale:1.15,
+      scale: 1.15,
       alignment: Alignment.centerLeft,
       child: Radio<T?>(
         groupValue: widget.value,
@@ -274,7 +274,7 @@ class _GroupedRadioState<T> extends State<GroupedRadio<T?>> {
               widget.onChanged(optionValue);
             },
       child: Transform.scale(
-        scale: 1.15,
+        scale: 1.13,
         alignment: Alignment.centerLeft,
         child: option
       ),
@@ -288,6 +288,7 @@ class _GroupedRadioState<T> extends State<GroupedRadio<T?>> {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (widget.controlAffinity == ControlAffinity.leading) control,
+            const SizedBox(width: 10),
             Flexible(child: label),
             if (widget.controlAffinity == ControlAffinity.trailing) control,
             if (widget.orientation != OptionsOrientation.vertical &&
