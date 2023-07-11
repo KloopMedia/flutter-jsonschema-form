@@ -185,6 +185,15 @@ class TextFormatWidgetBuilder extends StatelessWidget {
     required this.isRequired,
   }) : super(key: key);
 
+  DateTime? getFormattedDateTime(String? value) {
+    if (value == null) return null;
+    final day = value.substring(0, 2);
+    final year = value.substring(6, 10);
+    final addedYear = value.replaceRange(0, 2, year);
+    final formattedString = addedYear.replaceRange(8, 12, day);
+    return DateTime.tryParse(formattedString);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = const TextStyle().copyWith(color: disabled ? Colors.grey : null);
@@ -225,7 +234,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
       case FormatType.date:
         return FormBuilderDateTimePicker(
           name: id,
-          initialValue: DateTime.tryParse(value),
+          initialValue: getFormattedDateTime(value),
           decoration: decoration,
           validator: FormBuilderValidators.compose([
             if (isRequired) FormBuilderValidators.required(),
@@ -247,7 +256,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
       case FormatType.dateTime:
         return FormBuilderDateTimePicker(
           name: id,
-          initialValue: DateTime.tryParse(value),
+          initialValue: getFormattedDateTime(value),
           decoration: decoration,
           validator: FormBuilderValidators.compose([
             if (isRequired) FormBuilderValidators.required(),
