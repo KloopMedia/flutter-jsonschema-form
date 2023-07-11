@@ -348,15 +348,19 @@ class DefaultWidgetBuilder extends StatelessWidget {
           style: theme,
         );
       case FieldType.boolean:
-        return FormBuilderCheckbox(
-          name: id,
-          title: Text(title!),
-          initialValue: value,
-          validator: FormBuilderValidators.compose([
-            if (isRequired) FormBuilderValidators.required(),
-          ]),
-          onChanged: onChange,
-          enabled: !disabled,
+        return Transform.scale(
+          scale:1.15,
+          alignment: Alignment.centerLeft,
+          child: FormBuilderCheckbox(
+            name: id,
+            title: Text(title!, style: const TextStyle(fontSize: 14)),
+            initialValue: value,
+            validator: FormBuilderValidators.compose([
+              if (isRequired) FormBuilderValidators.required(),
+            ]),
+            onChanged: onChange,
+            enabled: !disabled,
+          ),
         );
       default:
         return const Text('Error');
