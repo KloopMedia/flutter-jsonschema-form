@@ -38,11 +38,10 @@ class FileWidget extends StatelessWidget {
               if (files.isNotEmpty) {
                 final fileName = files.first.name;
                 final bytes = files.first.bytes;
-                final path = files.first.path;
 
                 context
                     .read<FileBloc>()
-                    .add(AddFileEvent(name: fileName, bytes: bytes, path: path));
+                    .add(AddFileEvent(name: fileName, bytes: bytes, files: files));
               }
             },
           ),

@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:io' as io;
-// import 'dart:typed_data';
-// import 'dart:html' as html;
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -82,7 +80,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   void onAddFileEvent(AddFileEvent event, Emitter<FileState> emit) async {
     final name = event.name;
     final bytes = event.bytes;
-    final path = event.path;
+    final file = event.files.first;
 
     if (bytes != null) {
       final mime = lookupMimeType(name);
@@ -92,69 +90,34 @@ class FileBloc extends Bloc<FileEvent, FileState> {
       final type = mime?.split('/').first;
       final ref = storage.child(name);
 
-      ///compress
-      if (type == "video") {
-        ///mobile
-        final systemTempDir = io.Directory.systemTemp;
-        final tempFilePath = '${systemTempDir.path}/${DateTime.now().millisecondsSinceEpoch}.tmp';
-        final tempFile = io.File(tempFilePath);
-        final compressedVideoInfo = await VideoCompress.compressVideo(
-          tempFile.path,
-          quality: VideoQuality.MediumQuality,
-          deleteOrigin: false,
-          includeAudio: true,
-        );
-        // var filePath = compressedVideoInfo!.file!.path;
-        // var fileName = (filePath.split('/').last);
-        final compressedVideoBytes = await compressedVideoInfo?.file?.readAsBytes();
-
-        final uploadTask = ref.putData( compressedVideoBytes!, metadata);
-        emit(FileLoading(files: state.files, uploadTask: uploadTask));
-        try {
-          final snapshot = await uploadTask;
-          add(UploadSuccessEvent(snapshot.ref));
-        } on FirebaseException catch (e) {
-          final errorMessage = _handleFirebaseStorageExceptions(e);
-          emit(FileError(errorMessage: errorMessage, files: state.files));
-        } catch (e) {
-          emit(FileError(errorMessage: 'Other error', files: state.files));
-        }
-
-        // final videoThumbnailFile = await VideoCompress.getFileThumbnail(
-        //     path,
-        //     quality: 50, // default(100)
-        //     position: -1 // default(-1)
-        // );
-      } else if (type == "image") {
-        var compressedImageBytes = await FlutterImageCompress.compressWithList(
-          bytes,
-          minHeight: 1920,
-          minWidth: 1080,
-        );
-        final uploadTask = ref.putData(compressedImageBytes, metadata);
-        emit(FileLoading(files: state.files, uploadTask: uploadTask));
-        try {
-          final snapshot = await uploadTask;
-          add(UploadSuccessEvent(snapshot.ref));
-        } on FirebaseException catch (e) {
-          final errorMessage = _handleFirebaseStorageExceptions(e);
-          emit(FileError(errorMessage: errorMessage, files: state.files));
-        } catch (e) {
-          emit(FileError(errorMessage: 'Other error', files: state.files));
-        }
+      if (kIsWeb) {
+        await uploadToStorage(ref, bytes, metadata, emit);
       } else {
-        final uploadTask = ref.putData(bytes, metadata);
-        emit(FileLoading(files: state.files, uploadTask: uploadTask));
-        try {
-          final snapshot = await uploadTask;
-          add(UploadSuccessEvent(snapshot.ref));
-        } on FirebaseException catch (e) {
-          final errorMessage = _handleFirebaseStorageExceptions(e);
-          emit(FileError(errorMessage: errorMessage, files: state.files));
-        } catch (e) {
-          emit(FileError(errorMessage: 'Other error', files: state.files));
+        Uint8List? compressedFileBytes;
+        if (type == "video") {
+          emit(FileCompressing(files: state.files));
+          compressedFileBytes = await compressVideo(file.path);
+        } else if (type == "image") {
+          compressedFileBytes = await FlutterImageCompress.compressWithList(bytes, quality: 70);
+        } else {
+          await uploadToStorage(ref, bytes, metadata, emit);
         }
+        await uploadToStorage(ref, compressedFileBytes, metadata, emit);
       }
+    }
+  }
+
+  Future<void> uploadToStorage(Reference ref, Uint8List? compressedFileBytes, SettableMetadata metadata, Emitter<FileState> emit) async {
+    final uploadTask = ref.putData(compressedFileBytes!, metadata);
+    emit(FileLoading(files: state.files, uploadTask: uploadTask));
+    try {
+      final snapshot = await uploadTask;
+      add(UploadSuccessEvent(snapshot.ref));
+    } on FirebaseException catch (e) {
+      final errorMessage = _handleFirebaseStorageExceptions(e);
+      emit(FileError(errorMessage: errorMessage, files: state.files));
+    } catch (e) {
+      emit(FileError(errorMessage: 'Other error', files: state.files));
     }
   }
 
@@ -188,5 +151,16 @@ class FileBloc extends Bloc<FileEvent, FileState> {
 
   void onUploadFailEvent(UploadFailEvent event, Emitter<FileState> emit) {
     emit(FilesModified(files: state.files));
+  }
+
+  Future<Uint8List?> compressVideo(String path) async {
+    final compressedVideoInfo = await VideoCompress.compressVideo(
+      path,
+      quality: VideoQuality.LowQuality,
+      deleteOrigin: false,
+      includeAudio: true,
+    );
+    final compressedVideoBytes = await compressedVideoInfo?.file?.readAsBytes();
+    return compressedVideoBytes;
   }
 }

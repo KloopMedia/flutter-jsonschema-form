@@ -46,8 +46,7 @@ class FormBloc extends Bloc<FormEvent, FormState> {
     final metaData = await event.file.getMetadata();
     final bytes = metaData.size;
     if (onDownloadFileCallback != null) {
-      onDownloadFileCallback!(url, name);
-      // onDownloadFileCallback!([url, name, bytes]);
+      onDownloadFileCallback!(url, name, bytes);
     }
   }
 

@@ -58,7 +58,9 @@ class FileViewer extends StatelessWidget {
                           const SizedBox(height: 12),
                           ElevatedButton(
                             onPressed: () async {
-                              await downloadFile!(url, null).then((value) {
+                              final metaData = await file.getMetadata();
+                              final bytes = metaData.size;
+                              await downloadFile!(url, file.name, bytes).then((value) {
                                 if (value != null) {
                                   Navigator.pop(context);
                                 }

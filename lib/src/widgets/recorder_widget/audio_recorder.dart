@@ -177,7 +177,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
         final file = XFile(_path!);
         final name = path.basename(_path!);
         final bytes = await file.readAsBytes();
-        bloc.add(AddFileEvent(name: name, bytes: bytes));
+        bloc.add(AddFileEvent(name: name, bytes: bytes, files: [file]));
       }
     } on Exception catch (err) {
       recorderModule.logger.d('stopRecorder error: $err');

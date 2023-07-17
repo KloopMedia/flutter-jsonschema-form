@@ -17,7 +17,7 @@ class FileSelector extends StatelessWidget {
     return BlocBuilder<FileBloc, FileState>(
       builder: (context, state) {
         // Disable button when uploading file
-        if (state is FileLoading) {
+        if (state is FileLoading || state is FileCompressing) {
           return const CircularProgressIndicator();
           // return Row(
           //   children: [
