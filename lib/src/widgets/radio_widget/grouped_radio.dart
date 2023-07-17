@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -249,18 +250,22 @@ class _GroupedRadioState<T> extends State<GroupedRadio<T?>> {
     final option = widget.options[index];
     final optionValue = option.value;
     final isOptionDisabled = true == widget.disabled?.contains(optionValue);
-    final control = Radio<T?>(
-      groupValue: widget.value,
-      activeColor: widget.activeColor,
-      focusColor: widget.focusColor,
-      hoverColor: widget.hoverColor,
-      materialTapTargetSize: widget.materialTapTargetSize,
-      value: optionValue,
-      onChanged: isOptionDisabled
-          ? null
-          : (T? selected) {
-              widget.onChanged(selected);
-            },
+    final control = Transform.scale(
+      scale: 1.15,
+      alignment: Alignment.centerLeft,
+      child: Radio<T?>(
+        groupValue: widget.value,
+        activeColor: widget.activeColor,
+        focusColor: widget.focusColor,
+        hoverColor: widget.hoverColor,
+        materialTapTargetSize: widget.materialTapTargetSize,
+        value: optionValue,
+        onChanged: isOptionDisabled
+            ? null
+            : (T? selected) {
+                widget.onChanged(selected);
+              },
+      ),
     );
 
     final label = GestureDetector(
@@ -269,18 +274,24 @@ class _GroupedRadioState<T> extends State<GroupedRadio<T?>> {
           : () {
               widget.onChanged(optionValue);
             },
-      child: option,
+      child: Transform.scale(
+        scale: 1.13,
+        alignment: Alignment.centerLeft,
+        child: option
+      ),
     );
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(height: 10),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (widget.controlAffinity == ControlAffinity.leading) control,
-            Flexible(child: label),
+            if (kIsWeb) const SizedBox(width: 5),
+            Flexible(child: Padding(padding: const EdgeInsets.only(right: 25), child: label)),
             if (widget.controlAffinity == ControlAffinity.trailing) control,
             if (widget.orientation != OptionsOrientation.vertical &&
                 widget.separator != null &&
