@@ -1,6 +1,4 @@
 import 'dart:math';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,15 +38,13 @@ class FileList extends StatelessWidget {
           itemBuilder: (context, index) {
             final file = state.files[index];
             return FutureBuilder(
-                future: Future.wait([getFileSize(file), file.getDownloadURL()]),
-                builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-                  final size = snapshot.data?[0];
-                  final url = snapshot.data?[1];
+                future: getFileSize(file),
+                builder: (context, AsyncSnapshot snapshot) {
+                  final size = snapshot.data;
 
                   return FileListItem(
                     name: file.name,
                     size: size,
-                    url: url,
                     onPreview: () {
                       onPreview(file, index);
                     },
@@ -71,7 +67,6 @@ class FileList extends StatelessWidget {
 class FileListItem extends StatelessWidget {
   final String name;
   final String? size;
-  final String? url;
   final void Function() onPreview;
   final void Function() onRemove;
   final void Function() onDownload;
@@ -80,7 +75,6 @@ class FileListItem extends StatelessWidget {
     Key? key,
     required this.name,
     required this.size,
-    required this.url,
     required this.onPreview,
     required this.onRemove,
     required this.onDownload,
@@ -88,31 +82,8 @@ class FileListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    // final mimeType = lookupMimeType(name);
-    // final type = mimeType?.split('/').first;
-    // String thumbnail;
-
-    // switch (type) {
-    //   case "image":
-    //     thumbnail = url;
-    //     break;
-    //   case "video":
-    //     final fileName = await VideoThumbnail.thumbnailFile(
-    //         video: "https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4",
-    //         thumbnailPath: (await getTemporaryDirectory()).path,
-    //         imageFormat: ImageFormat.WEBP,
-    //         maxHeight: 48,
-    //         quality: 75,
-    //      );
-    //       thumbnail = '';
-    //     break;
-    //   case "audio":
-    //     thumbnail = '';
-    //     break;
-    //   default:
-    //     thumbnail = '';
-    // }
+    final mimeType = lookupMimeType(name);
+    final type = mimeType?.split('/').first;
 
     return Container(
       height: 48,
@@ -120,101 +91,35 @@ class FileListItem extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
-          Container(
-            width: 50,
-            height: 48,
-            // decoration: ShapeDecoration(
-              // color: Colors.blueGrey,
-              // image: DecorationImage(
-                // image: NetworkImage(url),
-                // fit: BoxFit.fill,
-              // ),
-              // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-            // ),
-            child: CachedNetworkImage(
-              width: 50,
-              height: 48,
-              imageUrl: "http://via.placeholder.com/200x150",
-              imageBuilder: (context, imageProvider) => Container(
-                // decoration: BoxDecoration(
-                //   image: DecorationImage(
-                //       image: imageProvider,
-                //       fit: BoxFit.cover,
-                //       colorFilter: const ColorFilter.mode(Colors.yellow, BlendMode.colorBurn)),
-                // ),
-                decoration: ShapeDecoration(
-                  color: Colors.grey,
-                  image: DecorationImage(
-                    image: imageProvider,
-                    fit: BoxFit.fill,
-                  ),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                ),
-              ),
-              placeholder: (context, url) => const CircularProgressIndicator(),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
-            ),
-            // child: CachedNetworkImage(
-            //   width: 50,
-            //   height: 48,
-            //   fit: BoxFit.contain,
-            //   // imageBuilder: (context, imageProvider) {
-            //   //   return Container(
-            //   //     width: 50,
-            //   //     height: 48,
-            //   //     decoration: ShapeDecoration(
-            //   //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))
-            //   //     ),
-            //   //   );
-            //   // },
-            //   imageUrl: url,
-            //   progressIndicatorBuilder: (context, url, downloadProgress) {
-            //     return CircularProgressIndicator(value: downloadProgress.progress);
-            //   },
-            //   errorWidget: (context, url, error) {
-            //     print(error);
-            //     return const Dialog(
-            //       child: SizedBox(
-            //         width: 58,
-            //         height: 48,
-            //         child: Center(
-            //           child: Column(
-            //             mainAxisSize: MainAxisSize.min,
-            //             children: [
-            //               Icon(Icons.error),
-            //               SizedBox(height: 12),
-            //               Text('Error: Failed to load'),
-            //             ],
-            //           ),
-            //         ),
-            //       ),
-            //     );
-            //   },
-            // ),
-          ),
-          const SizedBox(width: 10),
+          FileThumbnail(type: type),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  name,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    fontFamily: 'Roboto',
-                    color: Color(0xFF444748),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0, top: 5),
+                  child: Text(
+                    name,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Roboto',
+                      color: Color(0xFF444748),
+                    ),
                   ),
                 ),
-                Text(
-                  size ?? '---',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    fontFamily: 'Roboto',
-                    color: Color(0xFFC4C7C7),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0, bottom: 5),
+                  child: Text(
+                    size ?? '',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Roboto',
+                      color: Color(0xFFC4C7C7),
+                    ),
                   ),
                 ),
               ],
@@ -223,16 +128,37 @@ class FileListItem extends StatelessWidget {
           SizedBox(
             height: 48,
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                IconButton(onPressed: onDownload, icon: const Icon(Icons.upload, color: Color(0xFFC4C7C7), size: 20)),
-                IconButton(onPressed: onPreview, icon: const Icon(Icons.visibility, color: Color(0xFFC4C7C7), size: 20)),
-                IconButton(onPressed: onRemove, icon: const Icon(Icons.delete, color: Color(0xFFFF897D), size: 20)),
+                IconButton(onPressed: onDownload, icon: const Icon(Icons.upload, color: Color(0xFFC4C7C7), size: 24)),
+                IconButton(onPressed: onPreview, icon: const Icon(Icons.visibility, color: Color(0xFFC4C7C7), size: 24)),
+                IconButton(onPressed: onRemove, icon: const Icon(Icons.delete, color: Color(0xFFFF897D), size: 24)),
               ],
             ),
           ),
         ],
       ),
     );
+  }
+}
+
+class FileThumbnail extends StatelessWidget {
+  final String? type;
+
+  const FileThumbnail({super.key, required this.type});
+
+  @override
+  Widget build(BuildContext context) {
+    const iconColor = Color(0xFF444748);
+
+    switch (type) {
+      case "image":
+        return const Icon(Icons.image_outlined, size: 46, color: iconColor);
+      case "video":
+        return const Icon(Icons.video_file_outlined, size: 46, color: iconColor);
+      case "audio":
+        return const Icon(Icons.audio_file_outlined, size: 46, color: iconColor);
+      default:
+        return const Icon(Icons.text_snippet_outlined, size: 46, color: iconColor);
+    }
   }
 }
