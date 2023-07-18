@@ -24,7 +24,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final Reference? storage;
   final bool disabled;
   final Text? submitButtonText;
-  final Text? addFileText;
+  final List<String>? addFileText;
   final PageStorageKey? pageStorageKey;
 
   const FlutterJsonSchemaForm({

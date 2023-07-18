@@ -14,6 +14,8 @@ class FileSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
+
     return BlocBuilder<FileBloc, FileState>(
       builder: (context, state) {
         // Disable button when uploading file
@@ -33,7 +35,7 @@ class FileSelector extends StatelessWidget {
         return Column(
           children: [
             IconButton(
-              icon: const Icon(Icons.download, color:  Color(0xFF5E80FA)),
+              icon: Icon(Icons.download, color: theme.primary),
               onPressed: state.enabled
                   ? () async {
                 final picker = await FilePicker.platform.pickFiles(
@@ -50,9 +52,9 @@ class FileSelector extends StatelessWidget {
               TextSpan(
                 children: [
                   TextSpan(
-                    text: 'Выберите файл ',
-                    style: const TextStyle(
-                      color: Color(0xFF5E80FA),
+                    text: state.addFileText?[0],
+                    style: TextStyle(
+                      color: theme.primary,
                       fontSize: 16,
                       fontFamily: 'Roboto',
                       fontWeight: FontWeight.w400,
@@ -70,10 +72,10 @@ class FileSelector extends StatelessWidget {
                       }
                           : null,
                   ),
-                  const TextSpan(
-                    text: 'для загрузки',
+                  TextSpan(
+                    text: state.addFileText?[1],
                     style: TextStyle(
-                      color: Color(0xFF5C5F5F),
+                      color: theme.onSurface,
                       fontSize: 16,
                       fontFamily: 'Roboto',
                       fontWeight: FontWeight.w400,
@@ -84,30 +86,16 @@ class FileSelector extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
-            const Text(
+            Text(
               '(5 MB max)',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Color(0xFFC4C7C7),
+                color: theme.onSurface,
                 fontSize: 14,
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.w400,
               ),
             ),
-            // ElevatedButton(
-            //   onPressed: state.enabled
-            //       ? () async {
-            //           final picker = await FilePicker.platform.pickFiles(
-            //             allowCompression: true,
-            //             allowMultiple: false,
-            //             withData: true,
-            //           );
-            //           final files = picker?.files ?? [];
-            //           onSelect(files);
-            //         }
-            //       : null,
-            //   child: state.addFileText ?? const Text('Add File'),
-            // ),
           ],
         );
       },

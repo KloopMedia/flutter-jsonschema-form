@@ -4,7 +4,7 @@ abstract class FormState extends Equatable {
   final Map<String, dynamic> formData;
   final bool disabled;
   final bool readOnly;
-  final Text? addFileText;
+  final List<String>? addFileText;
 
   const FormState(this.formData, {this.disabled = false, this.readOnly = false, this.addFileText});
 

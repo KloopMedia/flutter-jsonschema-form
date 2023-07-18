@@ -21,7 +21,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
   final bool disabled;
   final bool readOnly;
   final bool isRequired;
-  final Text? addFileText;
+  final List<String>? addFileText;
 
   const FormWidgetBuilder({
     Key? key,

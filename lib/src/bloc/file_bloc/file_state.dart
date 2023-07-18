@@ -3,7 +3,7 @@ part of 'file_bloc.dart';
 abstract class FileState extends Equatable {
   final List<Reference> files;
   final bool enabled;
-  final Text? addFileText;
+  final List<String>? addFileText;
 
   const FileState({required this.files, this.enabled = true, this.addFileText});
 }

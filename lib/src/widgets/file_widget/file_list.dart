@@ -82,6 +82,7 @@ class FileListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
     final mimeType = lookupMimeType(name);
     final type = mimeType?.split('/').first;
 
@@ -102,11 +103,11 @@ class FileListItem extends StatelessWidget {
                   child: Text(
                     name,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
                       fontFamily: 'Roboto',
-                      color: Color(0xFF444748),
+                      color: theme.onSurface,
                     ),
                   ),
                 ),
@@ -114,11 +115,11 @@ class FileListItem extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 10.0, bottom: 5),
                   child: Text(
                     size ?? '',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                       fontFamily: 'Roboto',
-                      color: Color(0xFFC4C7C7),
+                      color: theme.outlineVariant,
                     ),
                   ),
                 ),
@@ -131,7 +132,7 @@ class FileListItem extends StatelessWidget {
               children: [
                 IconButton(onPressed: onDownload, icon: const Icon(Icons.upload, color: Color(0xFFC4C7C7), size: 24)),
                 IconButton(onPressed: onPreview, icon: const Icon(Icons.visibility, color: Color(0xFFC4C7C7), size: 24)),
-                IconButton(onPressed: onRemove, icon: const Icon(Icons.delete, color: Color(0xFFFF897D), size: 24)),
+                IconButton(onPressed: onRemove, icon: Icon(Icons.delete, color: theme.error, size: 24)),
               ],
             ),
           ),
@@ -148,17 +149,17 @@ class FileThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const iconColor = Color(0xFF444748);
+    final iconColor = Theme.of(context).colorScheme.onSurfaceVariant;
 
     switch (type) {
       case "image":
-        return const Icon(Icons.image_outlined, size: 46, color: iconColor);
+        return Icon(Icons.image_outlined, size: 46, color: iconColor);
       case "video":
-        return const Icon(Icons.video_file_outlined, size: 46, color: iconColor);
+        return Icon(Icons.video_file_outlined, size: 46, color: iconColor);
       case "audio":
-        return const Icon(Icons.audio_file_outlined, size: 46, color: iconColor);
+        return Icon(Icons.audio_file_outlined, size: 46, color: iconColor);
       default:
-        return const Icon(Icons.text_snippet_outlined, size: 46, color: iconColor);
+        return Icon(Icons.text_snippet_outlined, size: 46, color: iconColor);
     }
   }
 }

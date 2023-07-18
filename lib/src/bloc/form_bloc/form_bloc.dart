@@ -21,7 +21,7 @@ class FormBloc extends Bloc<FormEvent, FormState> {
   final bool disabled;
   final GlobalKey<FormBuilderState> formKey;
   final ValidationWarningCallback? onValidationCallback;
-  final Text? addFileText;
+  final List<String>? addFileText;
 
   FormBloc({
     Map<String, dynamic>? formData,

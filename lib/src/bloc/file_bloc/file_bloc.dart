@@ -17,7 +17,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   final bool allowMultiple;
   final bool enabled;
   final void Function(String? value) onChanged;
-  final Text? addFileText;
+  final List<String>? addFileText;
 
   FileBloc({
     required dynamic value,

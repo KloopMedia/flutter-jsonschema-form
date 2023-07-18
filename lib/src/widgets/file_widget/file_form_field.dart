@@ -15,7 +15,7 @@ class FileFormField extends StatefulWidget {
   final bool allowMultiple;
   final void Function(String? value) onChanged;
   final bool enabled;
-  final Text? addFileText;
+  final List<String>? addFileText;
 
   const FileFormField({
     Key? key,
