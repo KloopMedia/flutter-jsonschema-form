@@ -360,6 +360,7 @@ class DefaultWidgetBuilder extends StatelessWidget {
             ]),
             onChanged: onChange,
             enabled: !disabled,
+            contentPadding: const EdgeInsets.only(right: 30),
           ),
         );
       default:

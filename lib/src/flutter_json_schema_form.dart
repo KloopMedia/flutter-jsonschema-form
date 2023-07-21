@@ -21,10 +21,13 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final ValidationWarningCallback? onValidationFailed;
   final WebhookTriggerCallback? onWebhookTrigger;
   final DownloadFileCallback? onDownloadFile;
+  final VoidCallback? onOpenPreviousTask;
   final Reference? storage;
   final bool disabled;
+  final bool allowOpenPrevious;
   final Text? submitButtonText;
   final List<String>? addFileText;
+  final Text? openPreviousButtonText;
   final PageStorageKey? pageStorageKey;
 
   const FlutterJsonSchemaForm({
@@ -42,6 +45,9 @@ class FlutterJsonSchemaForm extends StatefulWidget {
     this.addFileText,
     this.pageStorageKey,
     this.onDownloadFile,
+    this.onOpenPreviousTask,
+    this.openPreviousButtonText,
+    this.allowOpenPrevious = false,
   }) : super(key: key);
 
   @override
@@ -74,6 +80,9 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
         disabled: widget.disabled,
         submitButtonText: widget.submitButtonText,
         pageStorageKey: widget.pageStorageKey,
+        allowOpenPrevious: widget.allowOpenPrevious,
+        onOpenPreviousTask: widget.onOpenPreviousTask,
+        openPreviousButtonText: widget.openPreviousButtonText,
       ),
     );
   }
@@ -85,6 +94,9 @@ class Form extends StatelessWidget {
   final List fields;
   final bool disabled;
   final Text? submitButtonText;
+  final VoidCallback? onOpenPreviousTask;
+  final Text? openPreviousButtonText;
+  final bool allowOpenPrevious;
 
   const Form({
     Key? key,
@@ -93,6 +105,9 @@ class Form extends StatelessWidget {
     required this.disabled,
     this.submitButtonText,
     this.pageStorageKey,
+    this.onOpenPreviousTask,
+    this.openPreviousButtonText,
+    required this.allowOpenPrevious,
   }) : super(key: key);
 
   @override
@@ -106,23 +121,48 @@ class Form extends StatelessWidget {
             clearValueOnUnregister: true,
             child: FormConstructor(fields: fields),
           ),
-          if (!disabled)
-            SizedBox(
-              height: 52,
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+          Row(
+            children: [
+              if (allowOpenPrevious)
+                Expanded(
+                  child: SizedBox(
+                    height: 52,
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(
+                          width: 1,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      onPressed: onOpenPreviousTask,
+                      child: openPreviousButtonText ?? const Text('Go back'),
+                    ),
                   ),
-                  backgroundColor: Theme.of(context).colorScheme.primary,
                 ),
-                onPressed: () {
-                  context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
-                },
-                child: submitButtonText ?? const Text('Submit'),
-              ),
-            ),
+              if (allowOpenPrevious && !disabled) const SizedBox(width: 10),
+              if (!disabled)
+                Expanded(
+                  child: SizedBox(
+                    height: 52,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                      ),
+                      onPressed: () {
+                        context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
+                      },
+                      child: submitButtonText ?? const Text('Submit'),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ],
       ),
     );
