@@ -20,7 +20,7 @@ class LinkFormField extends StatelessWidget {
       child: InkWell(
         child: Text(
           initialValue,
-          style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.blue),
+          style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.blue),
         ),
         onTap: () => launchUrl(Uri.parse(initialValue)),
       ),
