@@ -15,6 +15,7 @@ class FileSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
+    final bloc = context.read<FormBloc>();
 
     return BlocBuilder<FileBloc, FileState>(
       builder: (context, state) {
@@ -32,6 +33,8 @@ class FileSelector extends StatelessWidget {
           //   ],
           // );
         }
+        var translatedSelectFileText = bloc.addFileText?[0];
+        var translatedToUploadText = bloc.addFileText?[1];
         return Column(
           children: [
             IconButton(
@@ -52,7 +55,7 @@ class FileSelector extends StatelessWidget {
               TextSpan(
                 children: [
                   TextSpan(
-                    text: state.addFileText?[0],
+                    text: translatedSelectFileText,
                     style: TextStyle(
                       color: theme.primary,
                       fontSize: 16,
@@ -73,7 +76,7 @@ class FileSelector extends StatelessWidget {
                           : null,
                   ),
                   TextSpan(
-                    text: state.addFileText?[1],
+                    text: translatedToUploadText,
                     style: TextStyle(
                       color: theme.onSurface,
                       fontSize: 16,

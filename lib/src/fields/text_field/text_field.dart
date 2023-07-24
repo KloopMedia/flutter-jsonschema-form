@@ -89,7 +89,6 @@ class _TextFieldState extends State<TextField> {
   @override
   Widget build(BuildContext context) {
     final globalDisabled = context.read<bloc.FormBloc>().state.disabled;
-    final addFileText = _bloc.state.addFileText;
     return FieldWrapper(
       title: title,
       description: description,
@@ -128,7 +127,6 @@ class _TextFieldState extends State<TextField> {
             disabled: globalDisabled || disabled,
             readOnly: readOnly,
             isRequired: isRequired,
-            addFileText: addFileText,
           );
         }
       }),

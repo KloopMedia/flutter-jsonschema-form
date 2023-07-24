@@ -21,7 +21,6 @@ class FormWidgetBuilder<T> extends StatelessWidget {
   final bool disabled;
   final bool readOnly;
   final bool isRequired;
-  final List<String>? addFileText;
 
   const FormWidgetBuilder({
     Key? key,
@@ -34,7 +33,6 @@ class FormWidgetBuilder<T> extends StatelessWidget {
     required this.readOnly,
     required this.disabled,
     required this.isRequired,
-    this.addFileText,
   }) : super(key: key);
 
   @override
@@ -115,7 +113,6 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         onChanged: onChange,
         allowMultiple: widgetModel.multiple,
         enabled: !disabled,
-        addFileText: addFileText,
       );
     } else if (widgetModel is AudioWidgetModel) {
       return AudioFormField(

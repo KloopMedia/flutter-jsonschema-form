@@ -17,7 +17,6 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   final bool allowMultiple;
   final bool enabled;
   final void Function(String? value) onChanged;
-  final List<String>? addFileText;
 
   FileBloc({
     required dynamic value,
@@ -25,8 +24,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     required this.allowMultiple,
     required this.enabled,
     required this.onChanged,
-    this.addFileText,
-  }) : super(FilesInitial(files: _decodeValue(storage, value), enabled: enabled, addFileText: addFileText)) {
+  }) : super(FilesInitial(files: _decodeValue(storage, value), enabled: enabled)) {
     on<AddFileEvent>(onAddFileEvent);
     on<RemoveFileEvent>(onRemoveFileEvent);
     on<ViewFileEvent>(onViewFileEvent);
