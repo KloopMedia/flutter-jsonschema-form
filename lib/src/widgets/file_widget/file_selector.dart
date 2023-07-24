@@ -38,7 +38,7 @@ class FileSelector extends StatelessWidget {
         return Column(
           children: [
             IconButton(
-              icon: Icon(Icons.download, color: theme.primary),
+              icon: Icon(Icons.upload, color: theme.primary),
               onPressed: state.enabled
                   ? () async {
                 final picker = await FilePicker.platform.pickFiles(

@@ -130,7 +130,7 @@ class FileListItem extends StatelessWidget {
             height: 48,
             child: Row(
               children: [
-                IconButton(onPressed: onDownload, icon: const Icon(Icons.upload, color: Color(0xFFC4C7C7), size: 24)),
+                IconButton(onPressed: onDownload, icon: const Icon(Icons.download, color: Color(0xFFC4C7C7), size: 24)),
                 IconButton(onPressed: onPreview, icon: const Icon(Icons.visibility, color: Color(0xFFC4C7C7), size: 24)),
                 IconButton(onPressed: onRemove, icon: Icon(Icons.delete, color: theme.error, size: 24)),
               ],
