@@ -18,6 +18,7 @@ enum WidgetType {
   recorder,
   webhook,
   paragraph,
+  autocomplete,
   none,
 }
 
@@ -45,6 +46,7 @@ const widgetEnumMap = {
   WidgetType.recorder: 'recorder',
   WidgetType.webhook: 'webhook',
   WidgetType.paragraph: 'paragraph',
+  WidgetType.autocomplete: 'simple_autocomplete'
 };
 
 const formatEnumMap = {

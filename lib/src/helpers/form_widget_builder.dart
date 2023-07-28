@@ -18,6 +18,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
   final void Function(dynamic value) onChange;
   final List<DropdownMenuItem<T>>? dropdownItems;
   final List<FormBuilderFieldOption<T>>? radioItems;
+  final List? enumItems;
   final bool disabled;
   final bool readOnly;
   final bool isRequired;
@@ -33,6 +34,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
     required this.readOnly,
     required this.disabled,
     required this.isRequired,
+    this.enumItems,
   }) : super(key: key);
 
   @override
@@ -155,6 +157,20 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         decoration: decoration,
         initialValue: value,
         paragraph: widgetModel.paragraph,
+      );
+    } else if (widgetModel is AutocompleteWidgetModel) {
+      List<String> options;
+      try {
+        options = enumItems?.cast<String>() ?? [];
+      } catch (e) {
+        options = [];
+      }
+      return AutocompleteField(
+        name: id,
+        decoration: decoration,
+        initialValue: value,
+        options: options,
+        onChanged: onChange,
       );
     } else {
       return const Text('Error');
@@ -346,7 +362,7 @@ class DefaultWidgetBuilder extends StatelessWidget {
         );
       case FieldType.boolean:
         return Transform.scale(
-          scale:1.15,
+          scale: 1.15,
           alignment: Alignment.centerLeft,
           child: FormBuilderCheckbox(
             name: id,

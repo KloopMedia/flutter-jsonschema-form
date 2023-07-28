@@ -124,6 +124,7 @@ class _TextFieldState extends State<TextField> {
             onChange: onChange,
             dropdownItems: widget.model.getDropdownItems(),
             radioItems: widget.model.getRadio(),
+            enumItems: widget.model.enumItems,
             disabled: globalDisabled || disabled,
             readOnly: readOnly,
             isRequired: isRequired,

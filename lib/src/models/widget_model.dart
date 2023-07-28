@@ -37,6 +37,8 @@ abstract class WidgetModel {
       case WidgetType.webhook:
         final label = getOption(options, 'label');
         return WebhookTriggerWidgetModel(label: label);
+      case WidgetType.autocomplete:
+        return AutocompleteWidgetModel();
       // case WidgetType.card:
       //   // TODO: Handle this case.
       //   break;
@@ -50,6 +52,10 @@ abstract class WidgetModel {
         return const NullWidgetModel();
     }
   }
+}
+
+class AutocompleteWidgetModel extends WidgetModel {
+  const AutocompleteWidgetModel() : super(type: WidgetType.autocomplete);
 }
 
 class FileWidgetModel extends WidgetModel {
