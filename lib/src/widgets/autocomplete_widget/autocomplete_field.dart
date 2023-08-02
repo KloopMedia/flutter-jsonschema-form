@@ -38,7 +38,9 @@ class _AutocompleteFieldState extends State<AutocompleteField> {
               return widget.options;
             }
             return widget.options.where((String option) {
-              return option.contains(textEditingValue.text.toLowerCase());
+              final lowerCaseOption = option.toLowerCase();
+              final value = textEditingValue.text.toLowerCase();
+              return lowerCaseOption.startsWith(value) || lowerCaseOption.contains(value);
             });
           },
           onSelected: (String selection) {
