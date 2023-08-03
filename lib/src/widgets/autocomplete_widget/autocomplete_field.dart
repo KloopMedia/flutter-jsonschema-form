@@ -33,6 +33,15 @@ class _AutocompleteFieldState extends State<AutocompleteField> {
       builder: (field) {
         return Autocomplete(
           initialValue: TextEditingValue(text: widget.initialValue ?? ''),
+          fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
+            return TextFormField(
+              controller: textEditingController, //u
+              onChanged: (value) {
+                widget.onChanged(value);
+              },// ses fieldViewBuilder TextEditingController
+              focusNode: focusNode,
+            );
+          },
           optionsBuilder: (TextEditingValue textEditingValue) {
             if (textEditingValue.text == '') {
               return widget.options;
