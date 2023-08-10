@@ -68,7 +68,10 @@ class DependencyBuilder extends StatelessWidget {
         final parentValue = getFormDataByPath(state.formData, model.parentPath);
         if (model.values.contains(parentValue)) {
           final value = getFormDataByPath(state.formData, field.path);
-          return _mapModelToField(field, value, model);
+          bool? isQuiz = state.formData.containsKey('meta_quiz_score');
+          bool? isCorrect;
+          (isQuiz) ? isCorrect = !model.id.contains('incorrect') : isCorrect = null;
+          return _mapModelToField(field, value, model, isCorrect);
         } else {
           return const SizedBox.shrink();
         }
@@ -109,10 +112,10 @@ class ArrayBuilder extends StatelessWidget {
   }
 }
 
-Widget _mapModelToField(FieldModel model, dynamic value, [DependencyModel? dependency]) {
+Widget _mapModelToField(FieldModel model, dynamic value, [DependencyModel? dependency, bool? isCorrect]) {
   if (model is TextFieldModel) {
     final val = value is String? ? value : value.toString();
-    return form_fields.TextField(model: model, value: val, dependency: dependency);
+    return form_fields.TextField(model: model, value: val, dependency: dependency, isCorrect: isCorrect);
   } else if (model is NumberFieldModel) {
     final val = value is num? ? value : num.tryParse(value);
     return form_fields.NumberField(model: model, value: val, dependency: dependency);
