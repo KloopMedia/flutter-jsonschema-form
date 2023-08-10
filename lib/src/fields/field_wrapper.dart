@@ -11,11 +11,13 @@ class FieldWrapper extends StatelessWidget {
   final bool isRequired;
   final Widget child;
   final WrapperType _type;
+  final bool? isCorrect;
 
   const FieldWrapper({
     Key? key,
     this.title,
     this.description,
+    this.isCorrect,
     required this.isRequired,
     required this.child,
   })  : _type = WrapperType.field,
@@ -25,6 +27,7 @@ class FieldWrapper extends StatelessWidget {
     super.key,
     this.title,
     this.description,
+    this.isCorrect,
     this.isRequired = false,
     required this.child,
   }) : _type = WrapperType.section;
@@ -40,7 +43,7 @@ class FieldWrapper extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (title != null) FieldTitle(title: title!, isRequired: isRequired, type: _type),
+          if (title != null) FieldTitle(title: title!, isRequired: isRequired, type: _type, isCorrect: isCorrect),
           if (isField && description != null) const SizedBox(height: 4),
           if (description != null) FieldDescription(description: description!),
           if (isField) const SizedBox(height: 8),
@@ -55,8 +58,9 @@ class FieldTitle extends StatelessWidget {
   final String title;
   final bool isRequired;
   final WrapperType type;
+  final bool? isCorrect;
 
-  const FieldTitle({Key? key, required this.title, required this.isRequired, required this.type})
+  const FieldTitle({Key? key, required this.title, required this.isRequired, required this.type, this.isCorrect})
       : super(key: key);
 
   @override
@@ -64,6 +68,9 @@ class FieldTitle extends StatelessWidget {
     final theme = Theme.of(context);
     final style =
         type == WrapperType.section ? theme.textTheme.headline6 : theme.textTheme.titleMedium;
+    final quizStyle = theme.textTheme.titleMedium?.copyWith(
+        color: (isCorrect != null && isCorrect!) ? Colors.green : Colors.red
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,7 +78,7 @@ class FieldTitle extends StatelessWidget {
         SelectableText.rich(
           TextSpan(
             text: title,
-            style: style,
+            style: (isCorrect == null) ? style : quizStyle,
             children: <TextSpan>[
               if (isRequired) const TextSpan(text: '*', style: TextStyle(color: Colors.red)),
             ],

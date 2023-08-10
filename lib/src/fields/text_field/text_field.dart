@@ -10,8 +10,9 @@ class TextField extends StatefulWidget {
   final TextFieldModel model;
   final DependencyModel? dependency;
   final String? value;
+  final bool? isCorrect;
 
-  const TextField({Key? key, required this.model, required this.value, this.dependency})
+  const TextField({Key? key, required this.model, required this.value, this.dependency, this.isCorrect})
       : super(key: key);
 
   @override
@@ -93,6 +94,7 @@ class _TextFieldState extends State<TextField> {
       title: title,
       description: description,
       isRequired: isRequired,
+      isCorrect: widget.isCorrect,
       child: Builder(builder: (context) {
         if (widgetType is NullWidgetModel) {
           if (format != null) {
