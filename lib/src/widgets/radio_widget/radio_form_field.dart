@@ -5,9 +5,8 @@ import 'package:flutter_form_builder/flutter_form_builder.dart' hide GroupedRadi
 import 'grouped_radio.dart';
 
 /// Field to select one value from a list of Radio Widgets
-class FormBuilderRadioGroup<T> extends FormBuilderField<T> {
+class FormBuilderRadioGroup<T> extends FormBuilderFieldDecoration<T> {
   final Axis wrapDirection;
-  final bool shouldRadioRequestFocus;
   final Color? activeColor;
   final Color? focusColor;
   final Color? hoverColor;
@@ -28,17 +27,16 @@ class FormBuilderRadioGroup<T> extends FormBuilderField<T> {
 
   /// Creates field to select one value from a list of Radio Widgets
   FormBuilderRadioGroup({
-    AutovalidateMode autovalidateMode = AutovalidateMode.disabled,
-    bool enabled = true,
-    FocusNode? focusNode,
-    FormFieldSetter<T>? onSaved,
-    FormFieldValidator<T>? validator,
-    InputDecoration decoration = const InputDecoration(),
-    Key? key,
-    required String name, //From Super
+    super.autovalidateMode = AutovalidateMode.disabled,
+    super.enabled,
+    super.focusNode,
+    super.onSaved,
+    super.validator,
+    super.decoration,
+    super.key,
+    required super.name,
     required this.options,
-    T? initialValue,
-    this.shouldRadioRequestFocus = false,
+    super.initialValue,
     this.activeColor,
     this.controlAffinity = ControlAffinity.leading,
     this.disabled,
@@ -55,23 +53,12 @@ class FormBuilderRadioGroup<T> extends FormBuilderField<T> {
     this.wrapSpacing = 0.0,
     this.wrapTextDirection,
     this.wrapVerticalDirection = VerticalDirection.down,
+    super.onChanged,
+    super.valueTransformer,
+    super.onReset,
+    super.restorationId,
     this.physics,
-    ValueChanged<T?>? onChanged,
-    ValueTransformer<T?>? valueTransformer,
-    VoidCallback? onReset,
   }) : super(
-    key: key,
-    initialValue: initialValue,
-    name: name,
-    validator: validator,
-    valueTransformer: valueTransformer,
-    onChanged: onChanged,
-    autovalidateMode: autovalidateMode,
-    onSaved: onSaved,
-    enabled: enabled,
-    onReset: onReset,
-    focusNode: focusNode,
-    decoration: decoration,
     builder: (FormFieldState<T?> field) {
       final state = field as _FormBuilderRadioGroupState<T>;
 
@@ -87,9 +74,6 @@ class FormBuilderRadioGroup<T> extends FormBuilderField<T> {
           hoverColor: hoverColor,
           materialTapTargetSize: materialTapTargetSize,
           onChanged: (value) {
-            if (shouldRadioRequestFocus) {
-              state.requestFocus();
-            }
             state.didChange(value);
           },
           options: options,
@@ -111,9 +95,9 @@ class FormBuilderRadioGroup<T> extends FormBuilderField<T> {
   );
 
   @override
-  FormBuilderFieldState<FormBuilderRadioGroup<T>, T> createState() =>
+  FormBuilderFieldDecorationState<FormBuilderRadioGroup<T>, T> createState() =>
       _FormBuilderRadioGroupState<T>();
 }
 
 class _FormBuilderRadioGroupState<T>
-    extends FormBuilderFieldState<FormBuilderRadioGroup<T>, T> {}
+    extends FormBuilderFieldDecorationState<FormBuilderRadioGroup<T>, T> {}
