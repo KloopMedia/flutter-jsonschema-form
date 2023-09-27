@@ -20,6 +20,7 @@ enum WidgetType {
   paragraph,
   autocomplete,
   none,
+  image,
 }
 
 enum FormatType { email, uri, file, date, dateTime }
@@ -46,7 +47,8 @@ const widgetEnumMap = {
   WidgetType.recorder: 'recorder',
   WidgetType.webhook: 'webhook',
   WidgetType.paragraph: 'paragraph',
-  WidgetType.autocomplete: 'simple_autocomplete'
+  WidgetType.autocomplete: 'simple_autocomplete',
+  WidgetType.image: 'image',
 };
 
 const formatEnumMap = {

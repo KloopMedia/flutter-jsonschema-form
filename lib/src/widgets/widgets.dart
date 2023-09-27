@@ -7,3 +7,4 @@ export 'webhook_trigger_widget/webhook_trigger.dart';
 export 'radio_widget/radio_form_field.dart';
 export 'paragraph_widget/paragraph_widget.dart';
 export 'autocomplete_widget/autocomplete_field.dart';
+export 'image_viewer_widget/image_field.dart';

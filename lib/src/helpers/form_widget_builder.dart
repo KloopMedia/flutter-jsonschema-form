@@ -172,6 +172,20 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         options: options,
         onChanged: onChange,
       );
+    } else if (widgetModel is ImageWidgetModel) {
+      return ImageField<T>(
+        name: id,
+        initialValue: value,
+        decoration: decoration,
+        validator: FormBuilderValidators.compose([
+          if (isRequired) FormBuilderValidators.required(),
+        ]),
+        images: widgetModel.images,
+        text: widgetModel.text,
+        options: radioItems!,
+        enabled: !disabled,
+        onChanged: onChange,
+      );
     } else {
       return const Text('Error');
     }

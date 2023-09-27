@@ -45,6 +45,10 @@ abstract class WidgetModel {
       // case WidgetType.reader:
       //   // TODO: Handle this case.
       //   break;
+      case WidgetType.image:
+        final text = getOption<String>(options, 'text');
+        final List<String> images = List.castFrom(getOption(options, 'images') ?? []);
+        return ImageWidgetModel(text: text, images: images);
       case WidgetType.paragraph:
         final paragraph = getOption<String>(options, 'paragraph') ?? "";
         return ParagraphWidgetModel(paragraph: paragraph);
@@ -52,6 +56,13 @@ abstract class WidgetModel {
         return const NullWidgetModel();
     }
   }
+}
+
+class ImageWidgetModel extends WidgetModel {
+  final List<String> images;
+  final String? text;
+
+  const ImageWidgetModel({this.images = const [], this.text}) : super(type: WidgetType.image);
 }
 
 class AutocompleteWidgetModel extends WidgetModel {

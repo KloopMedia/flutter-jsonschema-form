@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 const decoration = InputDecoration(
   isDense: true,
+  border: OutlineInputBorder(
+    borderSide: BorderSide(width: 1.0),
+  ),
   focusedBorder: OutlineInputBorder(
     borderSide: BorderSide(
       color: Colors.blueAccent,
