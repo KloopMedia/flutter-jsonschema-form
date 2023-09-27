@@ -38,19 +38,7 @@ class ImageField<T> extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (images.length == 1)
-                Container(
-                  height: 174,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    image: DecorationImage(
-                      image: CachedNetworkImageProvider(images.first),
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                )
-              else
-                ImageRow(images: images),
+              ImageRow(images: images),
               if (text != null && text!.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 15.0),
