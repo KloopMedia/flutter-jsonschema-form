@@ -1,68 +1,70 @@
-import 'dart:convert';
-
 import 'package:example/main.dart';
+import 'package:example/schema/schema.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_json_schema_form/flutter_json_schema_form.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+
+import 'robots/image_robot.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('render image widget', (tester) async {
-    final schema = jsonDecode("""
-    {
-  "title": "A registration form",
-  "description": "A simple form example.",
-  "type": "object",
-  "required": [],
-  "properties": {
-    "image_widget_test": {
-      "type": "string",
-      "title": "Test"
-    }
-  }
-}
-    """);
-
-    final uiSchema = jsonDecode("""
-    {"image_widget_test": {
-    "ui:widget": "image"
-  }}
-    """);
-
+  group('testing image widget', () {
     // Load app widget.
-    await tester.pumpWidget(MyApp(schema: schema));
+    final app = MyApp(
+      schema: ImageSchema(),
+    );
 
-    await tester.pumpAndSettle();
+    getFormData(WidgetTester tester) {
+      return tester.state<MyAppState>(find.byType(MyApp)).formData;
+    }
 
-    // Verify that all options were rendered.
-    expect(find.text('One'), findsOneWidget);
-    expect(find.text('Two'), findsOneWidget);
-    expect(find.text('Three'), findsOneWidget);
+    testWidgets('render image widget', (tester) async {
+      await tester.pumpWidget(app);
 
-    final Finder chipOne = find.byKey(const ValueKey('image_chip_0'));
-    final Finder chipTwo = find.byKey(const ValueKey('image_chip_1'));
-    final Finder chipThree = find.byKey(const ValueKey('image_chip_2'));
+      // Verify that all options were rendered.
+      expect(find.text('One'), findsOneWidget);
+      expect(find.text('Two'), findsOneWidget);
+      expect(find.text('Three'), findsOneWidget);
+      expect(find.byKey(const Key('image_text')), findsOneWidget);
+    });
 
-    expect(chipOne, findsOneWidget);
+    testWidgets('tap chip', (tester) async {
+      final ImageRobot imageRobot = ImageRobot(tester);
 
-    await tester.tap(chipOne);
+      await tester.pumpWidget(app);
 
-    await tester.pumpAndSettle();
+      final Finder chipOne = find.widgetWithText(DecoratedChip, 'One');
 
-    final widgetOne = tester.widget<ChoiceChip>(chipOne);
-    final widgetTwo = tester.widget<ChoiceChip>(chipTwo);
-    final widgetThree = tester.widget<ChoiceChip>(chipThree);
+      expect(chipOne, findsOneWidget);
 
-    expect(widgetOne.selected, true);
-    expect(widgetTwo.selected, false);
-    expect(widgetThree.selected, false);
+      await imageRobot.tapOnChip(chipOne);
+      final widgetOne = tester.widget<DecoratedChip>(chipOne);
+      expect(widgetOne.selected, true);
+      expect(getFormData(tester)['image_widget_test'], 1);
 
-    await tester.tap(chipTwo);
-    await tester.pumpAndSettle();
+      final Finder chipTwo = find.widgetWithText(DecoratedChip, 'Two');
+      await imageRobot.tapOnChip(chipTwo);
+      final widgetTwo = tester.widget<DecoratedChip>(chipTwo);
 
-    expect(widgetOne.selected, false);
-    expect(widgetTwo.selected, true);
-    expect(widgetThree.selected, false);
+      expect(widgetTwo.selected, true);
+      expect(getFormData(tester)['image_widget_test'], 2);
+    });
+
+    testWidgets('tap image', (tester) async {
+      final ImageRobot imageRobot = ImageRobot(tester);
+
+      await tester.pumpWidget(app);
+      await tester.pumpAndSettle();
+
+      await imageRobot.clickImage();
+
+      expect(find.byType(ImageDetailScreen), findsOneWidget);
+
+      await imageRobot.exitDetailPage();
+
+      expect(find.byType(MyApp), findsOneWidget);
+    });
   });
 }

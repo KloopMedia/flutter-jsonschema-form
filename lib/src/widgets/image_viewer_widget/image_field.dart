@@ -43,6 +43,7 @@ class ImageField<T> extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 15.0),
                   child: Text(
+                    key: const Key('image_text'),
                     text!,
                     style: const TextStyle(fontSize: 16),
                   ),

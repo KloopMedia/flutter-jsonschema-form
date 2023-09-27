@@ -14,11 +14,11 @@ class MyApp extends StatefulWidget {
   const MyApp({super.key, this.schema});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<MyApp> createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
-  late Map<String, dynamic> _formData = widget.schema?.formData ?? {};
+class MyAppState extends State<MyApp> {
+  late Map<String, dynamic> formData = widget.schema?.formData ?? {};
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +28,10 @@ class _MyAppState extends State<MyApp> {
         body: FlutterJsonSchemaForm(
           schema: widget.schema?.formSchema ?? {},
           uiSchema: widget.schema?.uiSchema,
-          formData: _formData,
+          formData: formData,
           onChange: (data, path) {
-            print(data);
             setState(() {
-              _formData = data;
+              formData = data;
             });
           },
         ),

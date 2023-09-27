@@ -15,22 +15,26 @@ class ImageSchema extends Schema {
             "type": "object",
             "required": [],
             "properties": {
-              "firstName": {"type": "string", "title": "First name", "default": "Chuck"},
-              "lastName": {"type": "string", "title": "Last name"},
-              "image_widget_test": {"type": "integer", "title": "Test", "enum": ['1', '2', '3']}
+              "image_widget_test": {
+                "type": "integer",
+                "title": "Test",
+                "enum": ['1', '2', '3'],
+                "enumNames": ["One", "Two", "Three"]
+              },
             }
           },
           uiSchema: {
             "image_widget_test": {
               "ui:widget": "image",
               "ui:options": {
+                "text": "Test text",
                 "images": [
                   "https://picsum.photos/200",
                   "https://picsum.photos/200",
                   "https://picsum.photos/200"
                 ]
               }
-            }
+            },
           },
         );
 }
