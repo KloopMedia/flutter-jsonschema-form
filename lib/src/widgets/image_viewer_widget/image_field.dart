@@ -194,20 +194,17 @@ class DecoratedChip extends StatelessWidget {
     return Container(
       height: 39,
       constraints: const BoxConstraints(minWidth: 67),
+      decoration: ShapeDecoration(
+        color: selected ? Theme.of(context).colorScheme.primary : const Color(0xFFEFF1F1),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
       margin: margin,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(20),
-        child: Ink(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-          decoration: ShapeDecoration(
-            color: selected ? const Color(0xFF94A4FB) : const Color(0xFFEFF1F1),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-          ),
-          child: Center(child: decoratedLabel ?? label),
-        ),
+        child: Center(child: decoratedLabel ?? label),
       ),
     );
   }
