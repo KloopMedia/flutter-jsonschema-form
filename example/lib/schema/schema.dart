@@ -18,8 +18,8 @@ class ImageSchema extends Schema {
               "image_widget_test": {
                 "type": "integer",
                 "title": "Test",
-                "enum": ['1', '2', '3'],
-                "enumNames": ["One", "Two", "Three"]
+                "enum": ['1', '2', '3', '4', '5', '6'],
+                "enumNames": ["One", "Two", "Three", 'Four', 'Five', 'Six']
               },
             }
           },
@@ -29,6 +29,12 @@ class ImageSchema extends Schema {
               "ui:options": {
                 "text": "Test text",
                 "images": [
+                  "https://picsum.photos/200",
+                  "https://picsum.photos/200",
+                  "https://picsum.photos/200",
+                  "https://picsum.photos/200",
+                  "https://picsum.photos/200",
+                  "https://picsum.photos/200",
                   "https://picsum.photos/200",
                   "https://picsum.photos/200",
                   "https://picsum.photos/200"

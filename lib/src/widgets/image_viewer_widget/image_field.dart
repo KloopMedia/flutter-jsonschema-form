@@ -117,7 +117,10 @@ class ImageRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: renderImageList());
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(children: renderImageList()),
+    );
   }
 }
 
@@ -161,7 +164,10 @@ class _ButtonRowState<T> extends State<ButtonRow<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: renderButtonList());
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(children: renderButtonList()),
+    );
   }
 }
 
