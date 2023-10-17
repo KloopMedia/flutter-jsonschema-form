@@ -4,7 +4,7 @@ import 'package:flutter_json_schema_form/flutter_json_schema_form.dart';
 import 'schema/schema.dart';
 
 void main() {
-  final schema = ImageSchema();
+  final schema = BigSchema();
   runApp(MyApp(schema: schema));
 }
 

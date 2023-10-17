@@ -1,81 +1,145 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_form_builder/flutter_form_builder.dart';
-// import 'package:flutter_json_schema_form/src/helpers/input_decoration.dart';
-// import 'package:flutter_json_schema_form/src/widgets/image_viewer_widget/image_field.dart';
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:integration_test/integration_test.dart';
-//
-// class MyApp extends StatelessWidget {
-//   final Widget child;
-//
-//   const MyApp({super.key, required this.child});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     const title = 'Long List';
-//
-//     return MaterialApp(
-//       title: title,
-//       home: Scaffold(
-//         appBar: AppBar(
-//           title: const Text(title),
-//         ),
-//         body: child,
-//       ),
-//     );
-//   }
-// }
-//
-// void main() {
-//   testWidgets('render image widget', (tester) async {
-//     const widget = ImageField(
-//       name: 'test',
-//       decoration: decoration,
-//       initialValue: null,
-//       images: [],
-//       onChanged: () {},
-//       options: [
-//         FormBuilderFieldOption(value: 1, child: Text('One')),
-//         FormBuilderFieldOption(value: 2, child: Text('Two')),
-//         FormBuilderFieldOption(value: 3, child: Text('Three')),
-//       ],
-//     );
-//
-//     // Load app widget.
-//     await tester.pumpWidget(const MyApp(child: widget));
-//
-//     await tester.pumpAndSettle();
-//
-//     // Verify that all options were rendered.
-//     expect(find.text('One'), findsOneWidget);
-//     expect(find.text('Two'), findsOneWidget);
-//     expect(find.text('Three'), findsOneWidget);
-//
-//     final Finder chipOne = find.byKey(const ValueKey('image_chip_0'));
-//     final Finder chipTwo = find.byKey(const ValueKey('image_chip_1'));
-//     final Finder chipThree = find.byKey(const ValueKey('image_chip_2'));
-//
-//
-//     expect(chipOne, findsOneWidget);
-//
-//
-//     await tester.tap(chipOne);
-//
-//     await tester.pumpAndSettle();
-//
-//     final widgetOne = tester.widget<ChoiceChip>(chipOne);
-//     final widgetTwo = tester.widget<ChoiceChip>(chipTwo);
-//     final widgetThree = tester.widget<ChoiceChip>(chipThree);
-//
-//     expect(widgetOne.selected,  true);
-//     expect(widgetTwo.selected, false);
-//     expect(widgetThree.selected, false);
-//
-//     await tester.tap(chipTwo);
-//     await tester.pumpAndSettle();
-//
-//     expect(widgetOne.selected,  false);
-//     expect(widgetTwo.selected, true);
-//     expect(widgetThree.selected, false);
-//   });
-// }
+import 'package:flutter_json_schema_form/src/helpers/form_parser.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  test('Refactor form', () {
+
+    final schema = {
+      "title": "Person",
+      "type": "object",
+      "properties": {
+        "Do you have any pets?": {
+          "type": "string",
+          "enum": ["No", "Yes: One", "Yes: More than one"],
+          "default": "No"
+        },
+      },
+      "required": ["Do you have any pets?"],
+      "dependencies": {
+        "Do you have any pets?": {
+          "oneOf": [
+            {
+              "properties": {
+                "Do you have any pets?": {
+                  "enum": ["No"]
+                }
+              }
+            },
+            {
+              "properties": {
+                "Do you have any pets?": {
+                  "enum": ["Yes: One"]
+                },
+                "How old is your pet?": {"type": "number"}
+              },
+              "required": ["How old is your pet?"]
+            },
+            {
+              "properties": {
+                "Do you have any pets?": {
+                  "enum": ["Yes: More than one"]
+                },
+                "Do you want to get rid of any?": {"type": "boolean"}
+              },
+              "required": ["Do you want to get rid of any?"]
+            }
+          ]
+        }
+      }
+    };
+
+    final responses = {
+      "back_to_observer": "no",
+      // "3a": "no"
+    };
+
+    final big = {
+      "type": "object",
+      "properties": {
+        "back_to_observer": {
+          "enum": ["yes", "no"],
+          "title": "Should the form be sent back to the observer?",
+          "type": "string",
+          "enumNames": ["yes", "no"]
+        }
+      },
+      "dependencies": {
+        "back_to_observer": {
+          "oneOf": [
+            {
+              "properties": {
+                "back_to_observer": {
+                  "enum": ["yes"]
+                },
+                "note": {"title": "Note to observer", "type": "string"}
+              },
+              "required": ["note"]
+            },
+            {
+              "properties": {
+                "back_to_observer": {
+                  "enum": ["no"]
+                },
+                "3a": {
+                  "enum": ["yes", "no", "not_applicable"],
+                  "title":
+                  "3a. Was the number of voters in the general voting lists announced and entered into a protocol?",
+                  "type": "string",
+                  "enumNames": ["yes", "no", "not applicable"]
+                },
+              },
+              "dependencies": {
+                "3a": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "3a": {
+                          "enum": ["no"]
+                        },
+                        "3a_why": {"title": "Please write an explanation why.", "type": "string"}
+                      },
+                      "required": []
+                    },
+                    {
+                      "properties": {
+                        "3a": {
+                          "enum": ["yes", "not_applicable"]
+                        }
+                      },
+                      "required": []
+                    }
+                  ]
+                },
+              }
+            }
+          ]
+        }
+      },
+      "required": ["back_to_observer"],
+      "title": "Opening Procedures Verification"
+    };
+
+    final parser = SchemaParser( schema: {}, formData: responses);
+
+    final fields = parser.parse(id: '#', schema: big);
+
+    void drawTree(List<Field> fields) {
+      fields.forEach((element) {
+        print("ID: ${element.id}");
+        print("PATH: ${element.path.toString()}");
+        print("DEPENDENCY PATH ${element.dependencyParentPath}");
+        print("DEPENDENCY CONDITION ${element.dependencyConditions}");
+        print('\n');
+        if (element is Section) {
+          drawTree(element.fields);
+        }
+      });
+    }
+
+    drawTree(fields);
+
+    final parsedFields = parser.serialize(fields);
+
+    print(parsedFields);
+  });
+}
