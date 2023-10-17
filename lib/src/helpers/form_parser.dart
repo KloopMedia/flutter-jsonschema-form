@@ -19,6 +19,10 @@ abstract class Field {
     this.dependencyParentPath,
     this.dependencyConditions,
   });
+
+  bool get hasTitleOrDescription => title != null || description != null;
+
+  bool get isDependent => dependencyConditions != null && dependencyParentPath != null;
 }
 
 class ValueField<T> extends Field {
@@ -29,89 +33,124 @@ class ValueField<T> extends Field {
   final bool required;
 
   ValueField({
-    required super.id,
-    required super.path,
-    super.title,
-    super.description,
-    super.dependencyParentPath,
-    super.dependencyConditions,
+    required String id,
+    required PathModel path,
+    String? title,
+    String? description,
+    PathModel? dependencyParentPath,
+    List<dynamic>? dependencyConditions,
     this.defaultValue,
     this.enumValues,
     this.enumNames,
     this.enabled = true,
     this.required = false,
-  });
-}
-
-class Header {
-  final String? title;
-  final String? description;
-
-  Header({required this.title, required this.description});
+  }) : super(
+          id: id,
+          path: path,
+          title: title,
+          description: description,
+          dependencyParentPath: dependencyParentPath,
+          dependencyConditions: dependencyConditions,
+        );
 }
 
 abstract class ComplexField extends Field {
   ComplexField({
-    required super.id,
-    required super.path,
-    super.title,
-    super.description,
-    super.dependencyParentPath,
-    super.dependencyConditions,
-  });
+    required String id,
+    required PathModel path,
+    String? title,
+    String? description,
+    PathModel? dependencyParentPath,
+    List<dynamic>? dependencyConditions,
+  }) : super(
+          id: id,
+          path: path,
+          title: title,
+          description: description,
+          dependencyParentPath: dependencyParentPath,
+          dependencyConditions: dependencyConditions,
+        );
 }
 
 class Section extends ComplexField {
   final List<Field> fields;
 
   Section({
-    required super.id,
-    required super.path,
-    super.title,
-    super.description,
-    super.dependencyParentPath,
-    super.dependencyConditions,
+    required String id,
+    required PathModel path,
+    String? title,
+    String? description,
+    PathModel? dependencyParentPath,
+    List<dynamic>? dependencyConditions,
     required this.fields,
-  });
+  }) : super(
+          id: id,
+          path: path,
+          title: title,
+          description: description,
+          dependencyParentPath: dependencyParentPath,
+          dependencyConditions: dependencyConditions,
+        );
 }
 
 abstract class ArrayField extends ComplexField {
   ArrayField({
-    required super.id,
-    required super.path,
-    super.title,
-    super.description,
-    super.dependencyParentPath,
-    super.dependencyConditions,
-  });
+    required String id,
+    required PathModel path,
+    String? title,
+    String? description,
+    PathModel? dependencyParentPath,
+    List<dynamic>? dependencyConditions,
+  }) : super(
+          id: id,
+          path: path,
+          title: title,
+          description: description,
+          dependencyParentPath: dependencyParentPath,
+          dependencyConditions: dependencyConditions,
+        );
 }
 
 class FixedArray extends ArrayField {
   final List<Field> fields;
 
   FixedArray({
-    required super.id,
-    required super.path,
-    super.title,
-    super.description,
-    super.dependencyParentPath,
-    super.dependencyConditions,
+    required String id,
+    required PathModel path,
+    String? title,
+    String? description,
+    PathModel? dependencyParentPath,
+    List<dynamic>? dependencyConditions,
     required this.fields,
-  });
+  }) : super(
+          id: id,
+          path: path,
+          title: title,
+          description: description,
+          dependencyParentPath: dependencyParentPath,
+          dependencyConditions: dependencyConditions,
+        );
 }
 
 class DynamicArray extends ArrayField {
   final Field field;
 
   DynamicArray({
-    required super.id,
-    required super.path,
-    super.title,
-    super.description,
-    super.dependencyParentPath,
-    super.dependencyConditions,
+    required String id,
+    required PathModel path,
+    String? title,
+    String? description,
+    PathModel? dependencyParentPath,
+    List<dynamic>? dependencyConditions,
     required this.field,
-  });
+  }) : super(
+          id: id,
+          path: path,
+          title: title,
+          description: description,
+          dependencyParentPath: dependencyParentPath,
+          dependencyConditions: dependencyConditions,
+        );
 }
 
 class SchemaParser {
@@ -119,111 +158,159 @@ class SchemaParser {
   final Map<String, dynamic>? uiSchema;
   final Map<String, dynamic> formData;
 
-  const SchemaParser({required this.schema, this.uiSchema, required this.formData});
+  const SchemaParser({
+    required this.schema,
+    this.uiSchema,
+    required this.formData,
+  });
 
   static FieldType getFieldType(Map<String, dynamic> schema) {
     final maybeObject = schema.containsKey("properties") ? "object" : null;
     return decodeFieldType(schema['type'] ?? maybeObject);
   }
 
-  // List<Field> _parseObject(Map<String, dynamic> properties, PathModel path) {
-  //
-  // }
+  List<String> _getRequiredFields(Map<String, dynamic> schema) {
+    if (schema.containsKey('required')) {
+      return (schema['required'] as List<dynamic>).cast();
+    } else {
+      return [];
+    }
+  }
 
-  List<Field> parse({
+  List<Field> _parseObjectFields(
+    Map<String, dynamic> properties,
+    List<String> required,
+    PathModel path, {
+    PathModel? dependencyParentPath,
+    List<dynamic>? dependencyConditions,
+  }) {
+    final List<Field> subFields = [];
+
+    for (final entry in properties.entries) {
+      final id = entry.key;
+      final subSchema = entry.value;
+
+      final subField = parseSchema(
+        id: id,
+        schema: subSchema,
+        path: path,
+        dependencyConditions: dependencyConditions,
+        dependencyParentPath: dependencyParentPath,
+        isRequired: required.contains(id),
+      );
+      subFields.addAll(subField);
+    }
+
+    return subFields;
+  }
+
+  List<Field> _parseDependencyFields(
+    Map<String, dynamic> dependencies,
+    PathModel path,
+  ) {
+    final List<Field> subFields = [];
+
+    for (final entry in dependencies.entries) {
+      final List<Map<String, dynamic>> variants = entry.value['oneOf'];
+      for (final variant in variants) {
+        final Map<String, dynamic> copy = Map.of(variant['properties']);
+        final List<dynamic> conditions = copy.remove(entry.key)?['enum'] ?? [];
+        final parentPath = path.add(entry.key, FieldType.object);
+        final fullCopy = {...variant, "properties": copy};
+        if (copy.isNotEmpty) {
+          final depFields = parseSchema(
+            schema: fullCopy,
+            path: path,
+            dependencyParentPath: parentPath,
+            dependencyConditions: conditions,
+          );
+          subFields.addAll(depFields);
+        }
+      }
+    }
+
+    return subFields;
+  }
+
+  List<Field> parseSchema({
     String id = "#",
     required Map<String, dynamic> schema,
     PathModel path = const PathModel.empty(),
     PathModel? dependencyParentPath,
     List<dynamic>? dependencyConditions,
+    bool? isRequired,
   }) {
     final type = getFieldType(schema);
-    final List<Field> fields = [];
 
     if (type == FieldType.object) {
-      final Map<String, dynamic> properties = schema['properties'];
-      final List<Field> subFields = [];
       final newPath = id == "#" ? path : path.add(id, FieldType.object);
 
-      for (final entry in properties.entries) {
-        final subField = parse(
-          id: entry.key,
-          schema: entry.value,
-          path: newPath,
+      final List<String> required = _getRequiredFields(schema);
+      final objectFields = _parseObjectFields(schema['properties'], required, newPath);
+
+      List<Field> dependencyFields;
+      if (schema['dependencies'] != null) {
+        dependencyFields = _parseDependencyFields(schema['dependencies'], newPath);
+      } else {
+        dependencyFields = [];
+      }
+
+      final subFields = [...objectFields, ...dependencyFields];
+
+      return [
+        Section(
+          id: id,
+          path: path,
+          fields: subFields,
           dependencyConditions: dependencyConditions,
           dependencyParentPath: dependencyParentPath,
-        );
-        subFields.addAll(subField);
-      }
-
-      final Map<String, dynamic> dependencies = schema['dependencies'] ?? {};
-      for (final entry in dependencies.entries) {
-        final List<Map<String, dynamic>> variants = entry.value['oneOf'];
-        for (final variant in variants) {
-          final Map<String, dynamic> copy = Map.of(variant['properties']);
-          final List<dynamic> conditions = copy.remove(entry.key)?['enum'] ?? [];
-          final parentPath = newPath.add(entry.key, FieldType.object);
-          final fullCopy = {...variant, "properties": copy};
-          if (copy.isNotEmpty) {
-            final depFields = parse(
-              schema: fullCopy,
-              path: newPath,
-              dependencyParentPath: parentPath,
-              dependencyConditions: conditions,
-            );
-            subFields.addAll(depFields);
-          }
-        }
-      }
-
-      fields.add(Section(
-        id: id,
-        path: path,
-        fields: subFields,
-        dependencyConditions: dependencyConditions,
-        dependencyParentPath: dependencyParentPath,
-      ));
+        ),
+      ];
     } else {
       final newPath = path.add(id, FieldType.object);
-      fields.add(ValueField(
-        id: id,
-        path: newPath,
-        dependencyParentPath: dependencyParentPath,
-        dependencyConditions: dependencyConditions,
-      ));
+      return [
+        ValueField(
+          id: id,
+          path: newPath,
+          dependencyParentPath: dependencyParentPath,
+          dependencyConditions: dependencyConditions,
+          required: isRequired ?? false,
+        ),
+      ];
     }
-    return fields;
   }
 
-  List<Widget> serialize(List<Field> fields) {
-    final List<Widget> _fields = [];
+  List<Widget> serializeFields(List<Field> fields) {
+    final List<Widget> serializedFields = [];
+
     for (final field in fields) {
       if (field is Section) {
-        if (field.title != null || field.description != null) {
-          _fields.add(Text('${field.id} ${field.title}'));
+        if (field.hasTitleOrDescription) {
+          serializedFields.add(Text('${field.id} ${field.title}'));
         }
-        if (field.dependencyConditions != null && field.dependencyParentPath != null) {
+        if (field.isDependent) {
           final parentValue = getFormDataByPath(formData, field.dependencyParentPath!);
           if (field.dependencyConditions!.contains(parentValue)) {
-            _fields.addAll(serialize(field.fields));
+            serializedFields.addAll(serializeFields(field.fields));
           }
         } else {
-          _fields.addAll(serialize(field.fields));
+          serializedFields.addAll(serializeFields(field.fields));
         }
       } else if (field is FixedArray) {
-        _fields.add(Text('${field.id} ${field.title}'));
-        _fields.addAll(serialize(field.fields));
+        serializedFields.add(Text('${field.id} ${field.title}'));
+        serializedFields.addAll(serializeFields(field.fields));
       } else {
-        if (field.dependencyConditions != null && field.dependencyParentPath != null) {
+        if (field.isDependent) {
           final parentValue = getFormDataByPath(formData, field.dependencyParentPath!);
           if (field.dependencyConditions!.contains(parentValue)) {
-            _fields.add(Text(field.id));
+            serializedFields.add(Text(field.id));
           }
         } else {
-          _fields.add(Text(field.id));
+          serializedFields.add(Text(field.id));
         }
       }
     }
-    return _fields;
+
+    return serializedFields;
   }
 }
