@@ -1,4 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_json_schema_form/src/fields/field_wrapper.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 
 import '../models/models.dart';
 import 'helpers.dart';
@@ -17,14 +21,16 @@ class Dependency {
 
 abstract class Field {
   final String id;
+  final PathModel path;
+  final FieldType type;
   final String? title;
   final String? description;
-  final PathModel path;
   final Dependency? dependency;
 
   Field({
     required this.id,
     required this.path,
+    required this.type,
     this.title,
     this.description,
     this.dependency,
@@ -35,7 +41,7 @@ abstract class Field {
   bool get hasDependency => dependency != null;
 }
 
-class ValueField<T> extends Field {
+abstract class ValueField<T> extends Field {
   final T? defaultValue;
   final List<T>? enumValues;
   final List<String>? enumNames;
@@ -46,6 +52,7 @@ class ValueField<T> extends Field {
   ValueField({
     required super.id,
     required super.path,
+    required super.type,
     super.title,
     super.description,
     super.dependency,
@@ -56,12 +63,180 @@ class ValueField<T> extends Field {
     this.required = false,
     this.widgetType,
   });
+
+  factory ValueField.fromSchema({
+    required String id,
+    required PathModel path,
+    required FieldType type,
+    required WidgetModel widget,
+    required Dependency? dependency,
+    required bool isRequired,
+    required Map<String, dynamic> schema,
+  }) {
+    final title = schema['title'] + " [$id]";
+    final description = schema['description'];
+    final defaultValue = schema['default'];
+    final enumValues = schema['enum'];
+    final enumNames = schema['enumNames'];
+
+    switch (type) {
+      case FieldType.string:
+        return StringField(
+          id: id,
+          path: path,
+          type: type,
+          widgetType: widget,
+          dependency: dependency,
+          required: isRequired,
+          title: title,
+          description: description,
+          defaultValue: defaultValue,
+          enumNames: enumNames,
+          enumValues: enumValues,
+        ) as ValueField<T>;
+      case FieldType.number:
+      case FieldType.integer:
+        return NumberField(
+          id: id,
+          path: path,
+          type: type,
+          widgetType: widget,
+          dependency: dependency,
+          required: isRequired,
+          title: title,
+          description: description,
+          defaultValue: defaultValue,
+          enumNames: enumNames,
+          enumValues: enumValues,
+        ) as ValueField<T>;
+      case FieldType.boolean:
+        return BooleanField(
+          id: id,
+          path: path,
+          type: type,
+          widgetType: widget,
+          dependency: dependency,
+          required: isRequired,
+          title: title,
+          description: description,
+          defaultValue: defaultValue,
+          enumNames: enumNames,
+          enumValues: enumValues,
+        ) as ValueField<T>;
+      default:
+        throw Exception('Type [$type] not supported');
+    }
+  }
+
+  Widget build();
+}
+
+class StringField extends ValueField<String> {
+  StringField({
+    required super.id,
+    required super.path,
+    required super.type,
+    super.title,
+    super.description,
+    super.dependency,
+    super.defaultValue,
+    super.enumValues,
+    super.enumNames,
+    super.enabled = true,
+    super.required = false,
+    super.widgetType,
+  });
+
+  @override
+  Widget build() {
+    return FormBuilderTextField(
+      name: id,
+      initialValue: defaultValue,
+      decoration: decoration,
+      validator: FormBuilderValidators.compose([
+        if (this.required) FormBuilderValidators.required(),
+      ]),
+      // onChanged: onChange,
+      // style: theme,
+    );
+  }
+}
+
+class NumberField extends ValueField<num> {
+  NumberField({
+    required super.id,
+    required super.path,
+    required super.type,
+    super.title,
+    super.description,
+    super.dependency,
+    super.defaultValue,
+    super.enumValues,
+    super.enumNames,
+    super.enabled = true,
+    super.required = false,
+    super.widgetType,
+  });
+
+  @override
+  Widget build() {
+    return FormBuilderTextField(
+      name: id,
+      initialValue: defaultValue?.toString(),
+      decoration: decoration,
+      validator: FormBuilderValidators.compose([
+        if (this.required) FormBuilderValidators.required(),
+        if (type == FieldType.number) FormBuilderValidators.numeric(),
+        if (type == FieldType.integer) FormBuilderValidators.integer(),
+      ]),
+      keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      // onChanged: onChange,
+      // style: theme,
+    );
+  }
+}
+
+class BooleanField extends ValueField<bool> {
+  BooleanField({
+    required super.id,
+    required super.path,
+    required super.type,
+    super.title,
+    super.description,
+    super.dependency,
+    super.defaultValue,
+    super.enumValues,
+    super.enumNames,
+    super.enabled = true,
+    super.required = false,
+    super.widgetType,
+  });
+
+  @override
+  Widget build() {
+    return Transform.scale(
+      scale: 1.15,
+      alignment: Alignment.centerLeft,
+      child: FormBuilderCheckbox(
+        name: id,
+        title: Text(title!, style: const TextStyle(fontSize: 14)),
+        initialValue: defaultValue,
+        validator: FormBuilderValidators.compose([
+          if (this.required) FormBuilderValidators.required(),
+        ]),
+        // onChanged: onChange,
+        contentPadding: const EdgeInsets.only(right: 30),
+      ),
+    );
+  }
 }
 
 abstract class ComplexField extends Field {
   ComplexField({
     required super.id,
     required super.path,
+    required super.type,
     super.title,
     super.description,
     super.dependency,
@@ -74,6 +249,7 @@ class Section extends ComplexField {
   Section({
     required super.id,
     required super.path,
+    required super.type,
     super.title,
     super.description,
     super.dependency,
@@ -85,6 +261,7 @@ abstract class ArrayField extends ComplexField {
   ArrayField({
     required super.id,
     required super.path,
+    required super.type,
     super.title,
     super.description,
     super.dependency,
@@ -97,6 +274,7 @@ class FixedArray extends ArrayField {
   FixedArray({
     required super.id,
     required super.path,
+    required super.type,
     super.title,
     super.description,
     super.dependency,
@@ -110,6 +288,7 @@ class DynamicArray extends ArrayField {
   DynamicArray({
     required super.id,
     required super.path,
+    required super.type,
     super.title,
     super.description,
     super.dependency,
@@ -194,25 +373,12 @@ List<Field> _parseDependencyFields(
           dependency: dependency,
           uiSchema: uiSchema,
         );
-        final unwrappedDependencies = _unwrapDependencies(parsedDependencies);
-        subFields.addAll(unwrappedDependencies);
+        subFields.addAll(parsedDependencies);
       }
     }
   }
 
   return subFields;
-}
-
-List<Field> _unwrapDependencies(List<Field> fields) {
-  final List<Field> newList = [];
-  for (final field in fields) {
-    if (field is Section) {
-      newList.addAll(_unwrapDependencies(field.fields));
-    } else {
-      newList.add(field);
-    }
-  }
-  return newList;
 }
 
 List<Field> sortFields(
@@ -298,19 +464,22 @@ List<Field> parseSchema({
       Section(
         id: id,
         path: path,
+        type: type,
         fields: subFields,
         dependency: dependency,
       ),
     ];
   } else {
-    final newPath = path.add(id, FieldType.object);
+    final newPath = path.add(id, type);
     return [
-      ValueField(
+      ValueField.fromSchema(
         id: id,
         path: newPath,
+        type: type,
         dependency: dependency,
-        required: isRequired ?? false,
-        widgetType: WidgetModel.fromUiSchema(uiSchema),
+        isRequired: isRequired ?? false,
+        widget: WidgetModel.fromUiSchema(uiSchema),
+        schema: schema,
       ),
     ];
   }
@@ -335,14 +504,20 @@ List<Widget> serializeFields(List<Field> fields, Map<String, dynamic> formData) 
     } else if (field is FixedArray) {
       serializedFields.add(Text('${field.id} ${field.title}'));
       serializedFields.addAll(serializeFields(field.fields, formData));
-    } else {
+    } else if (field is ValueField) {
+      final widget = FieldWrapper(
+        title: field.title,
+        description: field.description,
+        isRequired: field.required,
+        child: field.build(),
+      );
       if (field.hasDependency) {
         final parentValue = getFormDataByPath(formData, field.dependency!.parentPath);
         if (field.dependency!.conditions.contains(parentValue)) {
-          serializedFields.add(Text(field.id));
+          serializedFields.add(widget);
         }
       } else {
-        serializedFields.add(Text(field.id));
+        serializedFields.add(widget);
       }
     }
   }
