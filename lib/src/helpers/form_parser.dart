@@ -212,19 +212,32 @@ List<Field> _parseDependencyFields(
       final parentPath = path.add(entry.key, FieldType.object);
       final fullCopy = {...variant, "properties": copy};
       if (copy.isNotEmpty) {
-        final depFields = parseSchema(
+        final parsedDependencies = parseSchema(
           schema: fullCopy,
           path: path,
           dependencyParentPath: parentPath,
           dependencyConditions: conditions,
           uiSchema: uiSchema,
         );
-        subFields.addAll(depFields);
+        final unwrappedDependencies = _unwrapDependencies(parsedDependencies);
+        subFields.addAll(unwrappedDependencies);
       }
     }
   }
 
   return subFields;
+}
+
+List<Field> _unwrapDependencies(List<Field> fields) {
+  final List<Field> newList = [];
+  for (final field in fields) {
+    if (field is Section) {
+      newList.addAll(_unwrapDependencies(field.fields));
+    } else {
+      newList.add(field);
+    }
+  }
+  return newList;
 }
 
 List<Field> parseSchema({
