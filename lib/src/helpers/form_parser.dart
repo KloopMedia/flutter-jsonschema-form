@@ -31,6 +31,7 @@ class ValueField<T> extends Field {
   final List<String>? enumNames;
   final bool enabled;
   final bool required;
+  final WidgetModel? widgetType;
 
   ValueField({
     required String id,
@@ -44,6 +45,7 @@ class ValueField<T> extends Field {
     this.enumNames,
     this.enabled = true,
     this.required = false,
+    this.widgetType,
   }) : super(
           id: id,
           path: path,
@@ -181,6 +183,7 @@ class SchemaParser {
     Map<String, dynamic> properties,
     List<String> required,
     PathModel path, {
+    Map<String, dynamic>? uiSchema,
     PathModel? dependencyParentPath,
     List<dynamic>? dependencyConditions,
   }) {
@@ -197,6 +200,7 @@ class SchemaParser {
         dependencyConditions: dependencyConditions,
         dependencyParentPath: dependencyParentPath,
         isRequired: required.contains(id),
+        uiSchema: uiSchema?[id],
       );
       subFields.addAll(subField);
     }
@@ -206,8 +210,9 @@ class SchemaParser {
 
   List<Field> _parseDependencyFields(
     Map<String, dynamic> dependencies,
-    PathModel path,
-  ) {
+    PathModel path, {
+    Map<String, dynamic>? uiSchema,
+  }) {
     final List<Field> subFields = [];
 
     for (final entry in dependencies.entries) {
@@ -223,6 +228,7 @@ class SchemaParser {
             path: path,
             dependencyParentPath: parentPath,
             dependencyConditions: conditions,
+            uiSchema: uiSchema,
           );
           subFields.addAll(depFields);
         }
@@ -235,6 +241,7 @@ class SchemaParser {
   List<Field> parseSchema({
     String id = "#",
     required Map<String, dynamic> schema,
+    Map<String, dynamic>? uiSchema,
     PathModel path = const PathModel.empty(),
     PathModel? dependencyParentPath,
     List<dynamic>? dependencyConditions,
@@ -246,11 +253,22 @@ class SchemaParser {
       final newPath = id == "#" ? path : path.add(id, FieldType.object);
 
       final List<String> required = _getRequiredFields(schema);
-      final objectFields = _parseObjectFields(schema['properties'], required, newPath);
+      final objectFields = _parseObjectFields(
+        schema['properties'],
+        required,
+        newPath,
+        uiSchema: uiSchema,
+        dependencyParentPath: dependencyParentPath,
+        dependencyConditions: dependencyConditions,
+      );
 
       List<Field> dependencyFields;
       if (schema['dependencies'] != null) {
-        dependencyFields = _parseDependencyFields(schema['dependencies'], newPath);
+        dependencyFields = _parseDependencyFields(
+          schema['dependencies'],
+          newPath,
+          uiSchema: uiSchema,
+        );
       } else {
         dependencyFields = [];
       }
@@ -275,6 +293,7 @@ class SchemaParser {
           dependencyParentPath: dependencyParentPath,
           dependencyConditions: dependencyConditions,
           required: isRequired ?? false,
+          widgetType: WidgetModel.fromUiSchema(uiSchema),
         ),
       ];
     }
