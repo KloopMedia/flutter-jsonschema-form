@@ -73,7 +73,7 @@ abstract class ValueField<T> extends Field {
     required bool isRequired,
     required Map<String, dynamic> schema,
   }) {
-    final title = schema['title'] + " [$id]";
+    final title = schema['title'];
     final description = schema['description'];
     final defaultValue = schema['default'];
     final enumValues = schema['enum'];
