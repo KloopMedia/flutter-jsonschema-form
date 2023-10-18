@@ -3,28 +3,36 @@ import 'package:flutter/cupertino.dart';
 import '../models/models.dart';
 import 'helpers.dart';
 
+class Dependency {
+  final String parentId;
+  final PathModel parentPath;
+  final List<dynamic> conditions;
+
+  Dependency({
+    required this.parentId,
+    required this.parentPath,
+    required this.conditions,
+  });
+}
+
 abstract class Field {
   final String id;
   final String? title;
   final String? description;
   final PathModel path;
-  final String? dependencyParentId;
-  final PathModel? dependencyParentPath;
-  final List<dynamic>? dependencyConditions;
+  final Dependency? dependency;
 
   Field({
     required this.id,
     required this.path,
     this.title,
     this.description,
-    this.dependencyParentId,
-    this.dependencyParentPath,
-    this.dependencyConditions,
+    this.dependency,
   });
 
   bool get hasTitleOrDescription => title != null || description != null;
 
-  bool get isDependent => dependencyConditions != null && dependencyParentPath != null;
+  bool get hasDependency => dependency != null;
 }
 
 class ValueField<T> extends Field {
@@ -40,9 +48,7 @@ class ValueField<T> extends Field {
     required super.path,
     super.title,
     super.description,
-    super.dependencyParentId,
-    super.dependencyParentPath,
-    super.dependencyConditions,
+    super.dependency,
     this.defaultValue,
     this.enumValues,
     this.enumNames,
@@ -58,9 +64,7 @@ abstract class ComplexField extends Field {
     required super.path,
     super.title,
     super.description,
-    super.dependencyParentId,
-    super.dependencyParentPath,
-    super.dependencyConditions,
+    super.dependency,
   });
 }
 
@@ -72,9 +76,7 @@ class Section extends ComplexField {
     required super.path,
     super.title,
     super.description,
-    super.dependencyParentId,
-    super.dependencyParentPath,
-    super.dependencyConditions,
+    super.dependency,
     required this.fields,
   });
 }
@@ -85,9 +87,7 @@ abstract class ArrayField extends ComplexField {
     required super.path,
     super.title,
     super.description,
-    super.dependencyParentId,
-    super.dependencyParentPath,
-    super.dependencyConditions,
+    super.dependency,
   });
 }
 
@@ -99,9 +99,7 @@ class FixedArray extends ArrayField {
     required super.path,
     super.title,
     super.description,
-    super.dependencyParentId,
-    super.dependencyParentPath,
-    super.dependencyConditions,
+    super.dependency,
     required this.fields,
   });
 }
@@ -114,9 +112,7 @@ class DynamicArray extends ArrayField {
     required super.path,
     super.title,
     super.description,
-    super.dependencyParentId,
-    super.dependencyParentPath,
-    super.dependencyConditions,
+    super.dependency,
     required this.field,
   });
 }
@@ -146,9 +142,7 @@ List<Field> _parseObjectFields(
   List<String> required,
   PathModel path, {
   Map<String, dynamic>? uiSchema,
-  String? dependencyParentId,
-  PathModel? dependencyParentPath,
-  List<dynamic>? dependencyConditions,
+  Dependency? dependency,
 }) {
   final List<Field> subFields = [];
 
@@ -160,9 +154,7 @@ List<Field> _parseObjectFields(
       id: id,
       schema: subSchema,
       path: path,
-      dependencyParentId: dependencyParentId,
-      dependencyConditions: dependencyConditions,
-      dependencyParentPath: dependencyParentPath,
+      dependency: dependency,
       isRequired: required.contains(id),
       uiSchema: uiSchema?[id],
     );
@@ -180,19 +172,26 @@ List<Field> _parseDependencyFields(
   final List<Field> subFields = [];
 
   for (final entry in dependencies.entries) {
+    final dependencyParentId = entry.key;
     final List<Map<String, dynamic>> variants = entry.value['oneOf'];
     for (final variant in variants) {
-      final Map<String, dynamic> copy = Map.of(variant['properties']);
-      final List<dynamic> conditions = copy.remove(entry.key)?['enum'] ?? [];
-      final parentPath = path.add(entry.key, FieldType.object);
-      final fullCopy = {...variant, "properties": copy};
-      if (copy.isNotEmpty) {
+      final Map<String, dynamic> properties = Map.of(variant['properties']);
+
+      final dependencyParentPath = path.add(dependencyParentId, FieldType.object);
+      final List<dynamic> conditions = properties.remove(dependencyParentId)?['enum'] ?? [];
+      final objectFromProperties = {...variant, "properties": properties};
+
+      final dependency = Dependency(
+        parentId: dependencyParentId,
+        parentPath: dependencyParentPath,
+        conditions: conditions,
+      );
+
+      if (properties.isNotEmpty) {
         final parsedDependencies = parseSchema(
-          schema: fullCopy,
+          schema: objectFromProperties,
           path: path,
-          dependencyParentId: entry.key,
-          dependencyParentPath: parentPath,
-          dependencyConditions: conditions,
+          dependency: dependency,
           uiSchema: uiSchema,
         );
         final unwrappedDependencies = _unwrapDependencies(parsedDependencies);
@@ -250,7 +249,7 @@ List<Field> sortFields(
   }
   for (var dependency in dependencies) {
     if (!order.contains(dependency.id)) {
-      final index = fields.indexWhere((field) => field.path == dependency.dependencyParentPath);
+      final index = fields.indexWhere((field) => field.path == dependency.dependency?.parentPath);
       if (!index.isNegative) {
         sortedFields.insert(index + 1, dependency);
       }
@@ -264,9 +263,7 @@ List<Field> parseSchema({
   required Map<String, dynamic> schema,
   Map<String, dynamic>? uiSchema,
   PathModel path = const PathModel.empty(),
-  String? dependencyParentId,
-  PathModel? dependencyParentPath,
-  List<dynamic>? dependencyConditions,
+  Dependency? dependency,
   bool? isRequired,
 }) {
   final type = getFieldType(schema);
@@ -280,9 +277,7 @@ List<Field> parseSchema({
       required,
       newPath,
       uiSchema: uiSchema,
-      dependencyParentId: dependencyParentId,
-      dependencyParentPath: dependencyParentPath,
-      dependencyConditions: dependencyConditions,
+      dependency: dependency,
     );
 
     List<Field> dependencyFields;
@@ -304,9 +299,7 @@ List<Field> parseSchema({
         id: id,
         path: path,
         fields: subFields,
-        dependencyParentId: dependencyParentId,
-        dependencyConditions: dependencyConditions,
-        dependencyParentPath: dependencyParentPath,
+        dependency: dependency,
       ),
     ];
   } else {
@@ -315,9 +308,7 @@ List<Field> parseSchema({
       ValueField(
         id: id,
         path: newPath,
-        dependencyParentId: dependencyParentId,
-        dependencyParentPath: dependencyParentPath,
-        dependencyConditions: dependencyConditions,
+        dependency: dependency,
         required: isRequired ?? false,
         widgetType: WidgetModel.fromUiSchema(uiSchema),
       ),
@@ -333,9 +324,9 @@ List<Widget> serializeFields(List<Field> fields, Map<String, dynamic> formData) 
       if (field.hasTitleOrDescription) {
         serializedFields.add(Text('${field.id} ${field.title}'));
       }
-      if (field.isDependent) {
-        final parentValue = getFormDataByPath(formData, field.dependencyParentPath!);
-        if (field.dependencyConditions!.contains(parentValue)) {
+      if (field.hasDependency) {
+        final parentValue = getFormDataByPath(formData, field.dependency!.parentPath);
+        if (field.dependency!.conditions.contains(parentValue)) {
           serializedFields.addAll(serializeFields(field.fields, formData));
         }
       } else {
@@ -345,9 +336,9 @@ List<Widget> serializeFields(List<Field> fields, Map<String, dynamic> formData) 
       serializedFields.add(Text('${field.id} ${field.title}'));
       serializedFields.addAll(serializeFields(field.fields, formData));
     } else {
-      if (field.isDependent) {
-        final parentValue = getFormDataByPath(formData, field.dependencyParentPath!);
-        if (field.dependencyConditions!.contains(parentValue)) {
+      if (field.hasDependency) {
+        final parentValue = getFormDataByPath(formData, field.dependency!.parentPath);
+        if (field.dependency!.conditions.contains(parentValue)) {
           serializedFields.add(Text(field.id));
         }
       } else {
