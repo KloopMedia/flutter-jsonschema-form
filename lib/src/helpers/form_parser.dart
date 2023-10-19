@@ -378,24 +378,31 @@ List<Field> _parseDependencyFields(
     }
   }
 
-  return subFields;
+  return _unwrapDependencies(subFields);
+}
+
+Map<String, List<Field>> _createOrderMap(List<Field> fields) {
+  final Map<String, List<Field>> orderMap = {};
+  for (var field in fields) {
+    orderMap.putIfAbsent(field.id, () => []).add(field);
+  }
+  return orderMap;
 }
 
 List<Field> sortFields(
-  List<Field> fields,
-  List<Field> dependencies,
+  List<Field> objectFields,
+  List<Field> dependencyFields,
   List<String>? order,
 ) {
   if (order == null) {
-    return fields;
+    return objectFields;
   }
-  final List<dynamic> allFields = [...fields, ...dependencies];
-  final Map<String, List> fieldSchema = {};
-  for (var field in allFields) {
-    final schemaFields = fieldSchema[field.id] ?? [];
-    fieldSchema[field.id] = [...schemaFields, field];
-  }
-  final other = fieldSchema.keys.where((element) => !order.contains(element));
+  final fields = [...objectFields, ...dependencyFields];
+  final orderMap = _createOrderMap(fields);
+
+  /// Fields not included in ui:order.
+  final other = orderMap.keys.where((element) => !order.contains(element));
+
   var orderSchema = List.of(order);
   if (order.contains('*')) {
     final wildCardIndex = order.indexOf('*');
@@ -406,22 +413,29 @@ List<Field> sortFields(
   }
   List<Field> sortedFields = [];
   for (var element in orderSchema) {
-    final schemaFields = fieldSchema[element];
+    final schemaFields = orderMap[element];
     if (schemaFields != null) {
-      for (var field in schemaFields) {
-        sortedFields.add(field);
-      }
+      sortedFields.addAll(schemaFields);
     }
   }
-  for (var dependency in dependencies) {
+  for (var dependency in dependencyFields) {
     if (!order.contains(dependency.id)) {
-      final index = fields.indexWhere((field) => field.path == dependency.dependency?.parentPath);
-      if (!index.isNegative) {
+      final index = objectFields.indexWhere((field) => field.id == dependency.dependency?.parentId);
+      if (index >= 0) {
         sortedFields.insert(index + 1, dependency);
       }
     }
   }
   return sortedFields;
+}
+
+List<Field> _unwrapDependencies(List<Field> dependencies) {
+  return dependencies.expand((element) {
+    if (element is Section) {
+      return element.fields;
+    }
+    return [element];
+  }).toList();
 }
 
 List<Field> parseSchema({
