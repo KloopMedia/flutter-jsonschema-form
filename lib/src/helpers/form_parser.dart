@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_json_schema_form/src/bloc/bloc.dart' as bloc;
 import 'package:flutter_json_schema_form/src/fields/field_wrapper.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
@@ -129,6 +131,13 @@ abstract class ValueField<T> extends Field {
   }
 
   Widget build();
+
+  T? valueTransformer(dynamic value);
+
+  void onChange(BuildContext context, dynamic value) {
+    var transformedValue = valueTransformer(value);
+    context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(id, transformedValue, path));
+  }
 }
 
 class StringField extends ValueField<String> {
@@ -148,22 +157,33 @@ class StringField extends ValueField<String> {
   });
 
   @override
+  String? valueTransformer(value) {
+    return value.isNotEmpty ? value : null;
+  }
+
+  @override
   Widget build() {
-    return FieldWrapper(
-      key: Key(id),
-      title: title ?? id,
-      description: description,
-      isRequired: this.required,
-      child: FormBuilderTextField(
-        name: id,
-        initialValue: defaultValue,
-        decoration: decoration,
-        validator: FormBuilderValidators.compose([
-          if (this.required) FormBuilderValidators.required(),
-        ]),
-        // onChanged: onChange,
-        // style: theme,
-      ),
+    return BlocBuilder<bloc.FormBloc, bloc.FormState>(
+      builder: (context, state) {
+        final value = getFormDataByPath(state.formData, path);
+
+        return FieldWrapper(
+          key: Key(id),
+          title: title ?? id,
+          description: description,
+          isRequired: this.required,
+          child: FormBuilderTextField(
+            name: id,
+            initialValue: value ?? defaultValue,
+            decoration: decoration,
+            validator: FormBuilderValidators.compose([
+              if (this.required) FormBuilderValidators.required(),
+            ]),
+            onChanged: (value) => onChange(context, value),
+            // style: theme,
+          ),
+        );
+      },
     );
   }
 }
@@ -186,26 +206,37 @@ class NumberField extends ValueField<num> {
 
   @override
   Widget build() {
-    return FieldWrapper(
-      key: Key(id),
-      title: title ?? id,
-      description: description,
-      isRequired: this.required,
-      child: FormBuilderTextField(
-        name: id,
-        initialValue: defaultValue?.toString(),
-        decoration: decoration,
-        validator: FormBuilderValidators.compose([
-          if (this.required) FormBuilderValidators.required(),
-          if (type == FieldType.number) FormBuilderValidators.numeric(),
-          if (type == FieldType.integer) FormBuilderValidators.integer(),
-        ]),
-        keyboardType: TextInputType.number,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        // onChanged: onChange,
-        // style: theme,
-      ),
+    return BlocBuilder<bloc.FormBloc, bloc.FormState>(
+      builder: (context, state) {
+        final value = getFormDataByPath(state.formData, path);
+
+        return FieldWrapper(
+          key: Key(id),
+          title: title ?? id,
+          description: description,
+          isRequired: this.required,
+          child: FormBuilderTextField(
+            name: id,
+            initialValue: value is num ? value.toString() : value ?? defaultValue?.toString(),
+            decoration: decoration,
+            validator: FormBuilderValidators.compose([
+              if (this.required) FormBuilderValidators.required(),
+              if (type == FieldType.number) FormBuilderValidators.numeric(),
+              if (type == FieldType.integer) FormBuilderValidators.integer(),
+            ]),
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            onChanged: (value) => onChange(context, value),
+            // style: theme,
+          ),
+        );
+      },
     );
+  }
+
+  @override
+  num? valueTransformer(value) {
+    return value is num ? value : num.tryParse(value);
   }
 }
 
@@ -227,20 +258,31 @@ class BooleanField extends ValueField<bool> {
 
   @override
   Widget build() {
-    return Transform.scale(
-      scale: 1.15,
-      alignment: Alignment.centerLeft,
-      child: FormBuilderCheckbox(
-        name: id,
-        title: Text(title ?? id, style: const TextStyle(fontSize: 14)),
-        initialValue: defaultValue,
-        validator: FormBuilderValidators.compose([
-          if (this.required) FormBuilderValidators.required(),
-        ]),
-        // onChanged: onChange,
-        contentPadding: const EdgeInsets.only(right: 30),
-      ),
+    return BlocBuilder<bloc.FormBloc, bloc.FormState>(
+      builder: (context, state) {
+        final value = getFormDataByPath(state.formData, path);
+
+        return Transform.scale(
+          scale: 1.15,
+          alignment: Alignment.centerLeft,
+          child: FormBuilderCheckbox(
+            name: id,
+            title: Text(title ?? id, style: const TextStyle(fontSize: 14)),
+            initialValue: value ?? defaultValue,
+            validator: FormBuilderValidators.compose([
+              if (this.required) FormBuilderValidators.required(),
+            ]),
+            onChanged: (value) => onChange(context, value),
+            contentPadding: const EdgeInsets.only(right: 30),
+          ),
+        );
+      },
     );
+  }
+
+  @override
+  bool? valueTransformer(value) {
+    return value is bool ? value : bool.tryParse(value);
   }
 }
 
