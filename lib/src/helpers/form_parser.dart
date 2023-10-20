@@ -149,15 +149,21 @@ class StringField extends ValueField<String> {
 
   @override
   Widget build() {
-    return FormBuilderTextField(
-      name: id,
-      initialValue: defaultValue,
-      decoration: decoration,
-      validator: FormBuilderValidators.compose([
-        if (this.required) FormBuilderValidators.required(),
-      ]),
-      // onChanged: onChange,
-      // style: theme,
+    return FieldWrapper(
+      key: Key(id),
+      title: title ?? id,
+      description: description,
+      isRequired: this.required,
+      child: FormBuilderTextField(
+        name: id,
+        initialValue: defaultValue,
+        decoration: decoration,
+        validator: FormBuilderValidators.compose([
+          if (this.required) FormBuilderValidators.required(),
+        ]),
+        // onChanged: onChange,
+        // style: theme,
+      ),
     );
   }
 }
@@ -180,19 +186,25 @@ class NumberField extends ValueField<num> {
 
   @override
   Widget build() {
-    return FormBuilderTextField(
-      name: id,
-      initialValue: defaultValue?.toString(),
-      decoration: decoration,
-      validator: FormBuilderValidators.compose([
-        if (this.required) FormBuilderValidators.required(),
-        if (type == FieldType.number) FormBuilderValidators.numeric(),
-        if (type == FieldType.integer) FormBuilderValidators.integer(),
-      ]),
-      keyboardType: TextInputType.number,
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      // onChanged: onChange,
-      // style: theme,
+    return FieldWrapper(
+      key: Key(id),
+      title: title ?? id,
+      description: description,
+      isRequired: this.required,
+      child: FormBuilderTextField(
+        name: id,
+        initialValue: defaultValue?.toString(),
+        decoration: decoration,
+        validator: FormBuilderValidators.compose([
+          if (this.required) FormBuilderValidators.required(),
+          if (type == FieldType.number) FormBuilderValidators.numeric(),
+          if (type == FieldType.integer) FormBuilderValidators.integer(),
+        ]),
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        // onChanged: onChange,
+        // style: theme,
+      ),
     );
   }
 }
@@ -220,7 +232,7 @@ class BooleanField extends ValueField<bool> {
       alignment: Alignment.centerLeft,
       child: FormBuilderCheckbox(
         name: id,
-        title: Text(title!, style: const TextStyle(fontSize: 14)),
+        title: Text(title ?? id, style: const TextStyle(fontSize: 14)),
         initialValue: defaultValue,
         validator: FormBuilderValidators.compose([
           if (this.required) FormBuilderValidators.required(),
@@ -394,10 +406,12 @@ List<Field> sortFields(
   List<Field> dependencyFields,
   List<String>? order,
 ) {
-  if (order == null) {
-    return objectFields;
-  }
   final fields = [...objectFields, ...dependencyFields];
+
+  if (order == null || order.isEmpty) {
+    return fields;
+  }
+
   final orderMap = _createOrderMap(fields);
 
   /// Fields not included in ui:order.
@@ -519,19 +533,13 @@ List<Widget> serializeFields(List<Field> fields, Map<String, dynamic> formData) 
       serializedFields.add(Text('${field.id} ${field.title}'));
       serializedFields.addAll(serializeFields(field.fields, formData));
     } else if (field is ValueField) {
-      final widget = FieldWrapper(
-        title: field.title,
-        description: field.description,
-        isRequired: field.required,
-        child: field.build(),
-      );
       if (field.hasDependency) {
         final parentValue = getFormDataByPath(formData, field.dependency!.parentPath);
         if (field.dependency!.conditions.contains(parentValue)) {
-          serializedFields.add(widget);
+          serializedFields.add(field.build());
         }
       } else {
-        serializedFields.add(widget);
+        serializedFields.add(field.build());
       }
     }
   }
