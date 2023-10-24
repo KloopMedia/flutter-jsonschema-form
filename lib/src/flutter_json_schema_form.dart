@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 import 'bloc/form_bloc/form_bloc.dart' as bloc;
+import 'helpers/form_parser.dart';
 import 'helpers/helpers.dart';
 
 typedef ChangeFormCallback = Function(Map<String, dynamic> formData, String path);
@@ -56,11 +57,24 @@ class FlutterJsonSchemaForm extends StatefulWidget {
 
 class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
   final _formKey = GlobalKey<FormBuilderState>();
+  late final List<Field> fields;
+  late final List<Field> serializedField;
+
+  @override
+  void initState() {
+    fields = parseSchema(schema: widget.schema, uiSchema: widget.uiSchema);
+    // serializedField = serializeFields(fields, widget.formData ?? {});
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    serializedField = serializeFields(fields, widget.formData ?? {});
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final fields = FormSerializer.serialize(widget.schema, widget.uiSchema);
-
     return BlocProvider(
       create: (context) => bloc.FormBloc(
         formKey: _formKey,
@@ -74,16 +88,55 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
         onDownloadFileCallback: widget.onDownloadFile,
         addFileText: widget.addFileText,
       ),
-      child: Form(
-        formKey: _formKey,
-        fields: fields,
-        disabled: widget.disabled,
-        submitButtonText: widget.submitButtonText,
-        pageStorageKey: widget.pageStorageKey,
-        allowOpenPrevious: widget.allowOpenPrevious,
-        onOpenPreviousTask: widget.onOpenPreviousTask,
-        openPreviousButtonText: widget.openPreviousButtonText,
+      child: BlocBuilder<bloc.FormBloc, bloc.FormState>(
+        builder: (context, state) {
+          return FormBuilder(
+            key: _formKey,
+            child: CustomScrollView(
+              slivers: [
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final field = serializedField[index];
+                      if (field is DynamicArray) {
+                        return ElevatedButton(
+                          onPressed: () {
+                            final arrayPath = field.path.add(index.toString(), field.field.type);
+                            final arrayField =
+                                field.field.copyWith(id: index.toString(), path: arrayPath);
+                            setState(() {
+                              serializedField.insert(index, arrayField);
+                            });
+                          },
+                          child: Text('+'),
+                        );
+                      }
+                      return field.build();
+                    },
+                    childCount: serializedField.length,
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    child: Text('Submit'),
+                  ),
+                )
+              ],
+            ),
+          );
+        },
       ),
+      // child: Form(
+      //   formKey: _formKey,
+      //   fields: fields,
+      //   disabled: widget.disabled,
+      //   submitButtonText: widget.submitButtonText,
+      //   pageStorageKey: widget.pageStorageKey,
+      //   allowOpenPrevious: widget.allowOpenPrevious,
+      //   onOpenPreviousTask: widget.onOpenPreviousTask,
+      //   openPreviousButtonText: widget.openPreviousButtonText,
+      // ),
     );
   }
 }

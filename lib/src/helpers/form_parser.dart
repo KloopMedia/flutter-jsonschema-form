@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -41,6 +42,10 @@ abstract class Field {
   bool get hasTitleOrDescription => title != null || description != null;
 
   bool get hasDependency => dependency != null;
+
+  Field copyWith({String? id, PathModel? path});
+
+  Widget build();
 }
 
 abstract class ValueField<T> extends Field {
@@ -130,8 +135,6 @@ abstract class ValueField<T> extends Field {
     }
   }
 
-  Widget build();
-
   T? valueTransformer(dynamic value);
 
   void onChange(BuildContext context, dynamic value) {
@@ -155,6 +158,23 @@ class StringField extends ValueField<String> {
     super.required = false,
     super.widgetType,
   });
+
+  @override
+  StringField copyWith({String? id, PathModel? path}) {
+    return StringField(
+      id: id ?? this.id,
+      path: path ?? this.path,
+      type: type,
+      title: title,
+      description: description,
+      defaultValue: defaultValue,
+      dependency: dependency,
+      enumValues: enumValues,
+      enumNames: enumNames,
+      enabled: enabled,
+      required: this.required,
+    );
+  }
 
   @override
   String? valueTransformer(value) {
@@ -203,6 +223,23 @@ class NumberField extends ValueField<num> {
     super.required = false,
     super.widgetType,
   });
+
+  @override
+  NumberField copyWith({String? id, PathModel? path}) {
+    return NumberField(
+      id: id ?? this.id,
+      path: path ?? this.path,
+      type: type,
+      title: title,
+      description: description,
+      defaultValue: defaultValue,
+      dependency: dependency,
+      enumValues: enumValues,
+      enumNames: enumNames,
+      enabled: enabled,
+      required: this.required,
+    );
+  }
 
   @override
   Widget build() {
@@ -257,6 +294,23 @@ class BooleanField extends ValueField<bool> {
   });
 
   @override
+  BooleanField copyWith({String? id, PathModel? path}) {
+    return BooleanField(
+      id: id ?? this.id,
+      path: path ?? this.path,
+      type: type,
+      title: title,
+      description: description,
+      defaultValue: defaultValue,
+      dependency: dependency,
+      enumValues: enumValues,
+      enumNames: enumNames,
+      enabled: enabled,
+      required: this.required,
+    );
+  }
+
+  @override
   Widget build() {
     return BlocBuilder<bloc.FormBloc, bloc.FormState>(
       builder: (context, state) {
@@ -309,6 +363,24 @@ class Section extends ComplexField {
     super.dependency,
     required this.fields,
   });
+
+  @override
+  Section copyWith({String? id, PathModel? path}) {
+    return Section(
+      id: id ?? this.id,
+      path: path ?? this.path,
+      type: type,
+      fields: fields,
+      title: title,
+      description: description,
+      dependency: dependency,
+    );
+  }
+
+  @override
+  Widget build() {
+    return Text('$id $title');
+  }
 }
 
 abstract class ArrayField extends ComplexField {
@@ -322,10 +394,10 @@ abstract class ArrayField extends ComplexField {
   });
 }
 
-class FixedArray extends ArrayField {
+class StaticArray extends ArrayField {
   final List<Field> fields;
 
-  FixedArray({
+  StaticArray({
     required super.id,
     required super.path,
     required super.type,
@@ -334,6 +406,24 @@ class FixedArray extends ArrayField {
     super.dependency,
     required this.fields,
   });
+
+  @override
+  StaticArray copyWith({String? id, PathModel? path}) {
+    return StaticArray(
+      id: id ?? this.id,
+      path: path ?? this.path,
+      type: type,
+      fields: fields,
+      title: title,
+      description: description,
+      dependency: dependency,
+    );
+  }
+
+  @override
+  Widget build() {
+    return Text('$id $title');
+  }
 }
 
 class DynamicArray extends ArrayField {
@@ -348,6 +438,24 @@ class DynamicArray extends ArrayField {
     super.dependency,
     required this.field,
   });
+
+  @override
+  DynamicArray copyWith({String? id, PathModel? path}) {
+    return DynamicArray(
+      id: id ?? this.id,
+      path: path ?? this.path,
+      field: field,
+      type: type,
+      title: title,
+      description: description,
+      dependency: dependency,
+    );
+  }
+
+  @override
+  Widget build() {
+    return Text('$id $title');
+  }
 }
 
 FieldType getFieldType(Map<String, dynamic> schema) {
@@ -539,6 +647,33 @@ List<Field> parseSchema({
         dependency: dependency,
       ),
     ];
+  } else if (type == FieldType.array) {
+    final items = schema['items'];
+    if (items is List) {
+      final List? _uiSchema = uiSchema?[id];
+      final List<Field> subFields = [];
+      for (int i = 0; i < items.length; i++) {
+        final Map<String, dynamic> item = items[i];
+        Map<String, dynamic>? ui;
+        if (_uiSchema != null) {
+          try {
+            ui = _uiSchema[i];
+          } on RangeError {
+            ui = {};
+          }
+        }
+
+        final field = parseSchema(schema: item, uiSchema: ui);
+        subFields.addAll(field);
+      }
+      return [StaticArray(id: id, path: path, type: type, fields: subFields)];
+    } else if (items is Map<String, dynamic>) {
+      final newPath = path.add(id, type);
+      final field = parseSchema(schema: items, uiSchema: uiSchema?[id], path: newPath).first;
+      return [DynamicArray(id: id, path: newPath, type: type, field: field)];
+    } else {
+      throw Exception('Incorrect type of items in $id');
+    }
   } else {
     final newPath = path.add(id, type);
     return [
@@ -555,13 +690,13 @@ List<Field> parseSchema({
   }
 }
 
-List<Widget> serializeFields(List<Field> fields, Map<String, dynamic> formData) {
-  final List<Widget> serializedFields = [];
+List<Field> serializeFields(List<Field> fields, Map<String, dynamic> formData) {
+  final List<Field> serializedFields = [];
 
   for (final field in fields) {
     if (field is Section) {
       if (field.hasTitleOrDescription) {
-        serializedFields.add(Text('${field.id} ${field.title}'));
+        serializedFields.add(field);
       }
       if (field.hasDependency) {
         final parentValue = getFormDataByPath(formData, field.dependency!.parentPath);
@@ -571,17 +706,19 @@ List<Widget> serializeFields(List<Field> fields, Map<String, dynamic> formData) 
       } else {
         serializedFields.addAll(serializeFields(field.fields, formData));
       }
-    } else if (field is FixedArray) {
-      serializedFields.add(Text('${field.id} ${field.title}'));
+    } else if (field is DynamicArray) {
+      serializedFields.add(field);
+    } else if (field is StaticArray) {
+      serializedFields.add(field);
       serializedFields.addAll(serializeFields(field.fields, formData));
     } else if (field is ValueField) {
       if (field.hasDependency) {
         final parentValue = getFormDataByPath(formData, field.dependency!.parentPath);
         if (field.dependency!.conditions.contains(parentValue)) {
-          serializedFields.add(field.build());
+          serializedFields.add(field);
         }
       } else {
-        serializedFields.add(field.build());
+        serializedFields.add(field);
       }
     }
   }
