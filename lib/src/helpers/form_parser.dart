@@ -84,6 +84,7 @@ abstract class ValueField<T> extends Field {
     final defaultValue = schema['default'];
     final enumValues = schema['enum'];
     final enumNames = schema['enumNames'];
+    final widgetType = widget == null && enumValues != null ? const SelectWidgetModel() : widget;
 
     switch (type) {
       case FieldType.string:
@@ -91,7 +92,7 @@ abstract class ValueField<T> extends Field {
           id: id,
           path: path,
           type: type,
-          widgetType: widget,
+          widgetType: widgetType,
           dependency: dependency,
           required: isRequired,
           title: title,
@@ -106,7 +107,7 @@ abstract class ValueField<T> extends Field {
           id: id,
           path: path,
           type: type,
-          widgetType: widget,
+          widgetType: widgetType,
           dependency: dependency,
           required: isRequired,
           title: title,
@@ -116,18 +117,20 @@ abstract class ValueField<T> extends Field {
           enumValues: enumValues,
         ) as ValueField<T>;
       case FieldType.boolean:
+        final isMultiChoice = widgetType is SelectWidgetModel || widgetType is RadioWidgetModel;
+
         return BooleanField(
           id: id,
           path: path,
           type: type,
-          widgetType: widget,
+          widgetType: widgetType,
           dependency: dependency,
           required: isRequired,
           title: title,
           description: description,
           defaultValue: defaultValue,
-          enumNames: enumNames,
-          enumValues: enumValues,
+          enumNames: isMultiChoice ? enumNames ?? const ["Yes", "No"] : null,
+          enumValues: isMultiChoice ? const [true, false] : null,
         ) as ValueField<T>;
       default:
         throw Exception('Type [$type] not supported');
@@ -142,6 +145,92 @@ abstract class ValueField<T> extends Field {
   void onChange(BuildContext context, dynamic value) {
     var transformedValue = valueTransformer(value);
     context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(id, transformedValue, path));
+  }
+
+  List<DropdownMenuItem<T>> getDropdownItems<T>() {
+    final options = enumValues ?? [];
+    final names = enumNames ?? [];
+
+    if (options.isEmpty) {
+      return [];
+    }
+
+    List<DropdownMenuItem<T>> items = List.generate(options.length, (index) {
+      final T value = _parseValue<T>(options[index]);
+
+      String name;
+      try {
+        final enumName = names[index].toString();
+        if (enumName.isNotEmpty) {
+          name = enumName;
+        } else {
+          name = value.toString();
+        }
+      } catch (_) {
+        name = value.toString();
+      }
+      return DropdownMenuItem(value: value, child: Text(name));
+    });
+    return items;
+  }
+
+  List<Map<String, dynamic>> getRadioItems<T>() {
+    final options = enumValues ?? [];
+    final names = enumNames ?? [];
+
+    if (options.isEmpty) {
+      return [];
+    }
+
+    List<Map<String, dynamic>> items = List.generate(options.length, (index) {
+      final T value = _parseValue<T>(options[index]);
+      String name;
+      try {
+        name = names[index].toString();
+      } catch (_) {
+        name = value.toString();
+      }
+      return {'value': value, 'name': name};
+    });
+    return items;
+  }
+
+  List<FormBuilderFieldOption<T>> getRadio<T>() {
+    final options = enumValues ?? [];
+    final names = enumNames ?? [];
+
+    if (options.isEmpty) {
+      return [];
+    }
+
+    List<FormBuilderFieldOption<T>> items = List.generate(options.length, (index) {
+      final T value = _parseValue<T>(options[index]);
+      String name;
+      try {
+        final enumName = names[index].toString();
+        if (enumName.isNotEmpty) {
+          name = enumName;
+        } else {
+          name = value.toString();
+        }
+      } catch (_) {
+        name = value.toString();
+      }
+      return FormBuilderFieldOption(value: value, child: Text(name));
+    });
+    return items;
+  }
+}
+
+T _parseValue<T>(dynamic value) {
+  try {
+    if (T == num) {
+      return num.parse(value) as T;
+    } else {
+      return value;
+    }
+  } catch (e) {
+    return null as T;
   }
 }
 
@@ -185,16 +274,31 @@ class StringField extends ValueField<String> {
 
   @override
   Widget build() {
-    return BlocBuilder<bloc.FormBloc, bloc.FormState>(
-      builder: (context, state) {
-        final value = getFormDataByPath(state.formData, path);
+    return FieldWrapper(
+      key: Key(id),
+      title: title ?? id,
+      description: description,
+      isRequired: this.required,
+      child: BlocBuilder<bloc.FormBloc, bloc.FormState>(
+        builder: (context, state) {
+          final value = getFormDataByPath(state.formData, path);
 
-        return FieldWrapper(
-          key: Key(id),
-          title: title ?? id,
-          description: description,
-          isRequired: this.required,
-          child: FormBuilderTextField(
+          if (widgetType != null) {
+            return FormWidgetBuilder(
+              id: id,
+              widgetType: widgetType!,
+              value: value,
+              onChange: (value) => onChange(context, value),
+              disabled: !enabled,
+              isRequired: this.required,
+              readOnly: false,
+              enumItems: enumValues,
+              dropdownItems: getDropdownItems(),
+              radioItems: getRadio(),
+            );
+          }
+
+          return FormBuilderTextField(
             name: id,
             initialValue: value ?? defaultValue,
             decoration: decoration,
@@ -203,9 +307,9 @@ class StringField extends ValueField<String> {
             ]),
             onChanged: (value) => onChange(context, value),
             // style: theme,
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
@@ -245,16 +349,31 @@ class NumberField extends ValueField<num> {
 
   @override
   Widget build() {
-    return BlocBuilder<bloc.FormBloc, bloc.FormState>(
-      builder: (context, state) {
-        final value = getFormDataByPath(state.formData, path);
+    return FieldWrapper(
+      key: Key(id),
+      title: title ?? id,
+      description: description,
+      isRequired: this.required,
+      child: BlocBuilder<bloc.FormBloc, bloc.FormState>(
+        builder: (context, state) {
+          final value = getFormDataByPath(state.formData, path);
 
-        return FieldWrapper(
-          key: Key(id),
-          title: title ?? id,
-          description: description,
-          isRequired: this.required,
-          child: FormBuilderTextField(
+          if (widgetType != null) {
+            return FormWidgetBuilder(
+              id: id,
+              widgetType: widgetType!,
+              value: value,
+              onChange: (value) => onChange(context, value),
+              disabled: !enabled,
+              isRequired: this.required,
+              readOnly: false,
+              enumItems: enumValues,
+              dropdownItems: getDropdownItems(),
+              radioItems: getRadio(),
+            );
+          }
+
+          return FormBuilderTextField(
             name: id,
             initialValue: value is num ? value.toString() : value ?? defaultValue?.toString(),
             decoration: decoration,
@@ -267,9 +386,9 @@ class NumberField extends ValueField<num> {
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             onChanged: (value) => onChange(context, value),
             // style: theme,
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -317,6 +436,26 @@ class BooleanField extends ValueField<bool> {
     return BlocBuilder<bloc.FormBloc, bloc.FormState>(
       builder: (context, state) {
         final value = getFormDataByPath(state.formData, path);
+
+        if (widgetType != null) {
+          return FieldWrapper(
+            title: title,
+            description: description,
+            isRequired: this.required,
+            child: FormWidgetBuilder(
+              id: id,
+              widgetType: widgetType!,
+              value: value,
+              onChange: (value) => onChange(context, value),
+              disabled: !enabled,
+              isRequired: this.required,
+              readOnly: false,
+              enumItems: enumValues,
+              dropdownItems: getDropdownItems(),
+              radioItems: getRadio(),
+            ),
+          );
+        }
 
         return Transform.scale(
           scale: 1.15,
