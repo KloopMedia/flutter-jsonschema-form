@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -648,7 +647,9 @@ List<Field> parseSchema({
       ),
     ];
   } else if (type == FieldType.array) {
+    final newPath = path.add(id, type);
     final items = schema['items'];
+
     if (items is List) {
       final List? _uiSchema = uiSchema?[id];
       final List<Field> subFields = [];
@@ -663,12 +664,11 @@ List<Field> parseSchema({
           }
         }
 
-        final field = parseSchema(schema: item, uiSchema: ui);
+        final field = parseSchema(id: i.toString(), schema: item, uiSchema: ui, path: newPath);
         subFields.addAll(field);
       }
       return [StaticArray(id: id, path: path, type: type, fields: subFields)];
     } else if (items is Map<String, dynamic>) {
-      final newPath = path.add(id, type);
       final field = parseSchema(schema: items, uiSchema: uiSchema?[id], path: newPath).first;
       return [DynamicArray(id: id, path: newPath, type: type, field: field)];
     } else {
