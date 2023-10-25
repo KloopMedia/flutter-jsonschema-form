@@ -74,7 +74,7 @@ abstract class ValueField<T> extends Field {
     required String id,
     required PathModel path,
     required FieldType type,
-    required WidgetModel widget,
+    required WidgetModel? widget,
     required Dependency? dependency,
     required bool isRequired,
     required Map<String, dynamic> schema,
@@ -134,6 +134,9 @@ abstract class ValueField<T> extends Field {
     }
   }
 
+  @override
+  ValueField copyWith({String? id, PathModel? path, T? defaultValue});
+
   T? valueTransformer(dynamic value);
 
   void onChange(BuildContext context, dynamic value) {
@@ -159,14 +162,14 @@ class StringField extends ValueField<String> {
   });
 
   @override
-  StringField copyWith({String? id, PathModel? path}) {
+  StringField copyWith({String? id, PathModel? path, String? defaultValue}) {
     return StringField(
       id: id ?? this.id,
       path: path ?? this.path,
       type: type,
       title: title,
       description: description,
-      defaultValue: defaultValue,
+      defaultValue: defaultValue ?? this.defaultValue,
       dependency: dependency,
       enumValues: enumValues,
       enumNames: enumNames,
@@ -224,14 +227,14 @@ class NumberField extends ValueField<num> {
   });
 
   @override
-  NumberField copyWith({String? id, PathModel? path}) {
+  NumberField copyWith({String? id, PathModel? path, num? defaultValue}) {
     return NumberField(
       id: id ?? this.id,
       path: path ?? this.path,
       type: type,
       title: title,
       description: description,
-      defaultValue: defaultValue,
+      defaultValue: defaultValue ?? this.defaultValue,
       dependency: dependency,
       enumValues: enumValues,
       enumNames: enumNames,
@@ -293,14 +296,14 @@ class BooleanField extends ValueField<bool> {
   });
 
   @override
-  BooleanField copyWith({String? id, PathModel? path}) {
+  BooleanField copyWith({String? id, PathModel? path, bool? defaultValue}) {
     return BooleanField(
       id: id ?? this.id,
       path: path ?? this.path,
       type: type,
       title: title,
       description: description,
-      defaultValue: defaultValue,
+      defaultValue: defaultValue ?? this.defaultValue,
       dependency: dependency,
       enumValues: enumValues,
       enumNames: enumNames,
@@ -453,7 +456,41 @@ class DynamicArray extends ArrayField {
 
   @override
   Widget build() {
-    return Text('$id $title');
+    return FieldWrapper.section(
+      title: title,
+      description: description,
+      child: BlocBuilder<bloc.FormBloc, bloc.FormState>(
+        builder: (context, state) {
+          final value = getFormDataByPath(state.formData, path);
+          final array = value is List ? value : [];
+
+          return Column(
+            children: [
+              ...array.asMap().entries.map((e) {
+                final index = e.key;
+                final value = e.value;
+
+                final arrayPath = path.add(index.toString(), field.type);
+                final arrayField = field.copyWith(id: "${id}_$index", path: arrayPath);
+                if (arrayField is ValueField) {
+                  return arrayField.copyWith(defaultValue: value).build();
+                } else {
+                  return arrayField.build();
+                }
+              }),
+              ElevatedButton(
+                onPressed: () {
+                  final value = field is ValueField ? (field as ValueField).defaultValue : null;
+                  final newArray = [...array, value];
+                  context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(id, newArray, path));
+                },
+                child: Text('+'),
+              )
+            ],
+          );
+        },
+      ),
+    );
   }
 }
 
@@ -673,7 +710,7 @@ List<Field> parseSchema({
         type: type,
         dependency: dependency,
         isRequired: isRequired ?? false,
-        widget: WidgetModel.fromUiSchema(uiSchema),
+        widget: getWidgetModelFromUiSchema(uiSchema),
         schema: schema,
       ),
     ];

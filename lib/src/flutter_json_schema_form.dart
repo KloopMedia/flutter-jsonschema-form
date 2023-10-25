@@ -98,19 +98,6 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final field = serializedField[index];
-                      if (field is DynamicArray) {
-                        return ElevatedButton(
-                          onPressed: () {
-                            final arrayPath = field.path.add(index.toString(), field.field.type);
-                            final arrayField =
-                                field.field.copyWith(id: index.toString(), path: arrayPath);
-                            setState(() {
-                              serializedField.insert(index, arrayField);
-                            });
-                          },
-                          child: Text('+'),
-                        );
-                      }
                       return field.build();
                     },
                     childCount: serializedField.length,
