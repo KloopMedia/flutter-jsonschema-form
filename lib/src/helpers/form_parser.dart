@@ -601,6 +601,15 @@ List<Field> _unwrapDependencies(List<Field> dependencies) {
   }).toList();
 }
 
+Map<String, dynamic>? _uiSchemaAtIndex(Map<String, dynamic>? uiSchema, String id, int index) {
+  final _uiSchema = uiSchema?[id];
+  try {
+    return _uiSchema != null ? _uiSchema[index] : null;
+  } on RangeError {
+    return null;
+  }
+}
+
 List<Field> parseSchema({
   String id = "#",
   required Map<String, dynamic> schema,
@@ -610,10 +619,9 @@ List<Field> parseSchema({
   bool? isRequired,
 }) {
   final type = getFieldType(schema);
+  final newPath = id == "#" ? path : path.add(id, type);
 
   if (type == FieldType.object) {
-    final newPath = id == "#" ? path : path.add(id, FieldType.object);
-
     final List<String> required = _getRequiredFields(schema);
     final objectFields = _parseObjectFields(
       schema['properties'],
@@ -623,16 +631,9 @@ List<Field> parseSchema({
       dependency: dependency,
     );
 
-    List<Field> dependencyFields;
-    if (schema['dependencies'] != null) {
-      dependencyFields = _parseDependencyFields(
-        schema['dependencies'],
-        newPath,
-        uiSchema: uiSchema,
-      );
-    } else {
-      dependencyFields = [];
-    }
+    final List<Field> dependencyFields = schema['dependencies'] != null
+        ? _parseDependencyFields(schema['dependencies'], newPath, uiSchema: uiSchema)
+        : [];
 
     final order = getOrder(uiSchema);
     final subFields = sortFields(objectFields, dependencyFields, order);
@@ -647,26 +648,16 @@ List<Field> parseSchema({
       ),
     ];
   } else if (type == FieldType.array) {
-    final newPath = path.add(id, type);
     final items = schema['items'];
 
     if (items is List) {
-      final List? _uiSchema = uiSchema?[id];
-      final List<Field> subFields = [];
-      for (int i = 0; i < items.length; i++) {
-        final Map<String, dynamic> item = items[i];
-        Map<String, dynamic>? ui;
-        if (_uiSchema != null) {
-          try {
-            ui = _uiSchema[i];
-          } on RangeError {
-            ui = {};
-          }
-        }
+      final List<Field> subFields = items.asMap().entries.map((entry) {
+        final index = entry.key;
+        final item = entry.value;
+        final ui = _uiSchemaAtIndex(uiSchema, id, index);
+        return parseSchema(id: index.toString(), schema: item, uiSchema: ui, path: newPath).first;
+      }).toList();
 
-        final field = parseSchema(id: i.toString(), schema: item, uiSchema: ui, path: newPath);
-        subFields.addAll(field);
-      }
       return [StaticArray(id: id, path: path, type: type, fields: subFields)];
     } else if (items is Map<String, dynamic>) {
       final field = parseSchema(schema: items, uiSchema: uiSchema?[id], path: newPath).first;
@@ -675,7 +666,6 @@ List<Field> parseSchema({
       throw Exception('Incorrect type of items in $id');
     }
   } else {
-    final newPath = path.add(id, type);
     return [
       ValueField.fromSchema(
         id: id,
