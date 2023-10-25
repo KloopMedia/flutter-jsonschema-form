@@ -658,6 +658,9 @@ List<Field> parseSchema({
   final type = getFieldType(schema);
   final newPath = id == "#" ? path : path.add(id, type);
 
+  final String? title = schema['title'];
+  final String? description = schema['description'];
+
   if (type == FieldType.object) {
     final List<String> required = _getRequiredFields(schema);
     final objectFields = _parseObjectFields(
@@ -682,6 +685,8 @@ List<Field> parseSchema({
         type: type,
         fields: subFields,
         dependency: dependency,
+        title: title,
+        description: description,
       ),
     ];
   } else if (type == FieldType.array) {
@@ -695,10 +700,28 @@ List<Field> parseSchema({
         return parseSchema(id: index.toString(), schema: item, uiSchema: ui, path: newPath).first;
       }).toList();
 
-      return [StaticArray(id: id, path: path, type: type, fields: subFields)];
+      return [
+        StaticArray(
+          id: id,
+          path: path,
+          type: type,
+          fields: subFields,
+          title: title,
+          description: description,
+        )
+      ];
     } else if (items is Map<String, dynamic>) {
       final field = parseSchema(schema: items, uiSchema: uiSchema?[id], path: newPath).first;
-      return [DynamicArray(id: id, path: newPath, type: type, field: field)];
+      return [
+        DynamicArray(
+          id: id,
+          path: newPath,
+          type: type,
+          field: field,
+          title: title,
+          description: description,
+        )
+      ];
     } else {
       throw Exception('Incorrect type of items in $id');
     }
