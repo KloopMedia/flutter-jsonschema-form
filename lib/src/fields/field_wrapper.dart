@@ -9,7 +9,7 @@ class FieldWrapper extends StatelessWidget {
   final String? title;
   final String? description;
   final bool isRequired;
-  final Widget child;
+  final Widget? child;
   final WrapperType _type;
 
   const FieldWrapper({
@@ -26,7 +26,7 @@ class FieldWrapper extends StatelessWidget {
     this.title,
     this.description,
     this.isRequired = false,
-    required this.child,
+    this.child,
   }) : _type = WrapperType.section;
 
   bool get isField => _type == WrapperType.field;
@@ -44,7 +44,7 @@ class FieldWrapper extends StatelessWidget {
           if (isField && description != null) const SizedBox(height: 4),
           if (description != null) FieldDescription(description: description!),
           if (isField) const SizedBox(height: 8),
-          child,
+          if (child != null) child!,
         ],
       ),
     );

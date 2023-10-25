@@ -520,7 +520,7 @@ class Section extends ComplexField {
 
   @override
   Widget build() {
-    return Text('$id $title');
+    return FieldWrapper.section(title: title, description: description);
   }
 }
 
