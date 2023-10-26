@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/field_wrapper.dart';
 import 'models.dart';
 
-class Section extends ComplexField {
+class StaticArray extends ArrayField {
   final List<Field> fields;
 
-  Section({
+  StaticArray({
     required super.id,
     required super.path,
     required super.type,
@@ -17,8 +16,8 @@ class Section extends ComplexField {
   });
 
   @override
-  Section copyWith({String? id, PathModel? path}) {
-    return Section(
+  StaticArray copyWith({String? id, PathModel? path}) {
+    return StaticArray(
       id: id ?? this.id,
       path: path ?? this.path,
       type: type,
@@ -31,6 +30,6 @@ class Section extends ComplexField {
 
   @override
   Widget build() {
-    return FieldWrapper.section(title: title, description: description);
+    return Text('$id $title');
   }
 }

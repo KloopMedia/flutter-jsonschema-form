@@ -1,7 +1,7 @@
-import 'complex_field_model.dart';
+import 'field_model.dart';
 
-abstract class ArrayField extends ComplexField {
-  ArrayField({
+abstract class ComplexField extends Field {
+  ComplexField({
     required super.id,
     required super.path,
     required super.type,

@@ -1,17 +1,13 @@
 import 'models.dart';
 
-class DependencyModel {
+class Dependency {
   final String parentId;
   final PathModel parentPath;
-  final String id;
-  final List<dynamic> values;
-  final FieldModel? field;
+  final List<dynamic> conditions;
 
-  const DependencyModel({
-    required this.id,
+  Dependency({
     required this.parentId,
-    required this.values,
-    this.field,
     required this.parentPath,
+    required this.conditions,
   });
 }
