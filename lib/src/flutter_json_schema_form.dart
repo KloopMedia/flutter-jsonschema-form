@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 import 'bloc/form_bloc/form_bloc.dart' as bloc;
-import 'helpers/form_parser.dart';
 import 'helpers/helpers.dart';
+import 'models/models.dart';
 
 typedef ChangeFormCallback = Function(Map<String, dynamic> formData, String path);
 typedef SubmitFormCallback = Function(Map<String, dynamic> formData);
@@ -104,106 +104,53 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
                   ),
                 ),
                 SliverToBoxAdapter(
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child: Text('Submit'),
+                  child: Row(
+                    children: [
+                      if (widget.allowOpenPrevious)
+                        Expanded(
+                          child: SizedBox(
+                            height: 52,
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                  width: 1,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
+                              onPressed: widget.onOpenPreviousTask,
+                              child: widget.openPreviousButtonText ?? const Text('Go back'),
+                            ),
+                          ),
+                        ),
+                      if (widget.allowOpenPrevious && !widget.disabled) const SizedBox(width: 10),
+                      if (!widget.disabled)
+                        Expanded(
+                          child: SizedBox(
+                            height: 52,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                backgroundColor: Theme.of(context).colorScheme.primary,
+                              ),
+                              onPressed: () {
+                                context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
+                              },
+                              child: widget.submitButtonText ?? const Text('Submit'),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 )
               ],
             ),
           );
         },
-      ),
-      // child: Form(
-      //   formKey: _formKey,
-      //   fields: fields,
-      //   disabled: widget.disabled,
-      //   submitButtonText: widget.submitButtonText,
-      //   pageStorageKey: widget.pageStorageKey,
-      //   allowOpenPrevious: widget.allowOpenPrevious,
-      //   onOpenPreviousTask: widget.onOpenPreviousTask,
-      //   openPreviousButtonText: widget.openPreviousButtonText,
-      // ),
-    );
-  }
-}
-
-class Form extends StatelessWidget {
-  final GlobalKey<FormBuilderState> formKey;
-  final PageStorageKey? pageStorageKey;
-  final List fields;
-  final bool disabled;
-  final Text? submitButtonText;
-  final VoidCallback? onOpenPreviousTask;
-  final Text? openPreviousButtonText;
-  final bool allowOpenPrevious;
-
-  const Form({
-    Key? key,
-    required this.formKey,
-    required this.fields,
-    required this.disabled,
-    this.submitButtonText,
-    this.pageStorageKey,
-    this.onOpenPreviousTask,
-    this.openPreviousButtonText,
-    required this.allowOpenPrevious,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      key: pageStorageKey,
-      child: Column(
-        children: [
-          FormBuilder(
-            key: formKey,
-            clearValueOnUnregister: true,
-            child: FormConstructor(fields: fields),
-          ),
-          Row(
-            children: [
-              if (allowOpenPrevious)
-                Expanded(
-                  child: SizedBox(
-                    height: 52,
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(
-                          width: 1,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
-                      onPressed: onOpenPreviousTask,
-                      child: openPreviousButtonText ?? const Text('Go back'),
-                    ),
-                  ),
-                ),
-              if (allowOpenPrevious && !disabled) const SizedBox(width: 10),
-              if (!disabled)
-                Expanded(
-                  child: SizedBox(
-                    height: 52,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                      ),
-                      onPressed: () {
-                        context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
-                      },
-                      child: submitButtonText ?? const Text('Submit'),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ],
       ),
     );
   }
