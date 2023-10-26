@@ -25,9 +25,9 @@ class FieldWrapper extends StatelessWidget {
     super.key,
     this.title,
     this.description,
-    this.isRequired = false,
     this.child,
-  }) : _type = WrapperType.section;
+  })  : _type = WrapperType.section,
+        isRequired = false;
 
   bool get isField => _type == WrapperType.field;
 
@@ -35,65 +35,33 @@ class FieldWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).textTheme;
+
+    final titleTheme = isSection ? theme.titleLarge : theme.titleMedium;
+    final descriptionTheme = theme.bodyMedium!.copyWith(color: theme.bodySmall!.color);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (title != null) FieldTitle(title: title!, isRequired: isRequired, type: _type),
+          if (title != null)
+            SelectableText.rich(
+              TextSpan(
+                text: title,
+                style: titleTheme,
+                children: <TextSpan>[
+                  if (isRequired) const TextSpan(text: '*', style: TextStyle(color: Colors.red)),
+                ],
+              ),
+            ),
+          if (isSection && title != null) const Divider(thickness: 2),
           if (isField && description != null) const SizedBox(height: 4),
-          if (description != null) FieldDescription(description: description!),
+          if (description != null) Text(description!, style: descriptionTheme),
           if (isField) const SizedBox(height: 8),
           if (child != null) child!,
         ],
       ),
     );
-  }
-}
-
-class FieldTitle extends StatelessWidget {
-  final String title;
-  final bool isRequired;
-  final WrapperType type;
-
-  const FieldTitle({Key? key, required this.title, required this.isRequired, required this.type})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final style =
-        type == WrapperType.section ? theme.textTheme.titleLarge : theme.textTheme.titleMedium;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SelectableText.rich(
-          TextSpan(
-            text: title,
-            style: style,
-            children: <TextSpan>[
-              if (isRequired) const TextSpan(text: '*', style: TextStyle(color: Colors.red)),
-            ],
-          ),
-        ),
-        if (type == WrapperType.section) const Divider(thickness: 2),
-      ],
-    );
-  }
-}
-
-class FieldDescription extends StatelessWidget {
-  final String description;
-
-  const FieldDescription({Key? key, required this.description}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final TextStyle textStyle = theme.textTheme.bodyMedium!;
-    final Color? color = theme.textTheme.bodySmall!.color;
-
-    return Text(description, style: textStyle.copyWith(color: color));
   }
 }
