@@ -63,7 +63,7 @@ class FieldTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final style =
-        type == WrapperType.section ? theme.textTheme.headline6 : theme.textTheme.titleMedium;
+        type == WrapperType.section ? theme.textTheme.titleLarge : theme.textTheme.titleMedium;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,10 +91,8 @@ class FieldDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final TextStyle textStyle =
-        theme.useMaterial3 ? theme.textTheme.bodyMedium! : theme.textTheme.bodyText2!;
-    final Color? color =
-        theme.useMaterial3 ? theme.textTheme.bodySmall!.color : theme.textTheme.caption!.color;
+    final TextStyle textStyle = theme.textTheme.bodyMedium!;
+    final Color? color = theme.textTheme.bodySmall!.color;
 
     return Text(description, style: textStyle.copyWith(color: color));
   }
