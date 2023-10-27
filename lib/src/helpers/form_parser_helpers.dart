@@ -49,7 +49,8 @@ List<Field> _parsePropertiesFields(
 
 List<Field> _parseDependenciesFields(
   Map<String, dynamic> dependencies,
-  PathModel path, {
+  PathModel path,
+  List<Field> propertyFields, {
   Map<String, dynamic>? uiSchema,
 }) {
   final List<Field> subFields = [];
@@ -64,10 +65,18 @@ List<Field> _parseDependenciesFields(
       final List<dynamic> conditions = properties.remove(dependencyParentId)?['enum'] ?? [];
       final objectFromProperties = {...variant, "properties": properties};
 
+      Field? parentField;
+      try {
+        parentField = propertyFields.firstWhere((element) => element.id == dependencyParentId);
+      } catch (e) {
+        parentField = null;
+      }
+
       final dependency = Dependency(
         parentId: dependencyParentId,
         parentPath: dependencyParentPath,
         conditions: conditions,
+        parentDependency: parentField?.dependency,
       );
 
       if (properties.isNotEmpty) {

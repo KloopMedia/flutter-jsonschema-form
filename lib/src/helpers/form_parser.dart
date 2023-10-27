@@ -19,7 +19,7 @@ List<Field> parseSchema({
 
   if (type == FieldType.object) {
     final List<String> required = _getRequiredFields(schema);
-    final objectFields = _parsePropertiesFields(
+    final propertyFields = _parsePropertiesFields(
       schema['properties'],
       required,
       newPath,
@@ -28,11 +28,11 @@ List<Field> parseSchema({
     );
 
     final List<Field> dependencyFields = schema['dependencies'] != null
-        ? _parseDependenciesFields(schema['dependencies'], newPath, uiSchema: uiSchema)
+        ? _parseDependenciesFields(schema['dependencies'], newPath, propertyFields, uiSchema: uiSchema)
         : [];
 
     final order = _getOrder(uiSchema);
-    final subFields = _sortFields(objectFields, dependencyFields, order);
+    final subFields = _sortFields(propertyFields, dependencyFields, order);
 
     return [
       Section(
