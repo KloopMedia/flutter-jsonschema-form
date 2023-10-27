@@ -63,14 +63,8 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
   @override
   void initState() {
     fields = parseSchema(schema: widget.schema, uiSchema: widget.uiSchema);
-    // serializedField = serializeFields(fields, widget.formData ?? {});
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
     serializedField = serializeFields(fields, widget.formData ?? {});
-    super.didChangeDependencies();
+    super.initState();
   }
 
   @override
