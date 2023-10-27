@@ -42,9 +42,31 @@ class BooleanField extends ValueField<bool> {
   }
 
   @override
+  Widget getField(BuildContext context, value) {
+    return Transform.scale(
+      scale: 1.15,
+      alignment: Alignment.centerLeft,
+      child: FormBuilderCheckbox(
+        name: id,
+        title: Text(title ?? id, style: const TextStyle(fontSize: 14)),
+        initialValue: value ?? defaultValue,
+        validator: FormBuilderValidators.compose([
+          if (this.required) FormBuilderValidators.required(),
+        ]),
+        onChanged: (value) => onChange(context, value),
+        contentPadding: const EdgeInsets.only(right: 30),
+      ),
+    );
+  }
+
+  @override
   Widget build() {
     return BlocBuilder<bloc.FormBloc, bloc.FormState>(
       builder: (context, state) {
+        if (!shouldRenderDependency(dependency, state.formData)) {
+          return const SizedBox.shrink();
+        }
+
         final value = getFormDataByPath(state.formData, path);
 
         if (widgetType != null) {
@@ -52,35 +74,11 @@ class BooleanField extends ValueField<bool> {
             title: title,
             description: description,
             isRequired: this.required,
-            child: FormWidgetBuilder(
-              id: id,
-              widgetType: widgetType!,
-              value: value,
-              onChange: (value) => onChange(context, value),
-              disabled: !enabled,
-              isRequired: this.required,
-              readOnly: false,
-              enumItems: enumValues,
-              dropdownItems: getDropdownItems(),
-              radioItems: getRadio(),
-            ),
+            child: getWidget(context, value),
           );
         }
 
-        return Transform.scale(
-          scale: 1.15,
-          alignment: Alignment.centerLeft,
-          child: FormBuilderCheckbox(
-            name: id,
-            title: Text(title ?? id, style: const TextStyle(fontSize: 14)),
-            initialValue: value ?? defaultValue,
-            validator: FormBuilderValidators.compose([
-              if (this.required) FormBuilderValidators.required(),
-            ]),
-            onChanged: (value) => onChange(context, value),
-            contentPadding: const EdgeInsets.only(right: 30),
-          ),
-        );
+        return getField(context, value);
       },
     );
   }

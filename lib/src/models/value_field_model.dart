@@ -99,6 +99,23 @@ abstract class ValueField<T> extends Field {
   @override
   ValueField copyWith({String? id, PathModel? path, T? defaultValue});
 
+  Widget getWidget(BuildContext context, value) {
+    return FormWidgetBuilder(
+      id: id,
+      widgetType: widgetType!,
+      value: value,
+      onChange: (value) => onChange(context, value),
+      disabled: !enabled,
+      isRequired: this.required,
+      readOnly: false,
+      enumItems: enumValues,
+      dropdownItems: getDropdownItems(),
+      radioItems: getRadio(),
+    );
+  }
+
+  Widget getField(BuildContext context, value);
+
   T? valueTransformer(dynamic value);
 
   void onChange(BuildContext context, dynamic value) {

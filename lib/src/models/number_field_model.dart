@@ -43,47 +43,41 @@ class NumberField extends ValueField<num> {
   }
 
   @override
+  Widget getField(BuildContext context, value) {
+    return FormBuilderTextField(
+      name: id,
+      initialValue: value is num ? value.toString() : value ?? defaultValue?.toString(),
+      decoration: decoration,
+      validator: FormBuilderValidators.compose([
+        if (this.required) FormBuilderValidators.required(),
+        if (type == FieldType.number) FormBuilderValidators.numeric(),
+        if (type == FieldType.integer) FormBuilderValidators.integer(),
+      ]),
+      keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      onChanged: (value) => onChange(context, value),
+      // style: theme,
+    );
+  }
+
+  @override
   Widget build() {
-    return FieldWrapper(
-      key: Key(id),
-      title: title ?? id,
-      description: description,
-      isRequired: this.required,
-      child: BlocBuilder<bloc.FormBloc, bloc.FormState>(
-        builder: (context, state) {
-          final value = getFormDataByPath(state.formData, path);
+    return BlocBuilder<bloc.FormBloc, bloc.FormState>(
+      builder: (context, state) {
+        if (!shouldRenderDependency(dependency, state.formData)) {
+          return const SizedBox.shrink();
+        }
 
-          if (widgetType != null) {
-            return FormWidgetBuilder(
-              id: id,
-              widgetType: widgetType!,
-              value: value,
-              onChange: (value) => onChange(context, value),
-              disabled: !enabled,
-              isRequired: this.required,
-              readOnly: false,
-              enumItems: enumValues,
-              dropdownItems: getDropdownItems(),
-              radioItems: getRadio(),
-            );
-          }
+        final value = getFormDataByPath(state.formData, path);
 
-          return FormBuilderTextField(
-            name: id,
-            initialValue: value is num ? value.toString() : value ?? defaultValue?.toString(),
-            decoration: decoration,
-            validator: FormBuilderValidators.compose([
-              if (this.required) FormBuilderValidators.required(),
-              if (type == FieldType.number) FormBuilderValidators.numeric(),
-              if (type == FieldType.integer) FormBuilderValidators.integer(),
-            ]),
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            onChanged: (value) => onChange(context, value),
-            // style: theme,
-          );
-        },
-      ),
+        return FieldWrapper(
+          key: Key(id),
+          title: title ?? id,
+          description: description,
+          isRequired: this.required,
+          child: widgetType != null ? getWidget(context, value) : getField(context, value),
+        );
+      },
     );
   }
 
