@@ -34,7 +34,7 @@ class Section extends ComplexField {
   @override
   Widget build() {
     return BlocBuilder<bloc.FormBloc, bloc.FormState>(builder: (context, state) {
-      if (!shouldRenderDependency(dependency, state.formData)) {
+      if (!shouldRenderDependency(state.formData)) {
         return const SizedBox.shrink();
       }
 

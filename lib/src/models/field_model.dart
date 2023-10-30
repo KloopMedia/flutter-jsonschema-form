@@ -24,25 +24,11 @@ abstract class Field {
 
   bool get hasDependency => dependency != null;
 
+  bool shouldRenderDependency(Map<String, dynamic> formData) {
+    return dependency?.shouldRenderDependency(formData) ?? true;
+  }
+
   Field copyWith({String? id, PathModel? path});
 
   Widget build();
-
-  bool shouldRenderDependency(Dependency? dependency, Map<String, dynamic> formData) {
-    if (dependency == null) {
-      return true;
-    }
-
-    final data = getFormDataByPath(formData, dependency.parentPath);
-
-    if (!dependency.conditions.contains(data)) {
-      return false;
-    }
-
-    if (dependency.parentDependency != null) {
-      return shouldRenderDependency(dependency.parentDependency!, formData);
-    } else {
-      return true;
-    }
-  }
 }

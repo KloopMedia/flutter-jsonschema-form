@@ -1,3 +1,4 @@
+import '../helpers/form_data_helper.dart';
 import 'models.dart';
 
 class Dependency {
@@ -12,4 +13,18 @@ class Dependency {
     required this.conditions,
     required this.parentDependency,
   });
+
+  bool shouldRenderDependency(Map<String, dynamic> formData) {
+    final data = getFormDataByPath(formData, parentPath);
+
+    if (!conditions.contains(data)) {
+      return false;
+    }
+
+    if (parentDependency != null) {
+      return parentDependency!.shouldRenderDependency(formData);
+    } else {
+      return true;
+    }
+  }
 }
