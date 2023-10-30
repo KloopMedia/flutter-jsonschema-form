@@ -110,7 +110,7 @@ abstract class ValueField<T> extends Field {
       readOnly: false,
       enumItems: enumValues,
       dropdownItems: getDropdownItems(),
-      radioItems: getRadio(),
+      radioItems: getRadioItems(),
     );
   }
 
@@ -150,28 +150,7 @@ abstract class ValueField<T> extends Field {
     return items;
   }
 
-  List<Map<String, dynamic>> getRadioItems() {
-    final options = enumValues ?? [];
-    final names = enumNames ?? [];
-
-    if (options.isEmpty) {
-      return [];
-    }
-
-    List<Map<String, dynamic>> items = List.generate(options.length, (index) {
-      final T value = _parseValue<T>(options[index]);
-      String name;
-      try {
-        name = names[index].toString();
-      } catch (_) {
-        name = value.toString();
-      }
-      return {'value': value, 'name': name};
-    });
-    return items;
-  }
-
-  List<FormBuilderFieldOption<T>> getRadio() {
+  List<FormBuilderFieldOption<T>> getRadioItems() {
     final options = enumValues ?? [];
     final names = enumNames ?? [];
 
