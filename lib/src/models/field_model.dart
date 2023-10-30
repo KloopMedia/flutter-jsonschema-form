@@ -30,5 +30,5 @@ abstract class Field {
 
   Field copyWith({String? id, PathModel? path});
 
-  Widget build();
+  Widget build(BuildContext context);
 }

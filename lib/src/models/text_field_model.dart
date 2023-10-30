@@ -61,7 +61,7 @@ class StringField extends ValueField<String> {
   }
 
   @override
-  Widget build() {
+  Widget build(BuildContext context) {
     return BlocBuilder<bloc.FormBloc, bloc.FormState>(
       builder: (context, state) {
         if (!shouldRenderDependency(state.formData)) {

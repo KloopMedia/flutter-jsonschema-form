@@ -33,7 +33,7 @@ class DynamicArray extends ArrayField {
   }
 
   @override
-  Widget build() {
+  Widget build(BuildContext context) {
     return FieldWrapper.section(
       title: title,
       description: description,
@@ -51,9 +51,9 @@ class DynamicArray extends ArrayField {
                 final arrayPath = path.add(index.toString(), field.type);
                 final arrayField = field.copyWith(id: "${id}_$index", path: arrayPath);
                 if (arrayField is ValueField) {
-                  return arrayField.copyWith(defaultValue: value).build();
+                  return arrayField.copyWith(defaultValue: value).build(context);
                 } else {
-                  return arrayField.build();
+                  return arrayField.build(context);
                 }
               }),
               ElevatedButton(

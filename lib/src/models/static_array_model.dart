@@ -29,7 +29,7 @@ class StaticArray extends ArrayField {
   }
 
   @override
-  Widget build() {
+  Widget build(BuildContext context) {
     return Text('$id $title');
   }
 }
