@@ -22,6 +22,7 @@ class FormBloc extends Bloc<FormEvent, FormState> {
   final GlobalKey<FormBuilderState> formKey;
   final ValidationWarningCallback? onValidationCallback;
   final List<String>? addFileText;
+  final List<Field> fields;
 
   FormBloc({
     Map<String, dynamic>? formData,
@@ -34,6 +35,7 @@ class FormBloc extends Bloc<FormEvent, FormState> {
     this.onWebhookTriggerCallback,
     this.onDownloadFileCallback,
     this.addFileText,
+    required this.fields,
   }) : super(FormInitial(formData ?? {}, disabled: disabled)) {
     on<ChangeFormEvent>(_onChangeFormEvent);
     on<SubmitFormEvent>(_onSubmitFormEvent);
@@ -69,6 +71,18 @@ class FormBloc extends Bloc<FormEvent, FormState> {
       formData = Map<String, dynamic>.from(
         updateDeeply(path.path, state.formData, (prevValue) => value, false),
       );
+    }
+
+    for (final field in fields) {
+      if (!field.shouldRenderDependency(formData)) {
+        if (field is ValueField) {
+          formData = Map<String, dynamic>.from(
+            updateDeeply(field.path.path, formData, (prevValue) => null, true),
+          );
+        }
+
+        formKey.currentState?.removeInternalFieldValue(field.id);
+      }
     }
 
     if (isDependency) {

@@ -71,6 +71,7 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => bloc.FormBloc(
+        fields: serializedField,
         formKey: _formKey,
         formData: widget.formData,
         storage: widget.storage,
@@ -92,7 +93,7 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final field = serializedField[index];
-                      return field.build();
+                      return field.build(context);
                     },
                     childCount: serializedField.length,
                   ),
