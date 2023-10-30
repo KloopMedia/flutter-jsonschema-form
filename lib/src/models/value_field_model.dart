@@ -123,7 +123,7 @@ abstract class ValueField<T> extends Field {
     context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(id, transformedValue, path));
   }
 
-  List<DropdownMenuItem<T>> getDropdownItems<T>() {
+  List<DropdownMenuItem<T>> getDropdownItems() {
     final options = enumValues ?? [];
     final names = enumNames ?? [];
 
@@ -150,7 +150,7 @@ abstract class ValueField<T> extends Field {
     return items;
   }
 
-  List<Map<String, dynamic>> getRadioItems<T>() {
+  List<Map<String, dynamic>> getRadioItems() {
     final options = enumValues ?? [];
     final names = enumNames ?? [];
 
@@ -171,7 +171,7 @@ abstract class ValueField<T> extends Field {
     return items;
   }
 
-  List<FormBuilderFieldOption<T>> getRadio<T>() {
+  List<FormBuilderFieldOption<T>> getRadio() {
     final options = enumValues ?? [];
     final names = enumNames ?? [];
 
