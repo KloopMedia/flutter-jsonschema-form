@@ -22,14 +22,12 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final ValidationWarningCallback? onValidationFailed;
   final WebhookTriggerCallback? onWebhookTrigger;
   final DownloadFileCallback? onDownloadFile;
-  final VoidCallback? onOpenPreviousTask;
   final Reference? storage;
   final bool disabled;
-  final bool allowOpenPrevious;
   final Text? submitButtonText;
   final List<String>? addFileText;
-  final Text? openPreviousButtonText;
   final PageStorageKey? pageStorageKey;
+  final List<Widget>? buttons;
 
   const FlutterJsonSchemaForm({
     Key? key,
@@ -46,9 +44,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
     this.addFileText,
     this.pageStorageKey,
     this.onDownloadFile,
-    this.onOpenPreviousTask,
-    this.openPreviousButtonText,
-    this.allowOpenPrevious = false,
+    this.buttons,
   }) : super(key: key);
 
   @override
@@ -67,6 +63,48 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
     super.initState();
   }
 
+  Widget _buildSubmitButton(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
+      onPressed: () {
+        context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
+      },
+      child: widget.submitButtonText ?? const Text('Submit'),
+    );
+  }
+
+  List<Widget> _buildFormButtons(BuildContext context) {
+    final submitButton = _buildSubmitButton(context);
+    final buttons = [...widget.buttons ?? [], if (!widget.disabled) submitButton];
+
+    List<Widget> wrappedButtons = [];
+    for (var i = 0; i < buttons.length; i++) {
+      final double start = i == 0 ? 0 : 5;
+      final double end = i == buttons.length - 1 ? 0 : 5;
+      final paddingVertical = EdgeInsets.only(top: start, bottom: end);
+      final paddingHorizontal = EdgeInsets.only(left: start, right: end);
+      final isColumn = buttons.length > 2;
+
+      wrappedButtons.add(
+        Expanded(
+          flex: isColumn ? 0 : 1,
+          child: Container(
+            padding: isColumn ? paddingVertical : paddingHorizontal,
+            height: 52,
+            child: buttons[i],
+          ),
+        ),
+      );
+    }
+
+    return wrappedButtons;
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -83,69 +121,31 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
         onDownloadFileCallback: widget.onDownloadFile,
         addFileText: widget.addFileText,
       ),
-      child: BlocBuilder<bloc.FormBloc, bloc.FormState>(
-        builder: (context, state) {
-          return FormBuilder(
-            key: _formKey,
-            child: CustomScrollView(
-              slivers: [
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final field = serializedField[index];
-                      return field.build(context);
-                    },
-                    childCount: serializedField.length,
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: Row(
-                    children: [
-                      if (widget.allowOpenPrevious)
-                        Expanded(
-                          child: SizedBox(
-                            height: 52,
-                            child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(
-                                  width: 1,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                              ),
-                              onPressed: widget.onOpenPreviousTask,
-                              child: widget.openPreviousButtonText ?? const Text('Go back'),
-                            ),
-                          ),
-                        ),
-                      if (widget.allowOpenPrevious && !widget.disabled) const SizedBox(width: 10),
-                      if (!widget.disabled)
-                        Expanded(
-                          child: SizedBox(
-                            height: 52,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                backgroundColor: Theme.of(context).colorScheme.primary,
-                              ),
-                              onPressed: () {
-                                context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
-                              },
-                              child: widget.submitButtonText ?? const Text('Submit'),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                )
-              ],
+      child: FormBuilder(
+        key: _formKey,
+        child: CustomScrollView(
+          slivers: [
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final field = serializedField[index];
+                  return field.build(context);
+                },
+                childCount: serializedField.length,
+              ),
             ),
-          );
-        },
+            SliverToBoxAdapter(
+              child: Builder(builder: (context) {
+                final buttons = _buildFormButtons(context);
+                if (buttons.length > 2) {
+                  return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: buttons);
+                } else {
+                  return Row(children: buttons);
+                }
+              }),
+            )
+          ],
+        ),
       ),
     );
   }
