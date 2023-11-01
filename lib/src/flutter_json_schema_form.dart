@@ -2,6 +2,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_json_schema_form/l10n/generated/loc.dart';
 
 import 'bloc/form_bloc/form_bloc.dart' as bloc;
 import 'helpers/helpers.dart';
@@ -72,7 +73,7 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
       onPressed: () {
         context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
       },
-      child: const Text('Submit'),
+      child: Text(context.loc.submit),
     );
   }
 
