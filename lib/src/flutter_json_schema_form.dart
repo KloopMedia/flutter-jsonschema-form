@@ -24,10 +24,9 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final DownloadFileCallback? onDownloadFile;
   final Reference? storage;
   final bool disabled;
-  final Text? submitButtonText;
   final List<String>? addFileText;
   final PageStorageKey? pageStorageKey;
-  final List<Widget>? buttons;
+  final List<Widget>? extraButtons;
 
   const FlutterJsonSchemaForm({
     Key? key,
@@ -40,11 +39,10 @@ class FlutterJsonSchemaForm extends StatefulWidget {
     this.onWebhookTrigger,
     this.storage,
     this.disabled = false,
-    this.submitButtonText,
     this.addFileText,
     this.pageStorageKey,
     this.onDownloadFile,
-    this.buttons,
+    this.extraButtons,
   }) : super(key: key);
 
   @override
@@ -74,13 +72,13 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
       onPressed: () {
         context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
       },
-      child: widget.submitButtonText ?? const Text('Submit'),
+      child: const Text('Submit'),
     );
   }
 
   List<Widget> _buildFormButtons(BuildContext context) {
     final submitButton = _buildSubmitButton(context);
-    final buttons = [...widget.buttons ?? [], if (!widget.disabled) submitButton];
+    final buttons = [...widget.extraButtons ?? [], if (!widget.disabled) submitButton];
 
     List<Widget> wrappedButtons = [];
     for (var i = 0; i < buttons.length; i++) {
