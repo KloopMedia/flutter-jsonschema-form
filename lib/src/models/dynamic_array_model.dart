@@ -38,6 +38,7 @@ class DynamicArray extends ArrayField {
       title: title,
       description: description,
       child: BlocBuilder<bloc.FormBloc, bloc.FormState>(
+        buildWhen: (previous, current) => shouldRebuildBloc(this, previous, current),
         builder: (context, state) {
           final value = getFormDataByPath(state.formData, path);
           final array = value is List ? value : [];

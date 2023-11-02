@@ -62,6 +62,7 @@ class BooleanField extends ValueField<bool> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<bloc.FormBloc, bloc.FormState>(
+      buildWhen: (previous, current) => shouldRebuildBloc(this, previous, current),
       builder: (context, state) {
         if (!shouldRenderDependency(state.formData)) {
           return const SizedBox.shrink();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/bloc.dart' as bloc;
+import '../helpers/form_data_helper.dart';
 import '../widgets/field_wrapper.dart';
 import 'models.dart';
 
@@ -33,12 +34,14 @@ class Section extends ComplexField {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<bloc.FormBloc, bloc.FormState>(builder: (context, state) {
-      if (!shouldRenderDependency(state.formData)) {
-        return const SizedBox.shrink();
-      }
+    return BlocBuilder<bloc.FormBloc, bloc.FormState>(
+        buildWhen: (previous, current) => shouldRebuildBloc(this, previous, current),
+        builder: (context, state) {
+          if (!shouldRenderDependency(state.formData)) {
+            return const SizedBox.shrink();
+          }
 
-      return FieldWrapper.section(title: title, description: description);
-    });
+          return FieldWrapper.section(title: title, description: description);
+        });
   }
 }
