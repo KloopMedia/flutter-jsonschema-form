@@ -6,7 +6,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 
 import '../bloc/bloc.dart' as bloc;
 import '../helpers/helpers.dart';
-import '../widgets/field_wrapper.dart';
+import '../widgets/widgets.dart';
 import 'models.dart';
 
 class NumberField extends ValueField<num> {
@@ -44,10 +44,12 @@ class NumberField extends ValueField<num> {
 
   @override
   Widget getField(BuildContext context, value) {
+    final isCorrect = checkFieldAnswer(context, value);
+
     return FormBuilderTextField(
       name: id,
       initialValue: value is num ? value.toString() : value ?? defaultValue?.toString(),
-      decoration: decoration,
+      decoration: showCorrectFieldDecoration(isCorrect),
       validator: FormBuilderValidators.compose([
         if (this.required) FormBuilderValidators.required(),
         if (type == FieldType.number) FormBuilderValidators.numeric(),
@@ -70,13 +72,18 @@ class NumberField extends ValueField<num> {
         }
 
         final value = getFormDataByPath(state.formData, path);
+        final isCorrect = checkFieldAnswer(context, value);
+        final widget = widgetType != null ? getWidget(context, value) : getField(context, value);
 
         return FieldWrapper(
           key: Key(id),
           title: title ?? id,
           description: description,
           isRequired: this.required,
-          child: widgetType != null ? getWidget(context, value) : getField(context, value),
+          child: CorrectAnswerWrapper(
+            isCorrect: isCorrect,
+            child: widget,
+          ),
         );
       },
     );

@@ -28,6 +28,8 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final List<String>? addFileText;
   final PageStorageKey? pageStorageKey;
   final List<Widget>? extraButtons;
+  final Map<String, dynamic>? correctFormData;
+  final bool showCorrectFields;
 
   const FlutterJsonSchemaForm({
     Key? key,
@@ -44,6 +46,8 @@ class FlutterJsonSchemaForm extends StatefulWidget {
     this.pageStorageKey,
     this.onDownloadFile,
     this.extraButtons,
+    this.correctFormData,
+    this.showCorrectFields = false,
   }) : super(key: key);
 
   @override
@@ -119,6 +123,8 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
         onWebhookTriggerCallback: widget.onWebhookTrigger,
         onDownloadFileCallback: widget.onDownloadFile,
         addFileText: widget.addFileText,
+        correctFormData: widget.correctFormData,
+        showCorrectFields: widget.showCorrectFields,
       ),
       child: FormBuilder(
         key: _formKey,

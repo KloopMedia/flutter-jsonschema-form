@@ -5,7 +5,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 
 import '../bloc/bloc.dart' as bloc;
 import '../helpers/helpers.dart';
-import '../widgets/field_wrapper.dart';
+import '../widgets/widgets.dart';
 import 'models.dart';
 
 class BooleanField extends ValueField<bool> {
@@ -69,13 +69,17 @@ class BooleanField extends ValueField<bool> {
         }
 
         final value = getFormDataByPath(state.formData, path);
+        final isCorrect = checkFieldAnswer(context, value);
 
         if (widgetType != null) {
           return FieldWrapper(
             title: title,
             description: description,
             isRequired: this.required,
-            child: getWidget(context, value),
+            child: CorrectAnswerWrapper(
+              isCorrect: isCorrect,
+              child: getWidget(context, value),
+            ),
           );
         }
 

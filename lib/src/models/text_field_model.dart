@@ -4,8 +4,8 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
 import '../bloc/bloc.dart' as bloc;
-import '../widgets/field_wrapper.dart';
 import '../helpers/helpers.dart';
+import '../widgets/widgets.dart';
 import 'models.dart';
 
 class StringField extends ValueField<String> {
@@ -48,10 +48,12 @@ class StringField extends ValueField<String> {
 
   @override
   Widget getField(BuildContext context, value) {
+    final isCorrect = checkFieldAnswer(context, value);
+
     return FormBuilderTextField(
       name: id,
       initialValue: value ?? defaultValue,
-      decoration: decoration,
+      decoration: showCorrectFieldDecoration(isCorrect),
       validator: FormBuilderValidators.compose([
         if (this.required) FormBuilderValidators.required(),
       ]),
@@ -70,13 +72,18 @@ class StringField extends ValueField<String> {
         }
 
         final value = getFormDataByPath(state.formData, path);
+        final isCorrect = checkFieldAnswer(context, value);
+        final widget = widgetType != null ? getWidget(context, value) : getField(context, value);
 
         return FieldWrapper(
           key: Key(id),
           title: title ?? id,
           description: description,
           isRequired: this.required,
-          child: widgetType != null ? getWidget(context, value) : getField(context, value),
+          child: CorrectAnswerWrapper(
+            isCorrect: isCorrect,
+            child: widget,
+          ),
         );
       },
     );

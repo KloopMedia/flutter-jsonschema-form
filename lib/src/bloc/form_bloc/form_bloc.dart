@@ -23,10 +23,13 @@ class FormBloc extends Bloc<FormEvent, FormState> {
   final ValidationWarningCallback? onValidationCallback;
   final List<String>? addFileText;
   final List<Field> fields;
+  final Map<String, dynamic>? correctFormData;
+  final bool showCorrectFields;
 
   FormBloc({
     Map<String, dynamic>? formData,
     required this.formKey,
+    required this.fields,
     this.storage,
     this.disabled = false,
     this.onChangeCallback,
@@ -35,7 +38,8 @@ class FormBloc extends Bloc<FormEvent, FormState> {
     this.onWebhookTriggerCallback,
     this.onDownloadFileCallback,
     this.addFileText,
-    required this.fields,
+    this.correctFormData,
+    this.showCorrectFields = false,
   }) : super(FormInitial(formData ?? {}, disabled: disabled)) {
     on<ChangeFormEvent>(_onChangeFormEvent);
     on<SubmitFormEvent>(_onSubmitFormEvent);

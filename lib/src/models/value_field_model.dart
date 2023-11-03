@@ -100,6 +100,8 @@ abstract class ValueField<T> extends Field {
   ValueField copyWith({String? id, PathModel? path, T? defaultValue});
 
   Widget getWidget(BuildContext context, value) {
+    final isCorrect = checkFieldAnswer(context, value);
+
     return FormWidgetBuilder(
       id: id,
       widgetType: widgetType!,
@@ -111,10 +113,19 @@ abstract class ValueField<T> extends Field {
       enumItems: enumValues,
       dropdownItems: getDropdownItems(),
       radioItems: getRadioItems(),
+      decoration: showCorrectFieldDecoration(isCorrect),
     );
   }
 
   Widget getField(BuildContext context, value);
+
+  bool? checkFieldAnswer(BuildContext context, dynamic value) {
+    final showCorrectAnswer = context.read<bloc.FormBloc>().showCorrectFields;
+    final correctFormData = context.read<bloc.FormBloc>().correctFormData;
+    final correctValue = getFormDataByPath(correctFormData ?? {}, path);
+    final isCorrect = showCorrectAnswer && correctFormData != null ? correctValue == value : null;
+    return isCorrect;
+  }
 
   T? valueTransformer(dynamic value);
 
