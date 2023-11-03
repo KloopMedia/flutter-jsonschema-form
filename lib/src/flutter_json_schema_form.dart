@@ -2,7 +2,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_json_schema_form/l10n/generated/loc.dart';
+import 'package:flutter_json_schema_form/l10n/loc.dart';
 
 import 'bloc/form_bloc/form_bloc.dart' as bloc;
 import 'helpers/helpers.dart';
@@ -25,7 +25,6 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final DownloadFileCallback? onDownloadFile;
   final Reference? storage;
   final bool disabled;
-  final List<String>? addFileText;
   final PageStorageKey? pageStorageKey;
   final List<Widget>? extraButtons;
   final Map<String, dynamic>? correctFormData;
@@ -42,7 +41,6 @@ class FlutterJsonSchemaForm extends StatefulWidget {
     this.onWebhookTrigger,
     this.storage,
     this.disabled = false,
-    this.addFileText,
     this.pageStorageKey,
     this.onDownloadFile,
     this.extraButtons,
@@ -122,7 +120,6 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
         onValidationCallback: widget.onValidationFailed,
         onWebhookTriggerCallback: widget.onWebhookTrigger,
         onDownloadFileCallback: widget.onDownloadFile,
-        addFileText: widget.addFileText,
         correctFormData: widget.correctFormData,
         showCorrectFields: widget.showCorrectFields,
       ),

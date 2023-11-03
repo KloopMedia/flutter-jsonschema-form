@@ -6,4 +6,10 @@ class FlutterJsonSchemaFormLocalizationsEn extends FlutterJsonSchemaFormLocaliza
 
   @override
   String get submit => 'Submit';
+
+  @override
+  String get select_file_start => 'Select file';
+
+  @override
+  String get select_file_end => ' to upload';
 }

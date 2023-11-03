@@ -5,5 +5,11 @@ class FlutterJsonSchemaFormLocalizationsUk extends FlutterJsonSchemaFormLocaliza
   FlutterJsonSchemaFormLocalizationsUk([String locale = 'uk']) : super(locale);
 
   @override
-  String get submit => 'Submit';
+  String get submit => 'Надіслати';
+
+  @override
+  String get select_file_start => 'Виберіть файл';
+
+  @override
+  String get select_file_end => ' для завантаження';
 }

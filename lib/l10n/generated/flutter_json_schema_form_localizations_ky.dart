@@ -5,5 +5,11 @@ class FlutterJsonSchemaFormLocalizationsKy extends FlutterJsonSchemaFormLocaliza
   FlutterJsonSchemaFormLocalizationsKy([String locale = 'ky']) : super(locale);
 
   @override
-  String get submit => 'Submit';
+  String get submit => 'Жөнөтүү';
+
+  @override
+  String get select_file_start => 'Файлды тандаңыз';
+
+  @override
+  String get select_file_end => '  жүктөө үчүн';
 }

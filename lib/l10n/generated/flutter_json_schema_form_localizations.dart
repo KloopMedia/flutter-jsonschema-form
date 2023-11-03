@@ -102,6 +102,18 @@ abstract class FlutterJsonSchemaFormLocalizations {
   /// In en, this message translates to:
   /// **'Submit'**
   String get submit;
+
+  /// No description provided for @select_file_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Select file'**
+  String get select_file_start;
+
+  /// No description provided for @select_file_end.
+  ///
+  /// In en, this message translates to:
+  /// **' to upload'**
+  String get select_file_end;
 }
 
 class _FlutterJsonSchemaFormLocalizationsDelegate extends LocalizationsDelegate<FlutterJsonSchemaFormLocalizations> {

@@ -1,3 +1,5 @@
 {
-	"submit": "Submit"
+	"submit": "Надіслати",
+	"select_file_start": "Виберіть файл",
+	"select_file_end": " для завантаження"
 }
