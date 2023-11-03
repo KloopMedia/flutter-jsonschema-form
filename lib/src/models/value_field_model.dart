@@ -120,11 +120,25 @@ abstract class ValueField<T> extends Field {
   Widget getField(BuildContext context, value);
 
   bool? checkFieldAnswer(BuildContext context, dynamic value) {
+    /// Check then need to check answers.
     final showCorrectAnswer = context.read<bloc.FormBloc>().showCorrectFields;
+    if (!showCorrectAnswer) {
+      return null;
+    }
+
+    /// Check if correctFormData is present and not empty.
     final correctFormData = context.read<bloc.FormBloc>().correctFormData;
-    final correctValue = getFormDataByPath(correctFormData ?? {}, path);
-    final isCorrect = showCorrectAnswer && correctFormData != null ? correctValue == value : null;
-    return isCorrect;
+    if (correctFormData == null || correctFormData.isEmpty) {
+      return null;
+    }
+
+    /// Check if correctFormData contains value at path.
+    final correctValue = getFormDataByPath(correctFormData, path);
+    if (correctValue == null) {
+      return null;
+    }
+
+    return correctValue == value;
   }
 
   T? valueTransformer(dynamic value);
