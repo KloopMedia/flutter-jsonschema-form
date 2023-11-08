@@ -47,23 +47,34 @@ class DynamicArray extends ArrayField {
             children: [
               ...array.asMap().entries.map((e) {
                 final index = e.key;
-                final value = e.value;
-
                 final arrayPath = path.add(index.toString(), field.type);
                 final arrayField = field.copyWith(id: "${id}_$index", path: arrayPath);
-                if (arrayField is ValueField) {
-                  return arrayField.copyWith(defaultValue: value).build(context);
-                } else {
-                  return arrayField.build(context);
-                }
+                return arrayField.build(context);
               }),
-              ElevatedButton(
-                onPressed: () {
-                  final value = field is ValueField ? (field as ValueField).defaultValue : null;
-                  final newArray = [...array, value];
-                  context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(id, newArray, path));
-                },
-                child: Text('+'),
+              Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      final value = field is ValueField ? (field as ValueField).defaultValue : null;
+                      final newArray = [...array, value];
+                      context.read<bloc.FormBloc>().add(bloc.ChangeFormEvent(id, newArray, path));
+                    },
+                    child: const Text('+'),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: array.isNotEmpty
+                        ? () {
+                            final newArray = [...array];
+                            newArray.removeLast();
+                            context
+                                .read<bloc.FormBloc>()
+                                .add(bloc.ChangeFormEvent(id, newArray, path));
+                          }
+                        : null,
+                    child: const Text('-'),
+                  ),
+                ],
               )
             ],
           );
