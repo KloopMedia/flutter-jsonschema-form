@@ -61,19 +61,13 @@ class FormBloc extends Bloc<FormEvent, FormState> {
 
     final value = event.value;
     final path = event.path;
-    final delete = event.delete;
+    final delete = event.delete || value == null;
     final isDependency = event.isDependency;
 
     Map<String, dynamic> formData;
-    if (delete || value == null) {
-      formData = Map<String, dynamic>.from(
-        updateDeeply(path.path, state.formData, (prevValue) => value, true),
-      );
-    } else {
-      formData = Map<String, dynamic>.from(
-        updateDeeply(path.path, state.formData, (prevValue) => value, false),
-      );
-    }
+    formData = Map<String, dynamic>.from(
+      updateDeeply(path.path, state.formData, (prevValue) => value, delete),
+    );
 
     for (final field in fields) {
       if (!field.shouldRenderDependency(formData)) {
