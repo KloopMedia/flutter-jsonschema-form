@@ -21,7 +21,7 @@ dependencies:
   form_builder_validators: ^9.0.0
   firebase_storage: ^11.0.6
   cross_file: ^0.3.3+2
-  file_picker: ^5.2.2
+  file_picker: ^6.1.1
   cached_network_image: ^3.2.2
   mime: ^1.0.2
   video_player: ^2.4.8
@@ -34,14 +34,14 @@ dependencies:
   path: ^1.8.2
   logger: ^1.1.0
   url_launcher: ^6.1.7
-  video_compress: 3.1.1
+  video_compress: ^3.1.2
   flutter_image_compress: ^2.0.3
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
   build_runner: ^2.3.2
   integration_test:
     sdk: flutter
