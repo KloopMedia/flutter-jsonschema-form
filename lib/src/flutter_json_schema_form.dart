@@ -30,6 +30,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final List<Widget>? extraButtons;
   final Map<String, dynamic>? correctFormData;
   final bool showCorrectFields;
+  final bool shrinkWrap;
 
   /// Supported locales: English, Russian, Kyrgyz, Ukrainian
   final Locale locale;
@@ -51,6 +52,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
     this.correctFormData,
     this.showCorrectFields = false,
     this.locale = const Locale('en'),
+    this.shrinkWrap = false,
   });
 
   @override
@@ -134,6 +136,7 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
         child: FormBuilder(
           key: _formKey,
           child: CustomScrollView(
+            shrinkWrap: widget.shrinkWrap,
             slivers: [
               SliverList(
                 delegate: SliverChildBuilderDelegate(
