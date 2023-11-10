@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_json_schema_form/l10n/loc.dart';
 
+import '../l10n/generated/flutter_json_schema_form_localizations.dart';
 import 'bloc/form_bloc/form_bloc.dart' as bloc;
 import 'helpers/helpers.dart';
 import 'models/models.dart';
@@ -30,8 +31,11 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final Map<String, dynamic>? correctFormData;
   final bool showCorrectFields;
 
+  /// Supported locales: English, Russian, Kyrgyz, Ukrainian
+  final Locale locale;
+
   const FlutterJsonSchemaForm({
-    Key? key,
+    super.key,
     required this.schema,
     this.uiSchema,
     this.formData,
@@ -46,7 +50,8 @@ class FlutterJsonSchemaForm extends StatefulWidget {
     this.extraButtons,
     this.correctFormData,
     this.showCorrectFields = false,
-  }) : super(key: key);
+    this.locale = const Locale('en'),
+  });
 
   @override
   State<FlutterJsonSchemaForm> createState() => _FlutterJsonSchemaFormState();
@@ -108,45 +113,52 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => bloc.FormBloc(
-        fields: serializedField,
-        formKey: _formKey,
-        formData: widget.formData,
-        storage: widget.storage,
-        disabled: widget.disabled,
-        onChangeCallback: widget.onChange,
-        onSubmitCallback: widget.onSubmit,
-        onValidationCallback: widget.onValidationFailed,
-        onWebhookTriggerCallback: widget.onWebhookTrigger,
-        onDownloadFileCallback: widget.onDownloadFile,
-        correctFormData: widget.correctFormData,
-        showCorrectFields: widget.showCorrectFields,
-      ),
-      child: FormBuilder(
-        key: _formKey,
-        child: CustomScrollView(
-          slivers: [
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final field = serializedField[index];
-                  return field.build(context);
-                },
-                childCount: serializedField.length,
+    return Localizations(
+      locale: widget.locale,
+      delegates: FlutterJsonSchemaFormLocalizations.localizationsDelegates,
+      child: BlocProvider(
+        create: (context) => bloc.FormBloc(
+          fields: serializedField,
+          formKey: _formKey,
+          formData: widget.formData,
+          storage: widget.storage,
+          disabled: widget.disabled,
+          onChangeCallback: widget.onChange,
+          onSubmitCallback: widget.onSubmit,
+          onValidationCallback: widget.onValidationFailed,
+          onWebhookTriggerCallback: widget.onWebhookTrigger,
+          onDownloadFileCallback: widget.onDownloadFile,
+          correctFormData: widget.correctFormData,
+          showCorrectFields: widget.showCorrectFields,
+        ),
+        child: FormBuilder(
+          key: _formKey,
+          child: CustomScrollView(
+            slivers: [
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final field = serializedField[index];
+                    return field.build(context);
+                  },
+                  childCount: serializedField.length,
+                ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: Builder(builder: (context) {
-                final buttons = _buildFormButtons(context);
-                if (buttons.length > 2) {
-                  return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: buttons);
-                } else {
-                  return Row(children: buttons);
-                }
-              }),
-            )
-          ],
+              SliverToBoxAdapter(
+                child: Builder(builder: (context) {
+                  final buttons = _buildFormButtons(context);
+                  if (buttons.length > 2) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: buttons,
+                    );
+                  } else {
+                    return Row(children: buttons);
+                  }
+                }),
+              ),
+            ],
+          ),
         ),
       ),
     );
