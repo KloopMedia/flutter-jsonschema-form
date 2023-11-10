@@ -148,17 +148,20 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
                 ),
               ),
               SliverToBoxAdapter(
-                child: Builder(builder: (context) {
-                  final buttons = _buildFormButtons(context);
-                  if (buttons.length > 2) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: buttons,
-                    );
-                  } else {
-                    return Row(children: buttons);
-                  }
-                }),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 24, bottom: 8.0),
+                  child: Builder(builder: (context) {
+                    final buttons = _buildFormButtons(context);
+                    if (buttons.length > 2) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: buttons,
+                      );
+                    } else {
+                      return Row(children: buttons);
+                    }
+                  }),
+                ),
               ),
             ],
           ),
