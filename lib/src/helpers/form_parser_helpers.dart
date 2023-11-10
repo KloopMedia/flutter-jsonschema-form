@@ -20,6 +20,14 @@ List<String> _getOrder(Map<String, dynamic>? uiSchema) {
   return (uiSchema['ui:order'] as List<dynamic>).cast();
 }
 
+Map<String, dynamic>? _getDependencies(Map<String, dynamic> schema) {
+  if (schema['dependencies'] != null) {
+    return Map.from(schema['dependencies']);
+  } else {
+    return null;
+  }
+}
+
 List<Field> _parsePropertiesFields(
   Map<String, dynamic> properties,
   List<String> required,

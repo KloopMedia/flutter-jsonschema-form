@@ -27,8 +27,10 @@ List<Field> parseSchema({
       dependency: dependency,
     );
 
-    final List<Field> dependencyFields = schema['dependencies'] != null
-        ? _parseDependenciesFields(schema['dependencies'], newPath, propertyFields, uiSchema: uiSchema)
+    final dependencies = _getDependencies(schema);
+
+    final List<Field> dependencyFields = dependencies != null
+        ? _parseDependenciesFields(dependencies, newPath, propertyFields, uiSchema: uiSchema)
         : [];
 
     final order = _getOrder(uiSchema);
