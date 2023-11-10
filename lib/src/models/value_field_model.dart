@@ -38,11 +38,11 @@ abstract class ValueField<T> extends Field {
     required bool isRequired,
     required Map<String, dynamic> schema,
   }) {
-    final title = schema['title'];
-    final description = schema['description'];
+    final String? title = schema['title'];
+    final String? description = schema['description'];
     final defaultValue = schema['default'];
-    final enumValues = schema['enum'];
-    final enumNames = schema['enumNames'];
+    final List<dynamic>? enumValues = schema['enum'];
+    final List<String>? enumNames = schema['enumNames'];
     final widgetType = widget == null && enumValues != null ? const SelectWidgetModel() : widget;
 
     switch (type) {
@@ -58,7 +58,7 @@ abstract class ValueField<T> extends Field {
           description: description,
           defaultValue: defaultValue,
           enumNames: enumNames,
-          enumValues: enumValues,
+          enumValues: enumValues?.cast(),
         ) as ValueField<T>;
       case FieldType.number:
       case FieldType.integer:
@@ -73,7 +73,7 @@ abstract class ValueField<T> extends Field {
           description: description,
           defaultValue: defaultValue,
           enumNames: enumNames,
-          enumValues: enumValues,
+          enumValues: enumValues?.cast(),
         ) as ValueField<T>;
       case FieldType.boolean:
         final isMultiChoice = widgetType is SelectWidgetModel || widgetType is RadioWidgetModel;
