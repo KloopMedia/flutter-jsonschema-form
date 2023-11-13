@@ -49,6 +49,8 @@ class StringField extends ValueField<String> {
   @override
   Widget getField(BuildContext context, value) {
     final isCorrect = checkFieldAnswer(context, value);
+    final disabled = context.read<bloc.FormBloc>().disabled;
+    final readOnly = !enabled || disabled;
 
     return FormBuilderTextField(
       name: id,
@@ -58,6 +60,7 @@ class StringField extends ValueField<String> {
         if (this.required) FormBuilderValidators.required(),
       ]),
       onChanged: (value) => onChange(context, value),
+      readOnly: readOnly,
       // style: theme,
     );
   }

@@ -114,13 +114,15 @@ abstract class ValueField<T> extends Field {
 
   Widget getWidget(BuildContext context, value) {
     final isCorrect = checkFieldAnswer(context, value);
+    final disabled = context.read<bloc.FormBloc>().disabled;
+    final readOnly = !enabled || disabled;
 
     return FormWidgetBuilder(
       id: id,
       widgetType: widgetType!,
       value: value,
       onChange: (value) => onChange(context, value),
-      disabled: !enabled,
+      disabled: readOnly,
       isRequired: this.required,
       readOnly: false,
       enumItems: enumValues,

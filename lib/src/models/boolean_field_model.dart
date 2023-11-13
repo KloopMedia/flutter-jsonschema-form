@@ -43,6 +43,9 @@ class BooleanField extends ValueField<bool> {
 
   @override
   Widget getField(BuildContext context, value) {
+    final disabled = context.read<bloc.FormBloc>().disabled;
+    final readOnly = !enabled || disabled;
+
     return Transform.scale(
       scale: 1.15,
       alignment: Alignment.centerLeft,
@@ -54,6 +57,7 @@ class BooleanField extends ValueField<bool> {
           if (this.required) FormBuilderValidators.required(),
         ]),
         onChanged: (value) => onChange(context, value),
+        enabled: !readOnly,
         contentPadding: const EdgeInsets.only(right: 30),
       ),
     );

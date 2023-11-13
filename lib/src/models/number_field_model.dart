@@ -45,6 +45,8 @@ class NumberField extends ValueField<num> {
   @override
   Widget getField(BuildContext context, value) {
     final isCorrect = checkFieldAnswer(context, value);
+    final disabled = context.read<bloc.FormBloc>().disabled;
+    final readOnly = !enabled || disabled;
 
     return FormBuilderTextField(
       name: id,
@@ -58,6 +60,7 @@ class NumberField extends ValueField<num> {
       keyboardType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       onChanged: (value) => onChange(context, value),
+      readOnly: readOnly,
       // style: theme,
     );
   }
