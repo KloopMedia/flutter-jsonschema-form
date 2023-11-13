@@ -15,9 +15,10 @@ final defaultFieldDecoration = InputDecoration(
     ),
     borderRadius: BorderRadius.circular(15),
   ),
-  // enabledBorder: OutlineInputBorder(
-  //   borderSide: BorderSide(width: 1.0, color:  Color(0xFF8E9192)),
-  // ),
+  enabledBorder: OutlineInputBorder(
+    borderSide: const BorderSide(width: 1.0, color:  Color(0xFF8E9192)),
+    borderRadius: BorderRadius.circular(15),
+  ),
   disabledBorder: OutlineInputBorder(
     borderSide: const BorderSide(width: 1.0, color: Color(0xFFA9ACAC)),
     borderRadius: BorderRadius.circular(15),
