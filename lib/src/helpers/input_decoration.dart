@@ -16,7 +16,7 @@ final defaultFieldDecoration = InputDecoration(
     borderRadius: BorderRadius.circular(15),
   ),
   enabledBorder: OutlineInputBorder(
-    borderSide: const BorderSide(width: 1.0, color:  Color(0xFF8E9192)),
+    borderSide: const BorderSide(width: 1.0, color: Color(0xFF8E9192)),
     borderRadius: BorderRadius.circular(15),
   ),
   disabledBorder: OutlineInputBorder(
@@ -39,43 +39,41 @@ final defaultFieldDecoration = InputDecoration(
   ),
 );
 
+const _correctColorBorder = Color.fromRGBO(116, 191, 59, 1);
+final _correctOutlineInputBorder = OutlineInputBorder(
+  borderSide: const BorderSide(width: 1, color: _correctColorBorder),
+  borderRadius: BorderRadius.circular(15),
+);
+
 final correctFormDataDecoration = defaultFieldDecoration.copyWith(
-  border: OutlineInputBorder(
-    borderSide: const BorderSide(width: 1, color: Colors.green),
-    borderRadius: BorderRadius.circular(15),
-  ),
-  enabledBorder: OutlineInputBorder(
-    borderSide: const BorderSide(width: 1.0, color: Colors.green),
-    borderRadius: BorderRadius.circular(15),
-  ),
-  focusedBorder: OutlineInputBorder(
-    borderSide: const BorderSide(color: Colors.green, width: 1.0),
-    borderRadius: BorderRadius.circular(15),
-  ),
+  border: _correctOutlineInputBorder,
+  enabledBorder: _correctOutlineInputBorder,
+  focusedBorder: _correctOutlineInputBorder,
+  disabledBorder: _correctOutlineInputBorder,
+);
+
+const _errorColorBorder = Color.fromRGBO(255, 137, 125, 1);
+final _errorOutlineInputBorder = OutlineInputBorder(
+  borderSide: const BorderSide(width: 1, color: _errorColorBorder),
+  borderRadius: BorderRadius.circular(15),
 );
 
 final wrongFormDataDecoration = defaultFieldDecoration.copyWith(
-  border: OutlineInputBorder(
-    borderSide: const BorderSide(width: 1, color: Colors.red),
-    borderRadius: BorderRadius.circular(15),
-  ),
-  enabledBorder: OutlineInputBorder(
-    borderSide: const BorderSide(width: 1.0, color: Colors.red),
-    borderRadius: BorderRadius.circular(15),
-  ),
-  focusedBorder: OutlineInputBorder(
-    borderSide: const BorderSide(color: Colors.red, width: 1.0),
-    borderRadius: BorderRadius.circular(15),
-  ),
+  border: _errorOutlineInputBorder,
+  enabledBorder: _errorOutlineInputBorder,
+  focusedBorder: _errorOutlineInputBorder,
+  disabledBorder: _errorOutlineInputBorder,
 );
 
+const _correctContainerColor = Color.fromRGBO(116, 191, 59, 0.15);
 const correctContainerDecoration = BoxDecoration(
-  color: Color.fromRGBO(233, 244, 226, 1),
+  color: _correctContainerColor,
   borderRadius: BorderRadius.all(Radius.circular(15)),
 );
 
+const _errorContainerColor = Color.fromRGBO(255, 137, 125, 0.15);
 const wrongContainerDecoration = BoxDecoration(
-  color: Color.fromRGBO(248, 236, 234, 1),
+  color: _errorContainerColor,
   borderRadius: BorderRadius.all(Radius.circular(15)),
 );
 
