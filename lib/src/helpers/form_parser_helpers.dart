@@ -65,7 +65,12 @@ List<Field> _parseDependenciesFields(
 
   for (final entry in dependencies.entries) {
     final dependencyParentId = entry.key;
-    final List<Map<String, dynamic>> variants = entry.value['oneOf'];
+    List<Map<String, dynamic>> variants;
+    try {
+      variants = List.from(entry.value['oneOf']);
+    } catch (e) {
+      variants = [];
+    }
     for (final variant in variants) {
       final Map<String, dynamic> properties = Map.of(variant['properties']);
 
