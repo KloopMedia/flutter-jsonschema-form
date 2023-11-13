@@ -41,8 +41,21 @@ abstract class ValueField<T> extends Field {
     final String? title = schema['title'];
     final String? description = schema['description'];
     final defaultValue = schema['default'];
-    final List<dynamic>? enumValues = schema['enum'];
-    final List<String>? enumNames = schema['enumNames'];
+
+    List<T>? enumValues = schema['enum'];
+    try {
+      enumValues = List.from(schema['enum']);
+    } catch (e) {
+      enumValues = null;
+    }
+
+    List<String>? enumNames;
+    try {
+      enumNames = List.from(schema['enumNames']);
+    } catch (e) {
+      enumNames = null;
+    }
+
     final widgetType = widget == null && enumValues != null ? const SelectWidgetModel() : widget;
 
     switch (type) {
