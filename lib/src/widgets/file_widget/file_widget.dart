@@ -1,16 +1,15 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/bloc.dart';
 import 'file_list.dart';
+import 'file_preview.dart';
 import 'file_selector.dart';
 import 'file_viewer.dart';
 import 'upload_task_manager.dart';
 
 class FileWidget extends StatelessWidget {
-  const FileWidget({Key? key}) : super(key: key);
+  const FileWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +32,7 @@ class FileWidget extends StatelessWidget {
       },
       child: Column(
         children: [
+          const ImagePreview(),
           FileSelector(
             onSelect: (files) {
               if (files.isNotEmpty) {

@@ -1,9 +1,10 @@
-import 'dart:math';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mime/mime.dart';
+
 import '../../bloc/bloc.dart';
+import 'utils.dart';
 
 class FileList extends StatelessWidget {
   final void Function(Reference file, int index) onPreview;
@@ -11,20 +12,11 @@ class FileList extends StatelessWidget {
   final void Function(Reference file, int index) onDownload;
 
   const FileList({
-    Key? key,
+    super.key,
     required this.onPreview,
     required this.onRemove,
     required this.onDownload,
-  }) : super(key: key);
-
-  Future<String> getFileSize(Reference file) async {
-    final metadata = await file.getMetadata();
-    final bytes = metadata.size;
-    if (bytes == null || bytes == 0) return '0 B';
-    const suffixes = ['B', 'KB', 'MB'];
-    final i = (log(bytes) / log(1024)).floor();
-    return '${(bytes / pow(1024, i)).toStringAsFixed(1)} ${suffixes[i]}';
-  }
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -55,8 +47,7 @@ class FileList extends StatelessWidget {
                       onDownload(file, index);
                     },
                   );
-                }
-            );
+                });
           },
         );
       },
@@ -72,13 +63,13 @@ class FileListItem extends StatelessWidget {
   final void Function() onDownload;
 
   const FileListItem({
-    Key? key,
+    super.key,
     required this.name,
     required this.size,
     required this.onPreview,
     required this.onRemove,
     required this.onDownload,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -130,9 +121,18 @@ class FileListItem extends StatelessWidget {
             height: 48,
             child: Row(
               children: [
-                IconButton(onPressed: onDownload, icon: const Icon(Icons.download, color: Color(0xFFC4C7C7), size: 24)),
-                IconButton(onPressed: onPreview, icon: const Icon(Icons.visibility, color: Color(0xFFC4C7C7), size: 24)),
-                IconButton(onPressed: onRemove, icon: Icon(Icons.delete, color: theme.error, size: 24)),
+                IconButton(
+                  onPressed: onDownload,
+                  icon: const Icon(Icons.download, color: Color(0xFFC4C7C7), size: 24),
+                ),
+                IconButton(
+                  onPressed: onPreview,
+                  icon: const Icon(Icons.visibility, color: Color(0xFFC4C7C7), size: 24),
+                ),
+                IconButton(
+                  onPressed: onRemove,
+                  icon: Icon(Icons.delete, color: theme.error, size: 24),
+                ),
               ],
             ),
           ),
