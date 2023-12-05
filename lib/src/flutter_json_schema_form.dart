@@ -2,9 +2,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_json_schema_form/l10n/loc.dart';
 
+import '../l10n/generated/flutter_json_schema_form_localizations.dart';
 import 'bloc/form_bloc/form_bloc.dart' as bloc;
 import 'helpers/helpers.dart';
+import 'models/models.dart';
 
 typedef ChangeFormCallback = Function(Map<String, dynamic> formData, String path);
 typedef SubmitFormCallback = Function(Map<String, dynamic> formData);
@@ -21,17 +24,19 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final ValidationWarningCallback? onValidationFailed;
   final WebhookTriggerCallback? onWebhookTrigger;
   final DownloadFileCallback? onDownloadFile;
-  final VoidCallback? onOpenPreviousTask;
   final Reference? storage;
   final bool disabled;
-  final bool allowOpenPrevious;
-  final Text? submitButtonText;
-  final List<String>? addFileText;
-  final Text? openPreviousButtonText;
   final PageStorageKey? pageStorageKey;
+  final List<Widget>? extraButtons;
+  final Map<String, dynamic>? correctFormData;
+  final bool showCorrectFields;
+  final bool shrinkWrap;
+
+  /// Supported locales: English, Russian, Kyrgyz, Ukrainian
+  final Locale locale;
 
   const FlutterJsonSchemaForm({
-    Key? key,
+    super.key,
     required this.schema,
     this.uiSchema,
     this.formData,
@@ -41,14 +46,14 @@ class FlutterJsonSchemaForm extends StatefulWidget {
     this.onWebhookTrigger,
     this.storage,
     this.disabled = false,
-    this.submitButtonText,
-    this.addFileText,
     this.pageStorageKey,
     this.onDownloadFile,
-    this.onOpenPreviousTask,
-    this.openPreviousButtonText,
-    this.allowOpenPrevious = false,
-  }) : super(key: key);
+    this.extraButtons,
+    this.correctFormData,
+    this.showCorrectFields = false,
+    this.locale = const Locale('en'),
+    this.shrinkWrap = false,
+  });
 
   @override
   State<FlutterJsonSchemaForm> createState() => _FlutterJsonSchemaFormState();
@@ -56,114 +61,111 @@ class FlutterJsonSchemaForm extends StatefulWidget {
 
 class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
   final _formKey = GlobalKey<FormBuilderState>();
+  late final List<Field> fields;
+  late final List<Field> serializedField;
 
   @override
-  Widget build(BuildContext context) {
-    final fields = FormSerializer.serialize(widget.schema, widget.uiSchema);
+  void initState() {
+    fields = parseSchema(schema: widget.schema, uiSchema: widget.uiSchema);
+    serializedField = serializeFields(fields, widget.formData ?? {});
+    super.initState();
+  }
 
-    return BlocProvider(
-      create: (context) => bloc.FormBloc(
-        formKey: _formKey,
-        formData: widget.formData,
-        storage: widget.storage,
-        disabled: widget.disabled,
-        onChangeCallback: widget.onChange,
-        onSubmitCallback: widget.onSubmit,
-        onValidationCallback: widget.onValidationFailed,
-        onWebhookTriggerCallback: widget.onWebhookTrigger,
-        onDownloadFileCallback: widget.onDownloadFile,
-        addFileText: widget.addFileText,
+  Widget _buildSubmitButton(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      child: Form(
-        formKey: _formKey,
-        fields: fields,
-        disabled: widget.disabled,
-        submitButtonText: widget.submitButtonText,
-        pageStorageKey: widget.pageStorageKey,
-        allowOpenPrevious: widget.allowOpenPrevious,
-        onOpenPreviousTask: widget.onOpenPreviousTask,
-        openPreviousButtonText: widget.openPreviousButtonText,
-      ),
+      onPressed: () {
+        context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
+      },
+      child: Text(context.loc.submit),
     );
   }
-}
 
-class Form extends StatelessWidget {
-  final GlobalKey<FormBuilderState> formKey;
-  final PageStorageKey? pageStorageKey;
-  final List fields;
-  final bool disabled;
-  final Text? submitButtonText;
-  final VoidCallback? onOpenPreviousTask;
-  final Text? openPreviousButtonText;
-  final bool allowOpenPrevious;
+  List<Widget> _buildFormButtons(BuildContext context) {
+    final submitButton = _buildSubmitButton(context);
+    final buttons = [...widget.extraButtons ?? [], if (!widget.disabled) submitButton];
 
-  const Form({
-    Key? key,
-    required this.formKey,
-    required this.fields,
-    required this.disabled,
-    this.submitButtonText,
-    this.pageStorageKey,
-    this.onOpenPreviousTask,
-    this.openPreviousButtonText,
-    required this.allowOpenPrevious,
-  }) : super(key: key);
+    List<Widget> wrappedButtons = [];
+    for (var i = 0; i < buttons.length; i++) {
+      final double start = i == 0 ? 0 : 5;
+      final double end = i == buttons.length - 1 ? 0 : 5;
+      final paddingVertical = EdgeInsets.only(top: start, bottom: end);
+      final paddingHorizontal = EdgeInsets.only(left: start, right: end);
+      final isColumn = buttons.length > 2;
+
+      wrappedButtons.add(
+        Expanded(
+          flex: isColumn ? 0 : 1,
+          child: Container(
+            padding: isColumn ? paddingVertical : paddingHorizontal,
+            height: 52,
+            child: buttons[i],
+          ),
+        ),
+      );
+    }
+
+    return wrappedButtons;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      key: pageStorageKey,
-      child: Column(
-        children: [
-          FormBuilder(
-            key: formKey,
-            clearValueOnUnregister: true,
-            child: FormConstructor(fields: fields),
-          ),
-          Row(
-            children: [
-              if (allowOpenPrevious)
-                Expanded(
-                  child: SizedBox(
-                    height: 52,
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(
-                          width: 1,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
-                      onPressed: onOpenPreviousTask,
-                      child: openPreviousButtonText ?? const Text('Go back'),
-                    ),
-                  ),
+    return Localizations(
+      locale: widget.locale,
+      delegates: FlutterJsonSchemaFormLocalizations.localizationsDelegates,
+      child: BlocProvider(
+        create: (context) => bloc.FormBloc(
+          fields: serializedField,
+          formKey: _formKey,
+          formData: widget.formData,
+          storage: widget.storage,
+          disabled: widget.disabled,
+          onChangeCallback: widget.onChange,
+          onSubmitCallback: widget.onSubmit,
+          onValidationCallback: widget.onValidationFailed,
+          onWebhookTriggerCallback: widget.onWebhookTrigger,
+          onDownloadFileCallback: widget.onDownloadFile,
+          correctFormData: widget.correctFormData,
+          showCorrectFields: widget.showCorrectFields,
+        ),
+        child: FormBuilder(
+          key: _formKey,
+          child: CustomScrollView(
+            shrinkWrap: widget.shrinkWrap,
+            slivers: [
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final field = serializedField[index];
+                    return field.build(context);
+                  },
+                  childCount: serializedField.length,
                 ),
-              if (allowOpenPrevious && !disabled) const SizedBox(width: 10),
-              if (!disabled)
-                Expanded(
-                  child: SizedBox(
-                    height: 52,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                      ),
-                      onPressed: () {
-                        context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
-                      },
-                      child: submitButtonText ?? const Text('Submit'),
-                    ),
-                  ),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 24, bottom: 8.0),
+                  child: Builder(builder: (context) {
+                    final buttons = _buildFormButtons(context);
+                    if (buttons.length > 2) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: buttons,
+                      );
+                    } else {
+                      return Row(children: buttons);
+                    }
+                  }),
                 ),
+              ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

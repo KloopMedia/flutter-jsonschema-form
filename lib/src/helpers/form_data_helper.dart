@@ -1,3 +1,4 @@
+import '../bloc/bloc.dart';
 import '../models/models.dart';
 import 'helpers.dart';
 
@@ -125,4 +126,12 @@ dynamic getFormDataByPath(
     }
   }
   return dataPointer;
+}
+
+bool shouldRebuildBloc(Field field, FormState previous, FormState current) {
+  final previousValue = getFormDataByPath(previous.formData, field.path);
+  final currentValue = getFormDataByPath(current.formData, field.path);
+  final renderPreviousDependency = field.shouldRenderDependency(previous.formData);
+  final renderCurrentDependency = field.shouldRenderDependency(current.formData);
+  return renderPreviousDependency != renderCurrentDependency || previousValue != currentValue;
 }

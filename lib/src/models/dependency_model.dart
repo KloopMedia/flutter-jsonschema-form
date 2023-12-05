@@ -1,17 +1,30 @@
+import '../helpers/form_data_helper.dart';
 import 'models.dart';
 
-class DependencyModel {
+class Dependency {
   final String parentId;
   final PathModel parentPath;
-  final String id;
-  final List<dynamic> values;
-  final FieldModel? field;
+  final List<dynamic> conditions;
+  final Dependency? parentDependency;
 
-  const DependencyModel({
-    required this.id,
+  Dependency({
     required this.parentId,
-    required this.values,
-    this.field,
     required this.parentPath,
+    required this.conditions,
+    required this.parentDependency,
   });
+
+  bool shouldRenderDependency(Map<String, dynamic> formData) {
+    final data = getFormDataByPath(formData, parentPath);
+
+    if (!conditions.contains(data)) {
+      return false;
+    }
+
+    if (parentDependency != null) {
+      return parentDependency!.shouldRenderDependency(formData);
+    } else {
+      return true;
+    }
+  }
 }

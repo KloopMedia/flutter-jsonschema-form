@@ -1,29 +1,47 @@
-import '../helpers/helpers.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../bloc/bloc.dart' as bloc;
+import '../helpers/form_data_helper.dart';
+import '../widgets/field_wrapper.dart';
 import 'models.dart';
 
-class SectionModel extends FieldModel {
-  final List<dynamic> fields;
-  final List<String> required;
+class Section extends ComplexField {
+  final List<Field> fields;
+
+  Section({
+    required super.id,
+    required super.path,
+    required super.type,
+    super.title,
+    super.description,
+    super.dependency,
+    required this.fields,
+  });
 
   @override
-  void copyWith({String? id, PathModel? path}) {}
+  Section copyWith({String? id, PathModel? path}) {
+    return Section(
+      id: id ?? this.id,
+      path: path ?? this.path,
+      type: type,
+      fields: fields,
+      title: title,
+      description: description,
+      dependency: dependency,
+    );
+  }
 
-  const SectionModel({
-    required String id,
-    String? title,
-    String? description,
-    required PathModel path,
-    required this.fields,
-    required this.required,
-  }) : super.init(
-          id: id,
-          title: title,
-          description: description,
-          fieldType: FieldType.object,
-          path: path,
-          isRequired: false,
-          widgetType: const NullWidgetModel(),
-          disabled: false,
-          readOnly: false,
-        );
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<bloc.FormBloc, bloc.FormState>(
+        buildWhen: (previous, current) => shouldRebuildBloc(this, previous, current),
+        builder: (context, state) {
+          if (!shouldRenderDependency(state.formData)) {
+            return const SizedBox.shrink();
+          }
+
+          return FieldWrapper.section(title: title, description: description);
+        });
+  }
 }

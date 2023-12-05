@@ -6,55 +6,55 @@ abstract class WidgetModel {
   const WidgetModel({
     required this.type,
   });
+}
 
-  factory WidgetModel.fromUiSchema(Map<String, dynamic>? uiSchema) {
-    final WidgetType type = decodeWidgetType(uiSchema?['ui:widget']);
-    final Map<String, dynamic>? options = uiSchema?['ui:options'];
+WidgetModel? getWidgetModelFromUiSchema(Map<String, dynamic>? uiSchema) {
+  final WidgetType type = decodeWidgetType(uiSchema?['ui:widget']);
+  final Map<String, dynamic>? options = uiSchema?['ui:options'];
 
-    switch (type) {
-      case WidgetType.radio:
-        return const RadioWidgetModel();
-      case WidgetType.select:
-        return const SelectWidgetModel();
-      case WidgetType.link:
-        return const LinkWidgetModel();
-      case WidgetType.password:
-        return const PasswordWidgetModel();
-      case WidgetType.textarea:
-        final rows = getOption<int>(options, 'rows');
-        return TextAreaWidgetModel(rows: rows);
-      case WidgetType.audio:
-        final private = getOption<bool>(options, 'private');
-        final url = getOption<String>(options, 'default');
-        return AudioWidgetModel(private: private, url: url);
-      case WidgetType.recorder:
-        final private = getOption<bool>(options, 'private');
-        return RecorderWidgetModel(private: private);
-      case WidgetType.file:
-        final private = getOption<bool>(options, 'private');
-        final multiple = getOption<bool>(options, 'multiple');
-        return FileWidgetModel(private: private, multiple: multiple);
-      case WidgetType.webhook:
-        final label = getOption(options, 'label');
-        return WebhookTriggerWidgetModel(label: label);
-      case WidgetType.autocomplete:
-        return AutocompleteWidgetModel();
-      // case WidgetType.card:
-      //   // TODO: Handle this case.
-      //   break;
-      // case WidgetType.reader:
-      //   // TODO: Handle this case.
-      //   break;
-      case WidgetType.image:
-        final text = getOption<String>(options, 'text');
-        final List<String> images = List.castFrom(getOption(options, 'images') ?? []);
-        return ImageWidgetModel(text: text, images: images);
-      case WidgetType.paragraph:
-        final paragraph = getOption<String>(options, 'paragraph') ?? "";
-        return ParagraphWidgetModel(paragraph: paragraph);
-      default:
-        return const NullWidgetModel();
-    }
+  switch (type) {
+    case WidgetType.radio:
+      return const RadioWidgetModel();
+    case WidgetType.select:
+      return const SelectWidgetModel();
+    case WidgetType.link:
+      return const LinkWidgetModel();
+    case WidgetType.password:
+      return const PasswordWidgetModel();
+    case WidgetType.textarea:
+      final rows = getOption<int>(options, 'rows');
+      return TextAreaWidgetModel(rows: rows);
+    case WidgetType.audio:
+      final private = getOption<bool>(options, 'private');
+      final url = getOption<String>(options, 'default');
+      return AudioWidgetModel(private: private, url: url);
+    case WidgetType.recorder:
+      final private = getOption<bool>(options, 'private');
+      return RecorderWidgetModel(private: private);
+    case WidgetType.file:
+      final private = getOption<bool>(options, 'private');
+      final multiple = getOption<bool>(options, 'multiple');
+      return FileWidgetModel(private: private, multiple: multiple);
+    case WidgetType.webhook:
+      final label = getOption(options, 'label');
+      return WebhookTriggerWidgetModel(label: label);
+    case WidgetType.autocomplete:
+      return AutocompleteWidgetModel();
+// case WidgetType.card:
+//   // TODO: Handle this case.
+//   break;
+// case WidgetType.reader:
+//   // TODO: Handle this case.
+//   break;
+    case WidgetType.image:
+      final text = getOption<String>(options, 'text');
+      final List<String> images = List.castFrom(getOption(options, 'images') ?? []);
+      return ImageWidgetModel(text: text, images: images);
+    case WidgetType.paragraph:
+      final paragraph = getOption<String>(options, 'paragraph') ?? "";
+      return ParagraphWidgetModel(paragraph: paragraph);
+    default:
+      return null;
   }
 }
 

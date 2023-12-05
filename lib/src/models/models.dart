@@ -1,9 +1,13 @@
 export 'array_model.dart';
 export 'section_model.dart';
 export 'field_model.dart';
-export 'text_field_model.dart';
-export 'number_field_model.dart';
-export 'boolean_field_model.dart';
 export 'path_model.dart';
 export 'dependency_model.dart';
 export 'widget_model.dart';
+export 'dynamic_array_model.dart';
+export 'static_array_model.dart';
+export 'value_field_model.dart';
+export 'boolean_field_model.dart';
+export 'text_field_model.dart';
+export 'number_field_model.dart';
+export 'complex_field_model.dart';

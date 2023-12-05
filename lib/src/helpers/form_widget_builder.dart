@@ -22,6 +22,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
   final bool disabled;
   final bool readOnly;
   final bool isRequired;
+  final InputDecoration decoration;
 
   const FormWidgetBuilder({
     Key? key,
@@ -35,6 +36,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
     required this.disabled,
     required this.isRequired,
     this.enumItems,
+    required this.decoration,
   }) : super(key: key);
 
   @override
@@ -200,6 +202,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
   final bool disabled;
   final bool readOnly;
   final bool isRequired;
+  final InputDecoration decoration;
 
   const TextFormatWidgetBuilder({
     Key? key,
@@ -210,6 +213,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
     required this.disabled,
     required this.readOnly,
     required this.isRequired,
+    required this.decoration,
   }) : super(key: key);
 
   DateTime? getFormattedDateTime(String? value) {
@@ -314,6 +318,7 @@ class DefaultWidgetBuilder extends StatelessWidget {
   final bool disabled;
   final bool readOnly;
   final bool isRequired;
+  final InputDecoration decoration;
 
   const DefaultWidgetBuilder({
     Key? key,
@@ -325,6 +330,7 @@ class DefaultWidgetBuilder extends StatelessWidget {
     required this.readOnly,
     required this.disabled,
     required this.isRequired,
+    required this.decoration,
   }) : super(key: key);
 
   @override

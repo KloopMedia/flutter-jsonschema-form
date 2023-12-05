@@ -21,11 +21,14 @@ class FormBloc extends Bloc<FormEvent, FormState> {
   final bool disabled;
   final GlobalKey<FormBuilderState> formKey;
   final ValidationWarningCallback? onValidationCallback;
-  final List<String>? addFileText;
+  final List<Field> fields;
+  final Map<String, dynamic>? correctFormData;
+  final bool showCorrectFields;
 
   FormBloc({
     Map<String, dynamic>? formData,
     required this.formKey,
+    required this.fields,
     this.storage,
     this.disabled = false,
     this.onChangeCallback,
@@ -33,7 +36,8 @@ class FormBloc extends Bloc<FormEvent, FormState> {
     this.onValidationCallback,
     this.onWebhookTriggerCallback,
     this.onDownloadFileCallback,
-    this.addFileText,
+    this.correctFormData,
+    this.showCorrectFields = false,
   }) : super(FormInitial(formData ?? {}, disabled: disabled)) {
     on<ChangeFormEvent>(_onChangeFormEvent);
     on<SubmitFormEvent>(_onSubmitFormEvent);
@@ -57,18 +61,24 @@ class FormBloc extends Bloc<FormEvent, FormState> {
 
     final value = event.value;
     final path = event.path;
-    final delete = event.delete;
+    final delete = event.delete || value == null;
     final isDependency = event.isDependency;
 
     Map<String, dynamic> formData;
-    if (delete || value == null) {
-      formData = Map<String, dynamic>.from(
-        updateDeeply(path.path, state.formData, (prevValue) => value, true),
-      );
-    } else {
-      formData = Map<String, dynamic>.from(
-        updateDeeply(path.path, state.formData, (prevValue) => value, false),
-      );
+    formData = Map<String, dynamic>.from(
+      updateDeeply(path.path, state.formData, (prevValue) => value, delete),
+    );
+
+    for (final field in fields) {
+      if (!field.shouldRenderDependency(formData)) {
+        if (field is ValueField) {
+          formData = Map<String, dynamic>.from(
+            updateDeeply(field.path.path, formData, (prevValue) => null, true),
+          );
+        }
+
+        formKey.currentState?.removeInternalFieldValue(field.id);
+      }
     }
 
     if (isDependency) {
