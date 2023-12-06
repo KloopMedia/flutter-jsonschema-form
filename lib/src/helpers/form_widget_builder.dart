@@ -188,6 +188,21 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         enabled: !disabled,
         onChanged: onChange,
       );
+    } else if (widgetModel is ImageRadioWidgetModel) {
+      return ImageRadioWidget<T>(
+        name: id,
+        initialValue: value,
+        decoration: decoration,
+        orientation: OptionsOrientation.vertical,
+        validator: FormBuilderValidators.compose([
+          if (isRequired) FormBuilderValidators.required(),
+        ]),
+        options: radioItems!,
+        enabled: !disabled,
+        onChanged: onChange,
+        physics: const NeverScrollableScrollPhysics(),
+        images: widgetModel.images,
+      );
     } else {
       return const Text('Error');
     }
