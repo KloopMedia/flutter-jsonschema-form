@@ -226,8 +226,7 @@ class DecoratedImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 144,
-      height: 144,
+      height: 300,
       margin: margin,
       child: Hero(
         tag: tag,
@@ -243,7 +242,7 @@ class DecoratedImage extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               child: CachedNetworkImage(
                 imageUrl: url,
-                fit: BoxFit.fill,
+                fit: BoxFit.fitHeight,
               ),
             ),
           ),
