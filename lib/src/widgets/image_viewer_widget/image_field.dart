@@ -226,8 +226,8 @@ class DecoratedImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 72,
-      height: 72,
+      width: 144,
+      height: 144,
       margin: margin,
       child: Hero(
         tag: tag,
