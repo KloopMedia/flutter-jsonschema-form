@@ -1,15 +1,14 @@
 import 'dart:convert';
-import 'dart:io' as io;
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:mime/mime.dart';
 import 'package:video_compress/video_compress.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-part 'file_event.dart';
 
+part 'file_event.dart';
 part 'file_state.dart';
 
 class FileBloc extends Bloc<FileEvent, FileState> {
@@ -35,12 +34,16 @@ class FileBloc extends Bloc<FileEvent, FileState> {
 
   static List<Reference> _decodeValue(Reference storage, dynamic value) {
     Iterable<MapEntry<String, String>> entries;
-    if (value is String) {
-      final decodedValue = Map<String, String>.from(jsonDecode(value));
-      entries = decodedValue.entries;
-    } else if (value is Map) {
-      entries = value.entries.cast();
-    } else {
+    try {
+      if (value is String) {
+        final decodedValue = Map<String, String>.from(jsonDecode(value));
+        entries = decodedValue.entries;
+      } else if (value is Map) {
+        entries = value.entries.cast();
+      } else {
+        entries = [];
+      }
+    } catch (_) {
       entries = [];
     }
 
@@ -105,7 +108,8 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     }
   }
 
-  Future<void> uploadToStorage(Reference ref, Uint8List? compressedFileBytes, SettableMetadata metadata, Emitter<FileState> emit) async {
+  Future<void> uploadToStorage(Reference ref, Uint8List? compressedFileBytes,
+      SettableMetadata metadata, Emitter<FileState> emit) async {
     final uploadTask = ref.putData(compressedFileBytes!, metadata);
     emit(FileLoading(files: state.files, uploadTask: uploadTask));
     try {
