@@ -17,7 +17,7 @@ class ImagePreview extends StatelessWidget {
         return ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: 6,
+          itemCount: state.files.length,
           itemBuilder: (context, index) {
             final file = state.files[index];
             final type = getMimeType(file.name);
