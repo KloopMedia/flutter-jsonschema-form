@@ -11,6 +11,10 @@ List<Field> parseSchema({
   Dependency? dependency,
   bool? isRequired,
 }) {
+  if (schema.isEmpty) {
+    return [];
+  }
+
   final type = _getFieldType(schema);
   final newPath = id == "#" ? path : path.add(id, type);
 
