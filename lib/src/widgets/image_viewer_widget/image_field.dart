@@ -226,7 +226,7 @@ class DecoratedImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
+      height: MediaQuery.of(context).size.width > 500 ? 300 : 150,
       margin: margin,
       child: Hero(
         tag: tag,
