@@ -12,4 +12,10 @@ class FlutterJsonSchemaFormLocalizationsKy extends FlutterJsonSchemaFormLocaliza
 
   @override
   String get select_file_end => '  жүктөө үчүн';
+
+  @override
+  String get answer_correct => 'Туура';
+
+  @override
+  String get answer_wrong => 'Туура эмес';
 }

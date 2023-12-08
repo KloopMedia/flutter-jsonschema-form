@@ -12,4 +12,10 @@ class FlutterJsonSchemaFormLocalizationsEn extends FlutterJsonSchemaFormLocaliza
 
   @override
   String get select_file_end => ' to upload';
+
+  @override
+  String get answer_correct => 'Correct';
+
+  @override
+  String get answer_wrong => 'Wrong';
 }

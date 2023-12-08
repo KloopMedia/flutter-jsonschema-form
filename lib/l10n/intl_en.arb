@@ -1,5 +1,7 @@
 {
 	"submit": "Submit",
 	"select_file_start": "Select file",
-	"select_file_end": " to upload"
+	"select_file_end": " to upload",
+	"answer_correct": "Correct",
+	"answer_wrong": "Wrong"
 }

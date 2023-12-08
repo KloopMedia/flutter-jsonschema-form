@@ -12,4 +12,10 @@ class FlutterJsonSchemaFormLocalizationsRu extends FlutterJsonSchemaFormLocaliza
 
   @override
   String get select_file_end => ' для загрузки';
+
+  @override
+  String get answer_correct => 'Правильно';
+
+  @override
+  String get answer_wrong => 'Неправильно';
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_json_schema_form/l10n/loc.dart';
 
 import '../helpers/helpers.dart';
 
@@ -35,17 +36,25 @@ class ContainerExtension extends StatelessWidget {
     if (isCorrect == null) {
       return const SizedBox.shrink();
     } else if (isCorrect!) {
-      return const Padding(
+      return Padding(
         padding: padding,
         child: Row(
-          children: [Icon(Icons.check), SizedBox(width: 10), Text('Correct')],
+          children: [
+            const Icon(Icons.check),
+            const SizedBox(width: 10),
+            Text(context.loc.answer_correct),
+          ],
         ),
       );
     } else {
-      return const Padding(
+      return Padding(
         padding: padding,
         child: Row(
-          children: [Icon(Icons.close_rounded), SizedBox(width: 10), Text('Wrong')],
+          children: [
+            const Icon(Icons.close_rounded),
+            const SizedBox(width: 10),
+            Text(context.loc.answer_wrong)
+          ],
         ),
       );
     }

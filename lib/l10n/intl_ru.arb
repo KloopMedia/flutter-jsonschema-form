@@ -1,5 +1,7 @@
 {
 	"submit": "Отправить",
 	"select_file_start": "Выберите файл",
-	"select_file_end": " для загрузки"
+	"select_file_end": " для загрузки",
+	"answer_correct": "Правильно",
+	"answer_wrong": "Неправильно"
 }
