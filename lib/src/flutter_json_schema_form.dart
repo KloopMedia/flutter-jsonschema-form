@@ -74,12 +74,14 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
   }
 
   Widget _buildSubmitButton(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: theme.primary,
+        foregroundColor: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
       ),
       onPressed: () {
         context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
