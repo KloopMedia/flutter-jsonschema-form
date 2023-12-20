@@ -85,7 +85,21 @@ class StringField extends ValueField<String> {
           isRequired: this.required,
           child: CorrectAnswerWrapper(
             isCorrect: isCorrect,
-            child: widget,
+            child: Theme(
+              data: ThemeData(
+                radioTheme: RadioThemeData(
+                  fillColor: MaterialStateProperty.resolveWith(
+                    (Set states) {
+                      if (states.contains(MaterialState.disabled)) {
+                        return Colors.grey;
+                      }
+                      return Colors.black;
+                    },
+                  ),
+                ),
+              ),
+              child: widget,
+            ),
           ),
         );
       },

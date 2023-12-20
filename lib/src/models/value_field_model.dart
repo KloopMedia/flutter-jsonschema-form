@@ -127,7 +127,7 @@ abstract class ValueField<T> extends Field {
       readOnly: false,
       enumItems: enumValues,
       dropdownItems: getDropdownItems(),
-      radioItems: getRadioItems(),
+      radioItems: getRadioItems(context),
       decoration: showCorrectFieldDecoration(isCorrect),
     );
   }
@@ -190,7 +190,7 @@ abstract class ValueField<T> extends Field {
     return items;
   }
 
-  List<FormBuilderFieldOption<T>> getRadioItems() {
+  List<FormBuilderFieldOption<T>> getRadioItems(BuildContext context) {
     final options = enumValues ?? [];
     final names = enumNames ?? [];
 
@@ -211,7 +211,10 @@ abstract class ValueField<T> extends Field {
       } catch (_) {
         name = value.toString();
       }
-      return FormBuilderFieldOption(value: value, child: Text(name));
+      return FormBuilderFieldOption(
+        value: value,
+        child: Text(name, style: const TextStyle(color: Colors.black)),
+      );
     });
     return items;
   }
