@@ -78,7 +78,6 @@ class FileListItem extends StatelessWidget {
     final type = mimeType?.split('/').first;
 
     return Container(
-      height: 48,
       width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
