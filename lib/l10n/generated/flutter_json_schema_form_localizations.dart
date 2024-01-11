@@ -126,6 +126,12 @@ abstract class FlutterJsonSchemaFormLocalizations {
   /// In en, this message translates to:
   /// **'Wrong'**
   String get answer_wrong;
+
+  /// No description provided for @quiz_score.
+  ///
+  /// In en, this message translates to:
+  /// **'Percentage of correct answers:'**
+  String get quiz_score;
 }
 
 class _FlutterJsonSchemaFormLocalizationsDelegate extends LocalizationsDelegate<FlutterJsonSchemaFormLocalizations> {

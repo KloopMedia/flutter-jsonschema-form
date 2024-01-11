@@ -3,5 +3,6 @@
 	"select_file_start": "Select file",
 	"select_file_end": " to upload",
 	"answer_correct": "Correct",
-	"answer_wrong": "Wrong"
+	"answer_wrong": "Wrong",
+	"quiz_score": "Percentage of correct answers:"
 }

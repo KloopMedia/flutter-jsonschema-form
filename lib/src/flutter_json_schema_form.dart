@@ -73,6 +73,31 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
     super.initState();
   }
 
+  int? _calculateFormScore(BuildContext context) {
+    final correctFormData = widget.correctFormData;
+    if (correctFormData == null || correctFormData.isEmpty) {
+      return null;
+    }
+
+    final correctAnswersTotalSize = correctFormData.length;
+    var correctAnswerCount = 0;
+
+    for (var field in serializedField) {
+      if (field is ValueField) {
+        final formData = widget.formData ?? {};
+        final value = getFormDataByPath(formData, field.path);
+        final isCorrect = field.checkFieldAnswer(context, value) ?? false;
+        if (isCorrect) {
+          correctAnswerCount += 1;
+        }
+      }
+    }
+
+    final score = (correctAnswerCount * 100 / correctAnswersTotalSize).round();
+
+    return score;
+  }
+
   Widget _buildSubmitButton(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
     return ElevatedButton(
@@ -152,6 +177,35 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
                   },
                   childCount: serializedField.length,
                 ),
+              ),
+              Builder(
+                builder: (context) {
+                  if (widget.showCorrectFields &&
+                      widget.correctFormData != null &&
+                      widget.correctFormData!.isNotEmpty) {
+                    final value = _calculateFormScore(context);
+
+                    return SliverToBoxAdapter(
+                      child: Container(
+                        padding: const EdgeInsets.all(15),
+                        decoration: correctContainerDecoration,
+                        child: Row(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(right: 8.0),
+                              child: Icon(Icons.error_outline),
+                            ),
+                            Text(
+                              "${context.loc.quiz_score} $value",
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                  return const SliverToBoxAdapter(child: SizedBox.shrink());
+                },
               ),
               SliverToBoxAdapter(
                 child: Padding(

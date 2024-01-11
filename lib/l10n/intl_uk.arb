@@ -3,5 +3,6 @@
 	"select_file_start": "Виберіть файл",
 	"select_file_end": " для завантаження",
   "answer_correct": "Правильно",
-  "answer_wrong": "Неправильно"
+  "answer_wrong": "Неправильно",
+	"quiz_score": "Відсоток правильних відповідей:"
 }

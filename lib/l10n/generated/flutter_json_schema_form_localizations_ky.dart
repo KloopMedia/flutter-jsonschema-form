@@ -18,4 +18,7 @@ class FlutterJsonSchemaFormLocalizationsKy extends FlutterJsonSchemaFormLocaliza
 
   @override
   String get answer_wrong => 'Туура эмес';
+
+  @override
+  String get quiz_score => 'Туура жооптордун пайызы:';
 }

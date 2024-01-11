@@ -18,4 +18,7 @@ class FlutterJsonSchemaFormLocalizationsEn extends FlutterJsonSchemaFormLocaliza
 
   @override
   String get answer_wrong => 'Wrong';
+
+  @override
+  String get quiz_score => 'Percentage of correct answers:';
 }
