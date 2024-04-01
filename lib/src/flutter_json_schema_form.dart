@@ -2,7 +2,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_json_schema_form/l10n/form_localization_ky.dart';
 import 'package:flutter_json_schema_form/l10n/loc.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 
 import '../l10n/generated/flutter_json_schema_form_localizations.dart';
 import 'bloc/form_bloc/form_bloc.dart' as bloc;
@@ -106,7 +108,8 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
           borderRadius: BorderRadius.circular(15),
         ),
         backgroundColor: theme.primary,
-        foregroundColor: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
+        foregroundColor:
+            Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
       ),
       onPressed: () {
         context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
@@ -146,7 +149,11 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
   Widget build(BuildContext context) {
     return Localizations(
       locale: widget.locale,
-      delegates: FlutterJsonSchemaFormLocalizations.localizationsDelegates,
+      delegates: const [
+        ...FlutterJsonSchemaFormLocalizations.localizationsDelegates,
+        FormBuilderLocalizations.delegate,
+        FormLocalizationsDelegateKy(),
+      ],
       child: BlocProvider(
         create: (context) => bloc.FormBloc(
           fields: serializedField,
