@@ -2,6 +2,7 @@
 	"submit": "Жөнөтүү",
   "select_file_start": "Файлды тандаңыз",
   "select_file_end": "  жүктөө үчүн",
+	"file_upload_success": "Файл ийгиликтүү жүктөлдү",
   "answer_correct": "Туура",
   "answer_wrong": "Туура эмес",
 	"quiz_score": "Туура жооптордун пайызы:"

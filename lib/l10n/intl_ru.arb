@@ -2,6 +2,7 @@
 	"submit": "Отправить",
 	"select_file_start": "Выберите файл",
 	"select_file_end": " для загрузки",
+	"file_upload_success": "Файл успешно загружен",
 	"answer_correct": "Правильно",
 	"answer_wrong": "Неправильно",
 	"quiz_score": "Процент правильных ответов:"

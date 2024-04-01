@@ -14,6 +14,9 @@ class FlutterJsonSchemaFormLocalizationsKy extends FlutterJsonSchemaFormLocaliza
   String get select_file_end => '  жүктөө үчүн';
 
   @override
+  String get file_upload_success => 'Файл ийгиликтүү жүктөлдү';
+
+  @override
   String get answer_correct => 'Туура';
 
   @override

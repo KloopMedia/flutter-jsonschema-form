@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_json_schema_form/l10n/loc.dart';
 
 import '../../bloc/bloc.dart';
 import 'file_list.dart';
@@ -17,6 +18,13 @@ class FileWidget extends StatelessWidget {
       listener: (context, state) async {
         if (state is FileError) {
           print(state.errorMessage);
+        }
+        if (state is FileUploadSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(context.loc.file_upload_success),
+            ),
+          );
         }
         if (state is FilePreview) {
           final bloc = context.read<FileBloc>();

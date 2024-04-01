@@ -146,6 +146,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     } else {
       files = [event.file];
     }
+    emit(FileUploadSuccess(files: files));
     emit(FilesModified(files: files));
     final value = _encodeValue(files);
     onChanged(value);

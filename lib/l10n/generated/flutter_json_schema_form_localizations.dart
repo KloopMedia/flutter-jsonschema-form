@@ -115,6 +115,12 @@ abstract class FlutterJsonSchemaFormLocalizations {
   /// **' to upload'**
   String get select_file_end;
 
+  /// No description provided for @file_upload_success.
+  ///
+  /// In en, this message translates to:
+  /// **'File was uploaded successfully'**
+  String get file_upload_success;
+
   /// No description provided for @answer_correct.
   ///
   /// In en, this message translates to:

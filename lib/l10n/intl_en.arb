@@ -2,6 +2,7 @@
 	"submit": "Submit",
 	"select_file_start": "Select file",
 	"select_file_end": " to upload",
+	"file_upload_success": "File was uploaded successfully",
 	"answer_correct": "Correct",
 	"answer_wrong": "Wrong",
 	"quiz_score": "Percentage of correct answers:"

@@ -55,3 +55,10 @@ class FilePreview extends FileState {
   @override
   List<Object?> get props => [file, files];
 }
+
+class FileUploadSuccess extends FileState {
+  const FileUploadSuccess({required super.files});
+
+  @override
+  List<Object?> get props => [];
+}
