@@ -52,7 +52,7 @@ const widgetEnumMap = {
   WidgetType.autocomplete: 'simple_autocomplete',
   WidgetType.image: 'image',
   WidgetType.imageRadio: 'image_radio',
-  WidgetType.youtubeRadio: 'youtube_radio',
+  WidgetType.youtubeRadio: 'youtube',
 };
 
 const formatEnumMap = {
