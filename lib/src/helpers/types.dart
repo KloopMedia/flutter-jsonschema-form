@@ -22,6 +22,7 @@ enum WidgetType {
   none,
   image,
   imageRadio,
+  youtubeRadio,
 }
 
 enum FormatType { email, uri, file, date, dateTime }
@@ -51,6 +52,7 @@ const widgetEnumMap = {
   WidgetType.autocomplete: 'simple_autocomplete',
   WidgetType.image: 'image',
   WidgetType.imageRadio: 'image_radio',
+  WidgetType.youtubeRadio: 'youtube_radio',
 };
 
 const formatEnumMap = {

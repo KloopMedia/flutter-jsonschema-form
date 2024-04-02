@@ -18,7 +18,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   @override
   void initState() {
     super.initState();
-    videoPlayerController = VideoPlayerController.network(widget.url)
+    videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.url))
       ..initialize().then((_) {
         chewieController = ChewieController(
           videoPlayerController: videoPlayerController,

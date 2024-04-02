@@ -11,3 +11,4 @@ export 'image_viewer_widget/image_field.dart';
 export 'correct_answer_wrapper.dart';
 export 'field_wrapper.dart';
 export 'image_radio_widget/image_radio_widget.dart';
+export 'youtube_radio_widget/youtube_radio_widget.dart';

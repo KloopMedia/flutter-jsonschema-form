@@ -53,6 +53,9 @@ WidgetModel? getWidgetModelFromUiSchema(Map<String, dynamic>? uiSchema) {
     case WidgetType.image:
       final List<String> images = List.castFrom(getOption(options, 'images') ?? []);
       return ImageRadioWidgetModel(images: images);
+    case WidgetType.youtubeRadio:
+      final String videoId = getOption(options, 'videoId');
+      return YoutubeRadioWidgetModel(videoId: videoId);
     case WidgetType.paragraph:
       final paragraph = getOption<String>(options, 'paragraph') ?? "";
       return ParagraphWidgetModel(paragraph: paragraph);
@@ -65,6 +68,12 @@ class ImageRadioWidgetModel extends WidgetModel {
   final List<String> images;
 
   const ImageRadioWidgetModel({this.images = const []}) : super(type: WidgetType.imageRadio);
+}
+
+class YoutubeRadioWidgetModel extends WidgetModel {
+  final String videoId;
+
+  const YoutubeRadioWidgetModel({required this.videoId}) : super(type: WidgetType.youtubeRadio);
 }
 
 class ImageWidgetModel extends WidgetModel {

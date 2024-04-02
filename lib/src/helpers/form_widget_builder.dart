@@ -203,6 +203,21 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         images: widgetModel.images,
       );
+    } else if (widgetModel is YoutubeRadioWidgetModel) {
+      return YoutubeRadioWidget<T>(
+        videoId: widgetModel.videoId,
+        name: id,
+        initialValue: value,
+        decoration: decoration,
+        orientation: OptionsOrientation.vertical,
+        validator: FormBuilderValidators.compose([
+          if (isRequired) FormBuilderValidators.required(),
+        ]),
+        options: radioItems!,
+        enabled: !disabled,
+        onChanged: onChange,
+        physics: const NeverScrollableScrollPhysics(),
+      );
     } else {
       return const Text('Error');
     }
