@@ -37,6 +37,7 @@ dependencies:
   video_compress: ^3.1.2
   flutter_image_compress: ^2.0.3
   flutter_inappwebview: ^6.0.0
+  another_flushbar: ^1.12.30
 
 
 dev_dependencies:

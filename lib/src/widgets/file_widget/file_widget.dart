@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_json_schema_form/l10n/loc.dart';
@@ -20,19 +21,17 @@ class FileWidget extends StatelessWidget {
           print(state.errorMessage);
         }
         if (state is FileUploadSuccess) {
-          SnackBar snackBar = SnackBar(
-            content: Text(context.loc.file_upload_success),
+          final flushBar = Flushbar(
+            message:  context.loc.file_upload_success,
+            margin: const EdgeInsets.all(10),
             backgroundColor: Colors.green,
-            dismissDirection: DismissDirection.up,
-            behavior: SnackBarBehavior.floating,
-            margin: EdgeInsets.only(
-              bottom: MediaQuery.of(context).size.height - 60,
-              left: 10,
-              right: 10,
-            ),
+            duration:  const Duration(seconds: 4),
+            flushbarPosition: FlushbarPosition.TOP,
+            flushbarStyle: FlushbarStyle.FLOATING,
+            borderRadius: BorderRadius.circular(16),
           );
 
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          flushBar.show(context);
         }
         if (state is FilePreview) {
           final bloc = context.read<FileBloc>();
