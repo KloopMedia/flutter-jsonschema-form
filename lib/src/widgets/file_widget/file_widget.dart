@@ -20,11 +20,19 @@ class FileWidget extends StatelessWidget {
           print(state.errorMessage);
         }
         if (state is FileUploadSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(context.loc.file_upload_success),
+          SnackBar snackBar = SnackBar(
+            content: Text(context.loc.file_upload_success),
+            backgroundColor: Colors.green,
+            dismissDirection: DismissDirection.up,
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.only(
+              bottom: MediaQuery.of(context).size.height - 60,
+              left: 10,
+              right: 10,
             ),
           );
+
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
         if (state is FilePreview) {
           final bloc = context.read<FileBloc>();
