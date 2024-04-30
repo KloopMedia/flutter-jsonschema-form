@@ -60,11 +60,13 @@ abstract class ValueField<T> extends Field {
 
     switch (type) {
       case FieldType.string:
+        final formatType = decodeFormatType(schema['format']);
         return StringField(
           id: id,
           path: path,
           type: type,
           widgetType: widgetType,
+          formatType: formatType,
           dependency: dependency,
           required: isRequired,
           title: title,

@@ -9,7 +9,9 @@ import '../widgets/widgets.dart';
 import 'models.dart';
 
 class StringField extends ValueField<String> {
-  StringField({
+  final FormatType? formatType;
+
+  StringField( {
     required super.id,
     required super.path,
     required super.type,
@@ -22,6 +24,7 @@ class StringField extends ValueField<String> {
     super.enabled = true,
     super.required = false,
     super.widgetType,
+    this.formatType,
   });
 
   @override
@@ -65,6 +68,23 @@ class StringField extends ValueField<String> {
     );
   }
 
+  Widget getFormatField(BuildContext context, value) {
+    final isCorrect = checkFieldAnswer(context, value);
+    final disabled = context.read<bloc.FormBloc>().disabled;
+    final readOnly = !enabled || disabled;
+
+    return TextFormatWidgetBuilder(
+      id: id,
+      type: formatType!,
+      value: value,
+      onChange: (value) => onChange(context, value),
+      disabled: readOnly,
+      isRequired: this.required,
+      readOnly: false,
+      decoration: showCorrectFieldDecoration(isCorrect),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<bloc.FormBloc, bloc.FormState>(
@@ -76,7 +96,15 @@ class StringField extends ValueField<String> {
 
         final value = getFormDataByPath(state.formData, path);
         final isCorrect = checkFieldAnswer(context, value);
-        final widget = widgetType != null ? getWidget(context, value) : getField(context, value);
+
+        final Widget widget;
+        if (widgetType != null) {
+          widget = getWidget(context, value);
+        } else if (formatType != null) {
+          widget = getFormatField(context, value);
+        } else {
+          widget = getField(context, value);
+        }
 
         return FieldWrapper(
           key: Key(id),
