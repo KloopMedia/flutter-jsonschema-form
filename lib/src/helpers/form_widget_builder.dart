@@ -235,7 +235,7 @@ class TextFormatWidgetBuilder extends StatelessWidget {
   final InputDecoration decoration;
 
   const TextFormatWidgetBuilder({
-    Key? key,
+    super.key,
     required this.type,
     required this.id,
     required this.value,
@@ -244,15 +244,19 @@ class TextFormatWidgetBuilder extends StatelessWidget {
     required this.readOnly,
     required this.isRequired,
     required this.decoration,
-  }) : super(key: key);
+  });
 
   DateTime? getFormattedDateTime(String? value) {
-    if (value == null) return null;
-    final day = value.substring(0, 2);
-    final year = value.substring(6, 10);
-    final addedYear = value.replaceRange(0, 2, year);
-    final formattedString = addedYear.replaceRange(8, 12, day);
-    return DateTime.tryParse(formattedString);
+    try {
+      if (value == null) return null;
+      final day = value.substring(0, 2);
+      final year = value.substring(6, 10);
+      final addedYear = value.replaceRange(0, 2, year);
+      final formattedString = addedYear.replaceRange(8, 12, day);
+      return DateTime.tryParse(formattedString);
+    } catch (e) {
+      return null;
+    }
   }
 
   @override
