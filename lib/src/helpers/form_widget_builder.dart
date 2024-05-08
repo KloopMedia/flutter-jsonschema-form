@@ -249,12 +249,18 @@ class TextFormatWidgetBuilder extends StatelessWidget {
   DateTime? getFormattedDateTime(String? value) {
     try {
       if (value == null) return null;
-      final day = value.substring(0, 2);
-      final year = value.substring(6, 10);
-      final addedYear = value.replaceRange(0, 2, year);
-      final formattedString = addedYear.replaceRange(8, 12, day);
-      return DateTime.tryParse(formattedString);
+
+      try {
+        final day = value.substring(0, 2);
+        final year = value.substring(6, 10);
+        final addedYear = value.replaceRange(0, 2, year);
+        final formattedString = addedYear.replaceRange(8, 12, day);
+        return DateTime.parse(formattedString);
+      } catch (e) {
+        return DateFormat("hh:mm").parse(value);
+      }
     } catch (e) {
+      print(e);
       return null;
     }
   }
