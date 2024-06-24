@@ -63,6 +63,7 @@ class FileSelector extends StatelessWidget {
                       ..onTap = state.enabled
                           ? () async {
                         final picker = await FilePicker.platform.pickFiles(
+                          type: FileType.media,
                           allowCompression: true,
                           allowMultiple: false,
                           withData: true,
