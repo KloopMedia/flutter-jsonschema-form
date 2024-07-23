@@ -38,7 +38,7 @@ dependencies:
   flutter_image_compress: ^2.0.3
   flutter_inappwebview: ^6.0.0
   another_flushbar: ^1.12.30
-
+  flutter_linkify: ^6.0.0
 
 dev_dependencies:
   flutter_test:
