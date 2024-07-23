@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 enum WrapperType {
   section,
@@ -46,13 +48,14 @@ class FieldWrapper extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (title != null)
-            SelectableText.rich(
-              TextSpan(
-                text: title,
-                style: titleTheme,
-                children: <TextSpan>[
-                  if (isRequired) const TextSpan(text: '*', style: TextStyle(color: Colors.red)),
-                ],
+            SelectionArea(
+              child: Linkify(
+                text: title! + (isRequired ? '*' : ''),
+                onOpen: (link) async {
+                  if (!await launchUrl(Uri.parse(link.url))) {
+                    throw Exception('Could not launch ${link.url}');
+                  }
+                },
               ),
             ),
           if (isSection && title != null) const Divider(thickness: 2),
