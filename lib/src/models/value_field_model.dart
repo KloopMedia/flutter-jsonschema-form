@@ -122,7 +122,7 @@ abstract class ValueField<T> extends Field {
     return FormWidgetBuilder(
       id: id,
       widgetType: widgetType!,
-      value: value,
+      value: value ?? defaultValue,
       onChange: (value) => onChange(context, value),
       disabled: readOnly,
       isRequired: this.required,

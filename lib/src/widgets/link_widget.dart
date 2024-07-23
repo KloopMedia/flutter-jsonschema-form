@@ -4,7 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 class LinkFormField extends StatelessWidget {
   final String name;
   final InputDecoration decoration;
-  final dynamic initialValue;
+  final String? initialValue;
 
   const LinkFormField({
     Key? key,
@@ -15,15 +15,15 @@ class LinkFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InputDecorator(
-      decoration: decoration,
-      child: InkWell(
+    if (initialValue != null && initialValue!.isNotEmpty && Uri.parse(initialValue!).isAbsolute) {
+      return InkWell(
         child: Text(
-          initialValue,
+          initialValue!,
           style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.blue),
         ),
-        onTap: () => launchUrl(Uri.parse(initialValue)),
-      ),
-    );
+        onTap: () => launchUrl(Uri.parse(initialValue!)),
+      );
+    }
+    return const SizedBox.shrink();
   }
 }
