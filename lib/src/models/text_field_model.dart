@@ -11,7 +11,7 @@ import 'models.dart';
 class StringField extends ValueField<String> {
   final FormatType? formatType;
 
-  StringField( {
+  StringField({
     required super.id,
     required super.path,
     required super.type,
@@ -111,14 +111,15 @@ class StringField extends ValueField<String> {
           title: title ?? id,
           description: description,
           isRequired: this.required,
+          padding: widgetType is ParagraphWidgetModel ? EdgeInsets.zero : null,
           child: CorrectAnswerWrapper(
             isCorrect: isCorrect,
             child: Theme(
               data: ThemeData(
                 radioTheme: RadioThemeData(
-                  fillColor: MaterialStateProperty.resolveWith(
+                  fillColor: WidgetStateProperty.resolveWith(
                     (Set states) {
-                      if (states.contains(MaterialState.disabled)) {
+                      if (states.contains(WidgetState.disabled)) {
                         return Colors.grey;
                       }
                       return Colors.black;

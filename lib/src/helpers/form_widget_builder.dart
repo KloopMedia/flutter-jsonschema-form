@@ -154,12 +154,7 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         label: widgetModel.label,
       );
     } else if (widgetModel is ParagraphWidgetModel) {
-      return ParagraphField(
-        name: id,
-        decoration: decoration,
-        initialValue: value,
-        paragraph: widgetModel.paragraph,
-      );
+      return const SizedBox.shrink();
     } else if (widgetModel is AutocompleteWidgetModel) {
       List<String> options;
       try {

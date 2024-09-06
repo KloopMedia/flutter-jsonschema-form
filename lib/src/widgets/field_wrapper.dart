@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -13,20 +14,22 @@ class FieldWrapper extends StatelessWidget {
   final bool isRequired;
   final Widget? child;
   final WrapperType _type;
+  final EdgeInsetsGeometry? padding;
 
   const FieldWrapper({
-    Key? key,
+    super.key,
     this.title,
     this.description,
+    this.padding,
     required this.isRequired,
     required this.child,
-  })  : _type = WrapperType.field,
-        super(key: key);
+  }) : _type = WrapperType.field;
 
   const FieldWrapper.section({
     super.key,
     this.title,
     this.description,
+    this.padding,
     this.child,
   })  : _type = WrapperType.section,
         isRequired = false;
@@ -39,11 +42,10 @@ class FieldWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context).textTheme;
 
-    final titleTheme = isSection ? theme.titleLarge : theme.titleMedium;
     final descriptionTheme = theme.bodyMedium!.copyWith(color: theme.bodySmall!.color);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: padding ?? const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
