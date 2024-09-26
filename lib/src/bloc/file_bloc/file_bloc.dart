@@ -84,6 +84,8 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     final file = event.files.first;
 
     if (bytes != null) {
+      emit(FileCompressing(files: state.files));
+
       final mime = lookupMimeType(name);
       final metadata = SettableMetadata(
         contentType: mime,
@@ -96,7 +98,6 @@ class FileBloc extends Bloc<FileEvent, FileState> {
       } else {
         Uint8List? compressedFileBytes;
         if (type == "video") {
-          emit(FileCompressing(files: state.files));
           compressedFileBytes = await compressVideo(file.path);
         } else if (type == "image") {
           compressedFileBytes = await FlutterImageCompress.compressWithList(bytes, quality: 70);
