@@ -69,17 +69,17 @@ class FormBloc extends Bloc<FormEvent, FormState> {
       updateDeeply(path.path, state.formData, (prevValue) => value, delete),
     );
 
-    for (final field in fields) {
-      if (!field.shouldRenderDependency(formData)) {
-        if (field is ValueField) {
-          formData = Map<String, dynamic>.from(
-            updateDeeply(field.path.path, formData, (prevValue) => null, true),
-          );
-        }
-
-        formKey.currentState?.removeInternalFieldValue(field.id);
-      }
-    }
+    // for (final field in fields) {
+    //   if (!field.shouldRenderDependency(formData)) {
+    //     if (field is ValueField) {
+    //       formData = Map<String, dynamic>.from(
+    //         updateDeeply(field.path.path, formData, (prevValue) => null, true),
+    //       );
+    //     }
+    //
+    //     formKey.currentState?.removeInternalFieldValue(field.id);
+    //   }
+    // }
 
     if (isDependency) {
       emit(const FormModified({}));
@@ -96,11 +96,25 @@ class FormBloc extends Bloc<FormEvent, FormState> {
       return;
     }
 
+    Map<String, dynamic> formData = {};
+
+    for (final field in fields) {
+      if (!field.shouldRenderDependency(state.formData)) {
+        if (field is ValueField) {
+          formData = Map<String, dynamic>.from(
+            updateDeeply(field.path.path, state.formData, (prevValue) => null, true),
+          );
+        }
+
+        formKey.currentState?.removeInternalFieldValue(field.id);
+      }
+    }
+
     if (formKey.currentState!.validate()) {
       if (onSubmitCallback != null) {
-        onSubmitCallback!(state.formData);
+        onSubmitCallback!(formData);
       }
-      emit(FormSubmitted(state.formData));
+      emit(FormSubmitted(formData));
     } else {
       print('SUBMIT ERROR ${formKey.currentState?.value}');
       if (onValidationCallback != null) {
