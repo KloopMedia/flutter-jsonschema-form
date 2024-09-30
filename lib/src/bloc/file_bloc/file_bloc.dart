@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -9,6 +11,7 @@ import 'package:mime/mime.dart';
 import 'package:video_compress/video_compress.dart';
 
 part 'file_event.dart';
+
 part 'file_state.dart';
 
 class FileBloc extends Bloc<FileEvent, FileState> {
@@ -25,6 +28,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     required this.onChanged,
   }) : super(FilesInitial(files: _decodeValue(storage, value), enabled: enabled)) {
     on<AddFileEvent>(onAddFileEvent);
+    on<AddFutureFileEvent>(onAddFutureFileEvent);
     on<RemoveFileEvent>(onRemoveFileEvent);
     on<ViewFileEvent>(onViewFileEvent);
     on<CloseFileViewerEvent>(onCloseFileViewerEvent);
@@ -85,12 +89,13 @@ class FileBloc extends Bloc<FileEvent, FileState> {
 
     if (bytes != null) {
       emit(FileCompressing(files: state.files));
-
       final mime = lookupMimeType(name);
       final metadata = SettableMetadata(
         contentType: mime,
       );
-      final type = mime?.split('/').first;
+      final type = mime
+          ?.split('/')
+          .first;
       final ref = storage.child(name);
 
       if (kIsWeb) {
@@ -166,5 +171,42 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     );
     final compressedVideoBytes = await compressedVideoInfo?.file?.readAsBytes();
     return compressedVideoBytes;
+  }
+
+  FutureOr<void> onAddFutureFileEvent(AddFutureFileEvent event, Emitter<FileState> emit) async {
+    emit(FilePreparing(files: state.files));
+    final result = await event.future;
+
+    final files = result?.files ?? [];
+
+    if (files.isNotEmpty) {
+      emit(FileCompressing(files: state.files));
+      final file = files.first;
+      final name = file.name;
+      final bytes = file.bytes;
+
+      final mime = lookupMimeType(name);
+      final metadata = SettableMetadata(
+        contentType: mime,
+      );
+      final type = mime
+          ?.split('/')
+          .first;
+      final ref = storage.child(name);
+
+      if (kIsWeb) {
+        await uploadToStorage(ref, bytes, metadata, emit);
+      } else {
+        Uint8List? compressedFileBytes;
+        if (type == "video") {
+          compressedFileBytes = await compressVideo(file.path!);
+        } else if (type == "image") {
+          compressedFileBytes = await FlutterImageCompress.compressWithList(bytes!, quality: 70);
+        } else {
+          await uploadToStorage(ref, bytes, metadata, emit);
+        }
+        await uploadToStorage(ref, compressedFileBytes, metadata, emit);
+      }
+    }
   }
 }

@@ -22,10 +22,10 @@ class FileWidget extends StatelessWidget {
         }
         if (state is FileUploadSuccess) {
           final flushBar = Flushbar(
-            message:  context.loc.file_upload_success,
+            message: context.loc.file_upload_success,
             margin: const EdgeInsets.all(10),
             backgroundColor: Colors.green,
-            duration:  const Duration(seconds: 4),
+            duration: const Duration(seconds: 4),
             flushbarPosition: FlushbarPosition.TOP,
             flushbarStyle: FlushbarStyle.FLOATING,
             borderRadius: BorderRadius.circular(16),
@@ -48,18 +48,7 @@ class FileWidget extends StatelessWidget {
       child: Column(
         children: [
           const ImagePreview(),
-          FileSelector(
-            onSelect: (files) {
-              if (files.isNotEmpty) {
-                final fileName = files.first.name;
-                final bytes = files.first.bytes;
-
-                context
-                    .read<FileBloc>()
-                    .add(AddFileEvent(name: fileName, bytes: bytes, files: files));
-              }
-            },
-          ),
+          FileSelector(),
           const UploadTaskManager(),
           FileList(
             onPreview: (file, index) {

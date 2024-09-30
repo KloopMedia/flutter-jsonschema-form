@@ -15,6 +15,15 @@ class AddFileEvent extends FileEvent {
   List<Object?> get props => [name, bytes];
 }
 
+class AddFutureFileEvent extends FileEvent {
+  final Future<FilePickerResult?> future;
+
+  const AddFutureFileEvent({required this.future});
+
+  @override
+  List<Object?> get props => [future];
+}
+
 class UploadSuccessEvent extends FileEvent {
   final Reference file;
 

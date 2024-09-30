@@ -7,9 +7,7 @@ import 'package:flutter_json_schema_form/l10n/loc.dart';
 import '../../bloc/bloc.dart';
 
 class FileSelector extends StatelessWidget {
-  final void Function(List<PlatformFile>) onSelect;
-
-  const FileSelector({Key? key, required this.onSelect}) : super(key: key);
+  const FileSelector({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,34 +16,23 @@ class FileSelector extends StatelessWidget {
     return BlocBuilder<FileBloc, FileState>(
       builder: (context, state) {
         // Disable button when uploading file
-        if (state is FileLoading || state is FileCompressing) {
+        if (state is FileLoading || state is FileCompressing || state is FilePreparing) {
           return const CircularProgressIndicator();
-          // return Row(
-          //   children: [
-          //     ElevatedButton(
-          //       onPressed: null,
-          //       child: state.addFileText ?? const Text('Add File'),
-          //     ),
-          //     const SizedBox(width: 16),
-          //     const CircularProgressIndicator()
-          //   ],
-          // );
         }
         return Column(
           children: [
             IconButton(
               icon: Icon(Icons.upload, color: theme.primary),
               onPressed: state.enabled
-                  ? () async {
-                final picker = await FilePicker.platform.pickFiles(
-                  type: FileType.media,
-                  allowCompression: true,
-                  allowMultiple: false,
-                  withData: true,
-                );
-                final files = picker?.files ?? [];
-                onSelect(files);
-              }
+                  ? () {
+                      final picker = FilePicker.platform.pickFiles(
+                        type: FileType.media,
+                        allowCompression: true,
+                        allowMultiple: false,
+                        withData: true,
+                      );
+                      context.read<FileBloc>().add(AddFutureFileEvent(future: picker));
+                    }
                   : null,
             ),
             Text.rich(
@@ -61,16 +48,15 @@ class FileSelector extends StatelessWidget {
                     ),
                     recognizer: TapGestureRecognizer()
                       ..onTap = state.enabled
-                          ? () async {
-                        final picker = await FilePicker.platform.pickFiles(
-                          type: FileType.media,
-                          allowCompression: true,
-                          allowMultiple: false,
-                          withData: true,
-                        );
-                        final files = picker?.files ?? [];
-                        onSelect(files);
-                      }
+                          ? () {
+                              final picker = FilePicker.platform.pickFiles(
+                                type: FileType.media,
+                                allowCompression: true,
+                                allowMultiple: false,
+                                withData: true,
+                              );
+                              context.read<FileBloc>().add(AddFutureFileEvent(future: picker));
+                            }
                           : null,
                   ),
                   TextSpan(

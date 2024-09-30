@@ -1,14 +1,17 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import '../../bloc/bloc.dart';
 
 class UploadTaskManager extends StatelessWidget {
-  const UploadTaskManager({Key? key}) : super(key: key);
+  const UploadTaskManager({super.key});
 
   String _bytesTransferredString(TaskSnapshot snapshot) {
-    return '${snapshot.bytesTransferred}/${snapshot.totalBytes}';
+    final totalSize = (snapshot.totalBytes / 1000).toStringAsFixed(1);
+    final transferredSize = (snapshot.bytesTransferred / 1000).toStringAsFixed(1);
+    return '$transferredSize/$totalSize';
   }
 
   double? _bytesTransferred(TaskSnapshot? snapshot) {
@@ -40,7 +43,7 @@ class UploadTaskManager extends StatelessWidget {
                 TaskState? taskState = snapshot?.state;
                 if (snapshot != null) {
                   status = Text(
-                    '${enumTaskStateMap[taskState!]!}: ${_bytesTransferredString(snapshot)} bytes sent',
+                    '${enumTaskStateMap[taskState!]!}: ${_bytesTransferredString(snapshot)} KB',
                   );
                 }
                 return ListTile(

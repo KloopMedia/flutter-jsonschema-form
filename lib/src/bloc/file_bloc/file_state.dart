@@ -22,8 +22,14 @@ class FilesModified extends FileState {
 }
 
 class FileCompressing extends FileState {
-
   const FileCompressing({required super.files});
+
+  @override
+  List<Object> get props => [files];
+}
+
+class FilePreparing extends FileState {
+  const FilePreparing({required super.files});
 
   @override
   List<Object> get props => [files];
