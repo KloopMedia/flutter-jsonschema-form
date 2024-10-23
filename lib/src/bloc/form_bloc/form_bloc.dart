@@ -96,25 +96,25 @@ class FormBloc extends Bloc<FormEvent, FormState> {
       return;
     }
 
-    Map<String, dynamic> formData = {};
-
-    for (final field in fields) {
-      if (!field.shouldRenderDependency(state.formData)) {
-        if (field is ValueField) {
-          formData = Map<String, dynamic>.from(
-            updateDeeply(field.path.path, state.formData, (prevValue) => null, true),
-          );
-        }
-
-        formKey.currentState?.removeInternalFieldValue(field.id);
-      }
-    }
-
     if (formKey.currentState!.validate()) {
       if (onSubmitCallback != null) {
+        Map<String, dynamic> formData = {...state.formData};
+
+        for (final field in fields) {
+          if (!field.shouldRenderDependency(formData)) {
+            if (field is ValueField) {
+              formData = Map<String, dynamic>.from(
+                updateDeeply(field.path.path, formData, (prevValue) => null, true),
+              );
+            }
+
+            formKey.currentState?.removeInternalFieldValue(field.id);
+          }
+        }
+
         onSubmitCallback!(formData);
       }
-      emit(FormSubmitted(formData));
+      emit(FormSubmitted(state.formData));
     } else {
       print('SUBMIT ERROR ${formKey.currentState?.value}');
       if (onValidationCallback != null) {
