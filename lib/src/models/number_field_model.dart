@@ -80,7 +80,7 @@ class NumberField extends ValueField<num> {
 
         return FieldWrapper(
           key: Key(id),
-          title: title ?? id,
+          title: title,
           description: description,
           isRequired: this.required,
           child: CorrectAnswerWrapper(

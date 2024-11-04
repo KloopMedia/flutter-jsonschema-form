@@ -108,7 +108,7 @@ class StringField extends ValueField<String> {
 
         return FieldWrapper(
           key: Key(id),
-          title: title ?? id,
+          title: title,
           description: description,
           isRequired: this.required,
           padding: widgetType is ParagraphWidgetModel ? EdgeInsets.zero : null,
