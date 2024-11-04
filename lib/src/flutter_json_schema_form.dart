@@ -34,10 +34,13 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final bool showCorrectFields;
   final bool shrinkWrap;
   final ScrollPhysics? physics;
+  final bool hideSubmitButton;
+  final String? submitButtonText;
+  final bool hideFinalScore;
 
-  /// Supported locales: English, Russian, Kyrgyz, Ukrainian
   final Locale locale;
 
+  /// Supported locales: English, Russian, Kyrgyz, Ukrainian
   const FlutterJsonSchemaForm({
     super.key,
     required this.schema,
@@ -57,6 +60,9 @@ class FlutterJsonSchemaForm extends StatefulWidget {
     this.locale = const Locale('en'),
     this.shrinkWrap = false,
     this.physics,
+    this.submitButtonText,
+    this.hideSubmitButton = false,
+    this.hideFinalScore = false,
   });
 
   @override
@@ -100,6 +106,10 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
     return score;
   }
 
+  void handleSubmit(BuildContext context) {
+    context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
+  }
+
   Widget _buildSubmitButton(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
     return ElevatedButton(
@@ -111,16 +121,17 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
         foregroundColor:
             Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
       ),
-      onPressed: () {
-        context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
-      },
-      child: Text(context.loc.submit),
+      onPressed: () => handleSubmit(context),
+      child: Text(widget.submitButtonText ?? context.loc.submit),
     );
   }
 
   List<Widget> _buildFormButtons(BuildContext context) {
     final submitButton = _buildSubmitButton(context);
-    final buttons = [...widget.extraButtons ?? [], if (!widget.disabled) submitButton];
+    final buttons = [
+      ...widget.extraButtons ?? [],
+      if (!widget.disabled && !widget.hideSubmitButton) submitButton
+    ];
 
     List<Widget> wrappedButtons = [];
     for (var i = 0; i < buttons.length; i++) {
@@ -187,7 +198,8 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
               ),
               Builder(
                 builder: (context) {
-                  if (widget.showCorrectFields &&
+                  if (!widget.hideFinalScore &&
+                      widget.showCorrectFields &&
                       widget.correctFormData != null &&
                       widget.correctFormData!.isNotEmpty) {
                     final value = _calculateFormScore(context);
