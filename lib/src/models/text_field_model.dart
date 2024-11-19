@@ -55,16 +55,22 @@ class StringField extends ValueField<String> {
     final disabled = context.read<bloc.FormBloc>().disabled;
     final readOnly = !enabled || disabled;
 
-    return FormBuilderTextField(
-      name: id,
-      initialValue: value ?? defaultValue,
-      decoration: showCorrectFieldDecoration(isCorrect),
-      validator: FormBuilderValidators.compose([
-        if (this.required) FormBuilderValidators.required(),
-      ]),
-      onChanged: (value) => onChange(context, value),
-      readOnly: readOnly,
-      // style: theme,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        FormBuilderTextField(
+          name: id,
+          initialValue: value ?? defaultValue,
+          decoration: showCorrectFieldDecoration(isCorrect),
+          validator: FormBuilderValidators.compose([
+            if (this.required) FormBuilderValidators.required(),
+          ]),
+          onChanged: (value) => onChange(context, value),
+          readOnly: readOnly,
+          // style: theme,
+        ),
+        getLinks(value),
+      ],
     );
   }
 

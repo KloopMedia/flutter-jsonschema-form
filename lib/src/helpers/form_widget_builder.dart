@@ -71,20 +71,26 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
       );
     } else if (widgetModel is TextAreaWidgetModel) {
-      return FormBuilderTextField(
-        name: id,
-        initialValue: value,
-        decoration: decoration,
-        minLines: widgetModel.rows ?? 4,
-        maxLines: widgetModel.rows,
-        keyboardType: TextInputType.multiline,
-        validator: FormBuilderValidators.compose([
-          if (isRequired) FormBuilderValidators.required(),
-        ]),
-        onChanged: onChange,
-        readOnly: disabled,
-        scrollPhysics: const NeverScrollableScrollPhysics(),
-        style: theme,
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          FormBuilderTextField(
+            name: id,
+            initialValue: value,
+            decoration: decoration,
+            minLines: widgetModel.rows ?? 4,
+            maxLines: widgetModel.rows,
+            keyboardType: TextInputType.multiline,
+            validator: FormBuilderValidators.compose([
+              if (isRequired) FormBuilderValidators.required(),
+            ]),
+            onChanged: onChange,
+            readOnly: disabled,
+            scrollPhysics: const NeverScrollableScrollPhysics(),
+            style: theme,
+          ),
+          getLinks(value),
+        ],
       );
     } else if (widgetModel is PasswordWidgetModel) {
       return FormBuilderTextField(
