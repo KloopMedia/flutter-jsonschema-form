@@ -39,6 +39,7 @@ class StringField extends ValueField<String> {
       dependency: dependency,
       enumValues: enumValues,
       enumNames: enumNames,
+      widgetType: widgetType,
       enabled: enabled,
       required: this.required,
     );

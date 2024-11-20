@@ -73,7 +73,7 @@ List<Field> parseSchema({
         )
       ];
     } else if (items is Map<String, dynamic>) {
-      final field = parseSchema(schema: items, uiSchema: uiSchema?[id], path: newPath).first;
+      final field = parseSchema(schema: items, uiSchema: uiSchema?["items"], path: newPath).first;
       return [
         DynamicArray(
           id: id,

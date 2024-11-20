@@ -36,6 +36,7 @@ class NumberField extends ValueField<num> {
       defaultValue: defaultValue ?? this.defaultValue,
       dependency: dependency,
       enumValues: enumValues,
+      widgetType: widgetType,
       enumNames: enumNames,
       enabled: enabled,
       required: this.required,

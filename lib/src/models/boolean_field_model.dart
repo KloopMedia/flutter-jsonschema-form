@@ -34,6 +34,7 @@ class BooleanField extends ValueField<bool> {
       description: description,
       defaultValue: defaultValue ?? this.defaultValue,
       dependency: dependency,
+      widgetType: widgetType,
       enumValues: enumValues,
       enumNames: enumNames,
       enabled: enabled,
