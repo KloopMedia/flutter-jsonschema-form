@@ -7,7 +7,7 @@ import 'package:flutter_json_schema_form/l10n/loc.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
 import '../l10n/generated/flutter_json_schema_form_localizations.dart';
-import 'bloc/form_bloc/form_bloc.dart' as bloc;
+import 'bloc/form_bloc/form_bloc.dart';
 import 'helpers/helpers.dart';
 import 'models/models.dart';
 
@@ -37,7 +37,6 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final bool hideSubmitButton;
   final String? submitButtonText;
   final bool hideFinalScore;
-
   final Locale locale;
 
   /// Supported locales: English, Russian, Kyrgyz, Ukrainian
@@ -66,18 +65,35 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   });
 
   @override
-  State<FlutterJsonSchemaForm> createState() => _FlutterJsonSchemaFormState();
+  State<FlutterJsonSchemaForm> createState() => FlutterJsonSchemaFormState();
+
+  FormBloc get formBloc => (key as GlobalKey<FlutterJsonSchemaFormState>).currentState!.formBloc;
 }
 
-class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
+class FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
   final _formKey = GlobalKey<FormBuilderState>();
   late final List<Field> fields;
   late final List<Field> serializedField;
+  late final FormBloc formBloc;
 
   @override
   void initState() {
     fields = parseSchema(schema: widget.schema, uiSchema: widget.uiSchema);
     serializedField = serializeFields(fields, widget.formData ?? {});
+    formBloc = FormBloc(
+      fields: serializedField,
+      formKey: _formKey,
+      formData: widget.formData,
+      storage: widget.storage,
+      disabled: widget.disabled,
+      onChangeCallback: widget.onChange,
+      onSubmitCallback: widget.onSubmit,
+      onValidationCallback: widget.onValidationFailed,
+      onWebhookTriggerCallback: widget.onWebhookTrigger,
+      onDownloadFileCallback: widget.onDownloadFile,
+      correctFormData: widget.correctFormData,
+      showCorrectFields: widget.showCorrectFields,
+    );
     super.initState();
   }
 
@@ -107,7 +123,7 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
   }
 
   void handleSubmit(BuildContext context) {
-    context.read<bloc.FormBloc>().add(bloc.SubmitFormEvent());
+    context.read<FormBloc>().add(SubmitFormEvent());
   }
 
   Widget _buildSubmitButton(BuildContext context) {
@@ -166,20 +182,7 @@ class _FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
         FormLocalizationsDelegateKy(),
       ],
       child: BlocProvider(
-        create: (context) => bloc.FormBloc(
-          fields: serializedField,
-          formKey: _formKey,
-          formData: widget.formData,
-          storage: widget.storage,
-          disabled: widget.disabled,
-          onChangeCallback: widget.onChange,
-          onSubmitCallback: widget.onSubmit,
-          onValidationCallback: widget.onValidationFailed,
-          onWebhookTriggerCallback: widget.onWebhookTrigger,
-          onDownloadFileCallback: widget.onDownloadFile,
-          correctFormData: widget.correctFormData,
-          showCorrectFields: widget.showCorrectFields,
-        ),
+        create: (context) => formBloc,
         child: FormBuilder(
           key: _formKey,
           child: CustomScrollView(
