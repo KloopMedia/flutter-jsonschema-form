@@ -175,6 +175,8 @@ class GroupedRadio<T> extends StatefulWidget {
 
   final ScrollPhysics? physics;
 
+  final bool alternativeTheme;
+
   const GroupedRadio({
     super.key,
     required this.options,
@@ -197,6 +199,7 @@ class GroupedRadio<T> extends StatefulWidget {
     this.separator,
     this.controlAffinity = ControlAffinity.leading,
     this.physics,
+    this.alternativeTheme = false,
   });
 
   @override
@@ -208,7 +211,13 @@ class _GroupedRadioState<T> extends State<GroupedRadio<T?>> {
   Widget build(BuildContext context) {
     final widgetList = <Widget>[];
     for (int i = 0; i < widget.options.length; i++) {
-      widgetList.add(_buildRadioButton(i));
+      Widget button;
+      if (widget.alternativeTheme) {
+        button = _buildAlternativeRadioButton(i);
+      } else {
+        button = _buildRadioButton(i);
+      }
+      widgetList.add(button);
     }
 
     switch (widget.orientation) {
@@ -274,11 +283,7 @@ class _GroupedRadioState<T> extends State<GroupedRadio<T?>> {
           : () {
               widget.onChanged(optionValue);
             },
-      child: Transform.scale(
-        scale: 1.13,
-        alignment: Alignment.centerLeft,
-        child: option
-      ),
+      child: Transform.scale(scale: 1.13, alignment: Alignment.centerLeft, child: option),
     );
 
     return Column(
@@ -299,6 +304,77 @@ class _GroupedRadioState<T> extends State<GroupedRadio<T?>> {
               widget.separator!,
           ],
         ),
+        if (widget.orientation == OptionsOrientation.vertical &&
+            widget.separator != null &&
+            index != widget.options.length - 1)
+          widget.separator!,
+      ],
+    );
+  }
+
+  Widget _buildAlternativeRadioButton(int index) {
+    final option = widget.options[index];
+    final optionValue = option.value;
+    final activeColor = Color(0xFFC1C8FD);
+    final activeBorderColor = Color(0xFF5E81FB);
+    final defaultColor = Color(0xFFEFEFFF);
+    final disabledColor = Color(0xFFEFF1F1);
+    final disabledBorderColor = Color(0xFFC6C5D0);
+    final isSelected = optionValue == widget.value;
+    final isOptionDisabled = true == widget.disabled?.contains(optionValue);
+
+    int textLength;
+    try {
+      textLength = (option.child as Text).data!.length;
+    } catch (e) {
+      textLength = 0;
+    }
+
+    final label = GestureDetector(
+      onTap: isOptionDisabled
+          ? null
+          : () {
+              widget.onChanged(optionValue);
+            },
+      child: Container(
+        width: double.infinity,
+        alignment: textLength > 30 ? Alignment.centerLeft : Alignment.center,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: isOptionDisabled ? disabledBorderColor : activeBorderColor,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          color: isOptionDisabled
+              ? disabledColor
+              : isSelected
+                  ? activeColor
+                  : defaultColor,
+          boxShadow: isOptionDisabled
+              ? null
+              : [
+                  BoxShadow(
+                    color: activeBorderColor, // Hex color code
+                    offset: Offset(0, 1), // Horizontal and vertical offsets
+                    blurRadius: 0, // The blur radius
+                    spreadRadius: 0, // The spread radius
+                  ),
+                ],
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          child: DefaultTextStyle.merge(
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            child: option,
+          ),
+        ),
+      ),
+    );
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        label,
         if (widget.orientation == OptionsOrientation.vertical &&
             widget.separator != null &&
             index != widget.options.length - 1)

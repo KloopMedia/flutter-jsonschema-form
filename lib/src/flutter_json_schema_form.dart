@@ -38,6 +38,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
   final String? submitButtonText;
   final bool hideFinalScore;
   final Locale locale;
+  final bool alternativeTheme;
 
   /// Supported locales: English, Russian, Kyrgyz, Ukrainian
   const FlutterJsonSchemaForm({
@@ -62,6 +63,7 @@ class FlutterJsonSchemaForm extends StatefulWidget {
     this.submitButtonText,
     this.hideSubmitButton = false,
     this.hideFinalScore = false,
+    this.alternativeTheme = false,
   });
 
   @override
@@ -93,6 +95,7 @@ class FlutterJsonSchemaFormState extends State<FlutterJsonSchemaForm> {
       onDownloadFileCallback: widget.onDownloadFile,
       correctFormData: widget.correctFormData,
       showCorrectFields: widget.showCorrectFields,
+      alternativeTheme: widget.alternativeTheme,
     );
     super.initState();
   }

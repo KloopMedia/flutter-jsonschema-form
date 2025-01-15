@@ -23,9 +23,10 @@ class FormWidgetBuilder<T> extends StatelessWidget {
   final bool readOnly;
   final bool isRequired;
   final InputDecoration decoration;
+  final bool alternativeTheme;
 
   const FormWidgetBuilder({
-    Key? key,
+    super.key,
     required this.id,
     required this.widgetType,
     required this.value,
@@ -37,7 +38,8 @@ class FormWidgetBuilder<T> extends StatelessWidget {
     required this.isRequired,
     this.enumItems,
     required this.decoration,
-  }) : super(key: key);
+    required this.alternativeTheme,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +62,11 @@ class FormWidgetBuilder<T> extends StatelessWidget {
       return FormBuilderRadioGroup<T>(
         name: id,
         initialValue: value,
-        decoration: decoration,
+        decoration: alternativeTheme ? InputDecoration(
+          border: InputBorder.none,
+        ) : decoration,
+        separator: alternativeTheme ? SizedBox(height: 16) : null,
+        alternativeTheme: alternativeTheme,
         orientation: OptionsOrientation.vertical,
         validator: FormBuilderValidators.compose([
           if (isRequired) FormBuilderValidators.required(),
@@ -362,7 +368,7 @@ class DefaultWidgetBuilder extends StatelessWidget {
   final InputDecoration decoration;
 
   const DefaultWidgetBuilder({
-    Key? key,
+    super.key,
     required this.id,
     required this.fieldType,
     required this.value,
@@ -372,7 +378,7 @@ class DefaultWidgetBuilder extends StatelessWidget {
     required this.disabled,
     required this.isRequired,
     required this.decoration,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

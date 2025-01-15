@@ -115,9 +115,11 @@ abstract class ValueField<T> extends Field {
   ValueField copyWith({String? id, PathModel? path, T? defaultValue});
 
   Widget getWidget(BuildContext context, value) {
+    final formBloc = context.read<bloc.FormBloc>();
     final isCorrect = checkFieldAnswer(context, value);
-    final disabled = context.read<bloc.FormBloc>().disabled;
+    final disabled = formBloc.disabled;
     final readOnly = !enabled || disabled;
+    final alternativeTheme = formBloc.alternativeTheme;
 
     return FormWidgetBuilder(
       id: id,
@@ -131,6 +133,7 @@ abstract class ValueField<T> extends Field {
       dropdownItems: getDropdownItems(),
       radioItems: getRadioItems(context),
       decoration: showCorrectFieldDecoration(isCorrect),
+      alternativeTheme: alternativeTheme,
     );
   }
 

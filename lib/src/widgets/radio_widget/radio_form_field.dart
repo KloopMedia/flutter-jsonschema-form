@@ -24,6 +24,7 @@ class FormBuilderRadioGroup<T> extends FormBuilderFieldDecoration<T> {
   final WrapAlignment wrapRunAlignment;
   final WrapCrossAlignment wrapCrossAxisAlignment;
   final ScrollPhysics? physics;
+  final bool alternativeTheme;
 
   /// Creates field to select one value from a list of Radio Widgets
   FormBuilderRadioGroup({
@@ -58,6 +59,7 @@ class FormBuilderRadioGroup<T> extends FormBuilderFieldDecoration<T> {
     super.onReset,
     super.restorationId,
     this.physics,
+    this.alternativeTheme = false,
   }) : super(
     builder: (FormFieldState<T?> field) {
       final state = field as _FormBuilderRadioGroupState<T>;
@@ -65,6 +67,7 @@ class FormBuilderRadioGroup<T> extends FormBuilderFieldDecoration<T> {
       return InputDecorator(
         decoration: state.decoration,
         child: GroupedRadio<T>(
+          alternativeTheme: alternativeTheme,
           activeColor: activeColor,
           controlAffinity: controlAffinity,
           disabled: state.enabled
