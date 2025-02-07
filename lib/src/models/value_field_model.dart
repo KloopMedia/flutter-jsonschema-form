@@ -117,9 +117,11 @@ abstract class ValueField<T> extends Field {
   Widget getWidget(BuildContext context, value) {
     final formBloc = context.read<bloc.FormBloc>();
     final isCorrect = checkFieldAnswer(context, value);
+    final correctValue = getCorrectAnswer(context);
     final disabled = formBloc.disabled;
     final readOnly = !enabled || disabled;
     final alternativeTheme = formBloc.alternativeTheme;
+    final showCorrectResponses = formBloc.showAlternativeCorrectFields;
 
     return FormWidgetBuilder(
       id: id,
@@ -132,33 +134,46 @@ abstract class ValueField<T> extends Field {
       enumItems: enumValues,
       dropdownItems: getDropdownItems(),
       radioItems: getRadioItems(context),
-      decoration: showCorrectFieldDecoration(isCorrect),
+      decoration: showCorrectResponses
+          ? InputDecoration(border: InputBorder.none)
+          : showCorrectFieldDecoration(isCorrect),
       alternativeTheme: alternativeTheme,
+      showCorrectResponses: showCorrectResponses,
+      correctAnswer: correctValue,
     );
   }
 
   Widget getField(BuildContext context, value);
 
   bool? checkFieldAnswer(BuildContext context, dynamic value) {
+    final correctValue = getCorrectAnswer(context);
+
+    if (context.read<bloc.FormBloc>().showCorrectFields) {
+      return correctValue == value;
+    }
+
+    return null;
+  }
+
+  dynamic getCorrectAnswer(BuildContext context) {
+    final formBloc = context.read<bloc.FormBloc>();
+
     /// Check then need to check answers.
-    final showCorrectAnswer = context.read<bloc.FormBloc>().showCorrectFields;
+    final showCorrectAnswer = formBloc.showCorrectFields || formBloc.showAlternativeCorrectFields;
     if (!showCorrectAnswer) {
       return null;
     }
 
     /// Check if correctFormData is present and not empty.
-    final correctFormData = context.read<bloc.FormBloc>().correctFormData;
+    final correctFormData = formBloc.correctFormData;
     if (correctFormData == null || correctFormData.isEmpty) {
       return null;
     }
 
     /// Check if correctFormData contains value at path.
     final correctValue = getFormDataByPath(correctFormData, path);
-    if (correctValue == null) {
-      return null;
-    }
 
-    return correctValue == value;
+    return correctValue;
   }
 
   T? valueTransformer(dynamic value);

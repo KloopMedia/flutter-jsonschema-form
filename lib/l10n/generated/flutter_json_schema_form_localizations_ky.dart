@@ -1,5 +1,7 @@
 import 'flutter_json_schema_form_localizations.dart';
 
+// ignore_for_file: type=lint
+
 /// The translations for Kirghiz Kyrgyz (`ky`).
 class FlutterJsonSchemaFormLocalizationsKy extends FlutterJsonSchemaFormLocalizations {
   FlutterJsonSchemaFormLocalizationsKy([String locale = 'ky']) : super(locale);

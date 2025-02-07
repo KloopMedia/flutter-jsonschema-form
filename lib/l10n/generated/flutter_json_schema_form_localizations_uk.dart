@@ -1,5 +1,7 @@
 import 'flutter_json_schema_form_localizations.dart';
 
+// ignore_for_file: type=lint
+
 /// The translations for Ukrainian (`uk`).
 class FlutterJsonSchemaFormLocalizationsUk extends FlutterJsonSchemaFormLocalizations {
   FlutterJsonSchemaFormLocalizationsUk([String locale = 'uk']) : super(locale);

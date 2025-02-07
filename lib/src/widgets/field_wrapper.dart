@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../bloc/bloc.dart';
 
 enum WrapperType {
   section,
@@ -44,8 +47,10 @@ class FieldWrapper extends StatelessWidget {
 
     final descriptionTheme = theme.bodyMedium!.copyWith(color: theme.bodySmall!.color);
 
+    final alternativeTheme = context.read<FormBloc>().alternativeTheme;
+
     return Padding(
-      padding: padding ?? const EdgeInsets.symmetric(vertical: 8.0),
+      padding: alternativeTheme ? EdgeInsets.zero : padding ?? const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

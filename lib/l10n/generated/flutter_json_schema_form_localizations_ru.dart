@@ -1,5 +1,7 @@
 import 'flutter_json_schema_form_localizations.dart';
 
+// ignore_for_file: type=lint
+
 /// The translations for Russian (`ru`).
 class FlutterJsonSchemaFormLocalizationsRu extends FlutterJsonSchemaFormLocalizations {
   FlutterJsonSchemaFormLocalizationsRu([String locale = 'ru']) : super(locale);

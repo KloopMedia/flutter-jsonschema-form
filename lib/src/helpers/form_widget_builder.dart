@@ -24,6 +24,8 @@ class FormWidgetBuilder<T> extends StatelessWidget {
   final bool isRequired;
   final InputDecoration decoration;
   final bool alternativeTheme;
+  final bool showCorrectResponses;
+  final dynamic correctAnswer;
 
   const FormWidgetBuilder({
     super.key,
@@ -39,6 +41,8 @@ class FormWidgetBuilder<T> extends StatelessWidget {
     this.enumItems,
     required this.decoration,
     required this.alternativeTheme,
+    required this.showCorrectResponses,
+    this.correctAnswer
   });
 
   @override
@@ -62,11 +66,11 @@ class FormWidgetBuilder<T> extends StatelessWidget {
       return FormBuilderRadioGroup<T>(
         name: id,
         initialValue: value,
-        decoration: alternativeTheme ? InputDecoration(
-          border: InputBorder.none,
-        ) : decoration,
+        decoration: decoration,
         separator: alternativeTheme ? SizedBox(height: 16) : null,
         alternativeTheme: alternativeTheme,
+        showCorrectResponses: showCorrectResponses,
+        correctAnswer: correctAnswer,
         orientation: OptionsOrientation.vertical,
         validator: FormBuilderValidators.compose([
           if (isRequired) FormBuilderValidators.required(),
@@ -209,6 +213,9 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         onChanged: onChange,
         physics: const NeverScrollableScrollPhysics(),
         images: widgetModel.images,
+        alternativeTheme: alternativeTheme,
+        showCorrectResponses: showCorrectResponses,
+        correctAnswer: correctAnswer,
       );
     } else if (widgetModel is YoutubeRadioWidgetModel) {
       return YoutubeRadioWidget<T>(
@@ -224,6 +231,9 @@ class FormWidgetBuilder<T> extends StatelessWidget {
         enabled: !disabled,
         onChanged: onChange,
         physics: const NeverScrollableScrollPhysics(),
+        alternativeTheme: alternativeTheme,
+        showCorrectResponses: showCorrectResponses,
+        correctAnswer: correctAnswer,
       );
     } else {
       return const Text('Error');

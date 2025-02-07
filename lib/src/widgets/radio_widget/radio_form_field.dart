@@ -25,6 +25,8 @@ class FormBuilderRadioGroup<T> extends FormBuilderFieldDecoration<T> {
   final WrapCrossAlignment wrapCrossAxisAlignment;
   final ScrollPhysics? physics;
   final bool alternativeTheme;
+  final bool showCorrectResponses;
+  final dynamic correctAnswer;
 
   /// Creates field to select one value from a list of Radio Widgets
   FormBuilderRadioGroup({
@@ -60,14 +62,20 @@ class FormBuilderRadioGroup<T> extends FormBuilderFieldDecoration<T> {
     super.restorationId,
     this.physics,
     this.alternativeTheme = false,
+    this.showCorrectResponses = false,
+    this.correctAnswer,
   }) : super(
     builder: (FormFieldState<T?> field) {
       final state = field as _FormBuilderRadioGroupState<T>;
 
+      print("TETS $correctAnswer");
+
       return InputDecorator(
         decoration: state.decoration,
         child: GroupedRadio<T>(
-          alternativeTheme: alternativeTheme,
+          showAlternativeTheme: alternativeTheme,
+          showCorrectResponses: showCorrectResponses,
+          correctAnswer: correctAnswer,
           activeColor: activeColor,
           controlAffinity: controlAffinity,
           disabled: state.enabled

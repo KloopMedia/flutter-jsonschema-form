@@ -10,6 +10,8 @@ import 'flutter_json_schema_form_localizations_ky.dart';
 import 'flutter_json_schema_form_localizations_ru.dart';
 import 'flutter_json_schema_form_localizations_uk.dart';
 
+// ignore_for_file: type=lint
+
 /// Callers can lookup localized strings with an instance of FlutterJsonSchemaFormLocalizations
 /// returned by `FlutterJsonSchemaFormLocalizations.of(context)`.
 ///

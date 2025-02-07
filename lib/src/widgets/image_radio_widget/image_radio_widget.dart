@@ -26,6 +26,9 @@ class ImageRadioWidget<T> extends FormBuilderFieldDecoration<T> {
   final WrapCrossAlignment wrapCrossAxisAlignment;
   final ScrollPhysics? physics;
   final List<String> images;
+  final bool alternativeTheme;
+  final bool showCorrectResponses;
+  final dynamic correctAnswer;
 
   /// Creates field to select one value from a list of Radio Widgets
   ImageRadioWidget({
@@ -61,6 +64,9 @@ class ImageRadioWidget<T> extends FormBuilderFieldDecoration<T> {
     super.restorationId,
     this.physics,
     required this.images,
+    this.alternativeTheme = false,
+    this.showCorrectResponses = false,
+    this.correctAnswer,
   }) : super(
           builder: (FormFieldState<T?> field) {
             final state = field as _ImageRadioWidgetState<T>;
@@ -97,6 +103,9 @@ class ImageRadioWidget<T> extends FormBuilderFieldDecoration<T> {
                     wrapTextDirection: wrapTextDirection,
                     wrapVerticalDirection: wrapVerticalDirection,
                     physics: physics,
+                    showAlternativeTheme: alternativeTheme,
+                    showCorrectResponses: showCorrectResponses,
+                    correctAnswer: correctAnswer,
                   ),
                 ],
               ),

@@ -25,6 +25,9 @@ class YoutubeRadioWidget<T> extends FormBuilderFieldDecoration<T> {
   final WrapCrossAlignment wrapCrossAxisAlignment;
   final ScrollPhysics? physics;
   final String videoId;
+  final bool alternativeTheme;
+  final bool showCorrectResponses;
+  final dynamic correctAnswer;
 
   /// Creates field to select one value from a list of Radio Widgets
   YoutubeRadioWidget({
@@ -60,6 +63,9 @@ class YoutubeRadioWidget<T> extends FormBuilderFieldDecoration<T> {
     super.onReset,
     super.restorationId,
     this.physics,
+    this.alternativeTheme = false,
+    this.showCorrectResponses = false,
+    this.correctAnswer,
   }) : super(
           builder: (FormFieldState<T?> field) {
             final state = field as _VideoRadioWidgetState<T>;
@@ -96,6 +102,9 @@ class YoutubeRadioWidget<T> extends FormBuilderFieldDecoration<T> {
                     wrapTextDirection: wrapTextDirection,
                     wrapVerticalDirection: wrapVerticalDirection,
                     physics: physics,
+                    showAlternativeTheme: alternativeTheme,
+                    showCorrectResponses: showCorrectResponses,
+                    correctAnswer: correctAnswer,
                   ),
                 ],
               ),

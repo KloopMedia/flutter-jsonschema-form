@@ -25,6 +25,7 @@ class FormBloc extends Bloc<FormEvent, FormState> {
   final Map<String, dynamic>? correctFormData;
   final bool showCorrectFields;
   final bool alternativeTheme;
+  final bool showAlternativeCorrectFields;
 
   FormBloc({
     Map<String, dynamic>? formData,
@@ -40,6 +41,7 @@ class FormBloc extends Bloc<FormEvent, FormState> {
     this.correctFormData,
     this.showCorrectFields = false,
     this.alternativeTheme = false,
+    this.showAlternativeCorrectFields = false,
   }) : super(FormInitial(formData ?? {}, disabled: disabled)) {
     on<ChangeFormEvent>(_onChangeFormEvent);
     on<SubmitFormEvent>(_onSubmitFormEvent);

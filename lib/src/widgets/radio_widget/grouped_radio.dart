@@ -175,7 +175,11 @@ class GroupedRadio<T> extends StatefulWidget {
 
   final ScrollPhysics? physics;
 
-  final bool alternativeTheme;
+  final bool showAlternativeTheme;
+
+  final bool showCorrectResponses;
+
+  final dynamic correctAnswer;
 
   const GroupedRadio({
     super.key,
@@ -199,7 +203,9 @@ class GroupedRadio<T> extends StatefulWidget {
     this.separator,
     this.controlAffinity = ControlAffinity.leading,
     this.physics,
-    this.alternativeTheme = false,
+    this.showAlternativeTheme = false,
+    this.showCorrectResponses = false,
+    this.correctAnswer,
   });
 
   @override
@@ -212,7 +218,9 @@ class _GroupedRadioState<T> extends State<GroupedRadio<T?>> {
     final widgetList = <Widget>[];
     for (int i = 0; i < widget.options.length; i++) {
       Widget button;
-      if (widget.alternativeTheme) {
+      if (widget.showCorrectResponses) {
+        button = _buildCorrectResponses(i);
+      } else if (widget.showAlternativeTheme) {
         button = _buildAlternativeRadioButton(i);
       } else {
         button = _buildRadioButton(i);
@@ -222,12 +230,19 @@ class _GroupedRadioState<T> extends State<GroupedRadio<T?>> {
 
     switch (widget.orientation) {
       case OptionsOrientation.vertical:
-        return SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          physics: widget.physics,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: widgetList,
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(8),
+          decoration: widget.showAlternativeTheme
+              ? BoxDecoration(color: Color(0xFFEFF1F1), borderRadius: BorderRadius.circular(15))
+              : null,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            physics: widget.physics,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: widgetList,
+            ),
           ),
         );
       case OptionsOrientation.horizontal:
@@ -379,6 +394,51 @@ class _GroupedRadioState<T> extends State<GroupedRadio<T?>> {
             widget.separator != null &&
             index != widget.options.length - 1)
           widget.separator!,
+      ],
+    );
+  }
+
+  Widget _buildCorrectResponses(int index) {
+    final option = widget.options[index];
+    final optionValue = option.value;
+    final activeColor = Color(0xFFDBF1C9);
+    final defaultColor = Color(0xFFEFF1F1);
+    final activeFontColor = Color(0xFF207413);
+    final isCorrect = optionValue == widget.correctAnswer;
+
+    final label = Container(
+      width: double.infinity,
+      alignment: Alignment.centerLeft,
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: isCorrect ? activeColor : defaultColor,
+      ),
+      child: Row(
+        children: [
+          Icon(
+            isCorrect ? Icons.check_circle_outline : Icons.cancel_outlined,
+            color: isCorrect ? Color(0xFF4A9627) : Color(0xFFFF897D),
+          ),
+          SizedBox(width: 8),
+          Text(
+            (option.child as Text).data.toString(),
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: isCorrect ? activeFontColor : Colors.black,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        label,
+        SizedBox(height: 8),
       ],
     );
   }
