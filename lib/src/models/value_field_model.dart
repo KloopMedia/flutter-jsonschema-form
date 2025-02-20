@@ -149,6 +149,9 @@ abstract class ValueField<T> extends Field {
     final correctValue = getCorrectAnswer(context);
 
     if (context.read<bloc.FormBloc>().showCorrectFields) {
+      if (correctValue == null) {
+        return null;
+      }
       return correctValue == value;
     }
 
