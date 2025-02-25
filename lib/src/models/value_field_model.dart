@@ -134,7 +134,7 @@ abstract class ValueField<T> extends Field {
       enumItems: enumValues,
       dropdownItems: getDropdownItems(),
       radioItems: getRadioItems(context),
-      decoration: showCorrectResponses
+      decoration: showCorrectResponses || alternativeTheme
           ? InputDecoration(border: InputBorder.none)
           : showCorrectFieldDecoration(isCorrect),
       alternativeTheme: alternativeTheme,
