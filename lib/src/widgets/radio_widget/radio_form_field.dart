@@ -68,8 +68,6 @@ class FormBuilderRadioGroup<T> extends FormBuilderFieldDecoration<T> {
     builder: (FormFieldState<T?> field) {
       final state = field as _FormBuilderRadioGroupState<T>;
 
-      print("TETS $correctAnswer");
-
       return InputDecorator(
         decoration: state.decoration,
         child: GroupedRadio<T>(
