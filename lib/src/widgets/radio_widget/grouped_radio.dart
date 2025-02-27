@@ -232,8 +232,8 @@ class _GroupedRadioState<T> extends State<GroupedRadio<T?>> {
       case OptionsOrientation.vertical:
         return Container(
           width: double.infinity,
-          padding: EdgeInsets.all(8),
-          decoration: widget.showAlternativeTheme
+          padding: widget.showCorrectResponses ? EdgeInsets.all(8) : null,
+          decoration: widget.showCorrectResponses
               ? BoxDecoration(color: Color(0xFFEFF1F1), borderRadius: BorderRadius.circular(15))
               : null,
           child: SingleChildScrollView(
@@ -390,10 +390,7 @@ class _GroupedRadioState<T> extends State<GroupedRadio<T?>> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         label,
-        if (widget.orientation == OptionsOrientation.vertical &&
-            widget.separator != null &&
-            index != widget.options.length - 1)
-          widget.separator!,
+        SizedBox(height: 16),
       ],
     );
   }
