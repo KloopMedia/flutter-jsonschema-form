@@ -411,7 +411,7 @@ class _GroupedRadioState<T> extends State<GroupedRadio<T?>> {
         borderRadius: BorderRadius.circular(12),
         color: isCorrect ? activeColor : defaultColor,
       ),
-      child: Row(
+      child: Wrap(
         children: [
           Icon(
             isCorrect ? Icons.check_circle_outline : Icons.cancel_outlined,
