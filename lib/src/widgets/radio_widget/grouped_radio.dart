@@ -353,7 +353,7 @@ class _GroupedRadioState<T> extends State<GroupedRadio<T?>> {
             },
       child: Container(
         width: double.infinity,
-        alignment: textLength > 30 ? Alignment.centerLeft : Alignment.center,
+        alignment: Alignment.center,
         decoration: BoxDecoration(
           border: Border.all(
             color: isOptionDisabled ? disabledBorderColor : activeBorderColor,
